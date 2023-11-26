@@ -48,7 +48,7 @@ dependencies:
   shared_preferences: ^2.2.2
   hive: ^2.2.3
   # State Management
-  flutter_riverpod: ^2.4.6
+  provider: ^6.1.1
   # Animation
   shimmer: ^3.0.0
   # Functional Dependencies [image picker, file creating and sharing, path provider]
@@ -57,6 +57,7 @@ dependencies:
   share_plus: ^7.2.1
   path_provider: ^2.1.1
   open_file_plus: ^3.4.1
+  flutter_riverpod: ^2.4.8
   
 
 dev_dependencies:
@@ -97,12 +98,11 @@ flutter:
   # "family" key with the font family name, and a "fonts" key with a
   # list giving the asset and other descriptors for the font. For
   # example:
-  # fonts:
-  #   - family: Schyler
-  #     fonts:
-  #       - asset: fonts/Schyler-Regular.ttf
-  #       - asset: fonts/Schyler-Italic.ttf
-  #         style: italic
+  fonts:
+    - family: IstokWeb
+      fonts:
+        - asset: assets/fonts/IstokWeb-Regular.ttf
+        - asset: assets/fonts/IstokWeb-Bold.ttf
   #   - family: Trajan Pro
   #     fonts:
   #       - asset: fonts/TrajanPro.ttf

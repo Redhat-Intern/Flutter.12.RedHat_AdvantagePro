@@ -1,26 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class ThemeNotifier extends StateNotifier<ThemeMode> with CustomThemeDataMixin {
-  ThemeNotifier() : super(ThemeMode.light);
-
-  bool isDark() => state == ThemeMode.dark;
+class ThemeProvider extends ChangeNotifier with CustomThemeDataMixin {
+  ThemeMode themeMode = ThemeMode.light;
+  bool get isDark => themeMode == ThemeMode.dark;
 
   // True = Dark , False = Light
   void toggleThemeMode(bool ison) {
-    state = ison ? ThemeMode.dark : ThemeMode.light;
+    themeMode = ison ? ThemeMode.dark : ThemeMode.light;
+    notifyListeners();
   }
 
-  ThemeData customThemeData() =>
-      state == ThemeMode.dark ? darktheme : lighttheme;
+   ThemeData customThemeData() =>
+      themeMode == ThemeMode.dark ? darkTheme : lightTheme;
 }
 
-final themeProvider = StateNotifierProvider<ThemeNotifier, ThemeMode>((ref) {
-  return ThemeNotifier();
-});
 
 mixin CustomThemeDataMixin {
-  final darktheme = ThemeData(
+  final lightTheme = ThemeData(
       scaffoldBackgroundColor: const Color(0xffDADEEC),
       bottomAppBarTheme: const BottomAppBarTheme(
         color: Colors.white,
@@ -28,7 +24,7 @@ mixin CustomThemeDataMixin {
       colorScheme: const ColorScheme.light(),
       iconTheme: const IconThemeData(color: Colors.white));
 
-  final lighttheme = ThemeData(
+  final darkTheme = ThemeData(
       scaffoldBackgroundColor: const Color.fromRGBO(51, 51, 51, 1),
       colorScheme: const ColorScheme.dark(),
       bottomAppBarTheme: const BottomAppBarTheme(color: Colors.white),

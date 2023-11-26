@@ -1,14 +1,12 @@
+// All Core global plugins
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_core/firebase_core.dart';
 
-import 'utilities/static_data.dart';
-import 'Utilities/theme/theme_provider.dart';
+// Functions and utility logics
 import 'firebase/firebase_options.dart';
-
-import 'Pages/Splash.dart';
-import 'pages/onboarding.dart';
+import 'my_app.dart';
 
 bool? isFirstTimeView;
 
@@ -19,27 +17,12 @@ Future main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  SharedPreferences sharedPrefernces = await SharedPreferences.getInstance();
-  isFirstTimeView = sharedPrefernces.getBool(firstTimeView) ?? true;
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
-  runApp( ProviderScope(
-    child: MyApp(),
-  ));
-}
-
-class MyApp extends ConsumerWidget with CustomThemeDataMixin{
-  MyApp({super.key});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    ThemeMode themeMode = ref.watch(themeProvider);
-
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      themeMode: themeMode,
-      theme: lighttheme,
-      darkTheme: darktheme,
-      home: isFirstTimeView == true ? const Onboarding() : const Splash(),
-    );
-  }
+  runApp(
+    // Extending the Application State to ProviderScope of RiverPod
+    ProviderScope(
+      child: MyApp(),
+    ),
+  );
 }
