@@ -10,23 +10,27 @@ class ThemeProvider extends ChangeNotifier with CustomThemeDataMixin {
     notifyListeners();
   }
 
-   ThemeData customThemeData() =>
+  ThemeData customThemeData() =>
       themeMode == ThemeMode.dark ? darkTheme : lightTheme;
 }
 
-
 mixin CustomThemeDataMixin {
   final lightTheme = ThemeData(
-      scaffoldBackgroundColor: const Color(0xffDADEEC),
-      bottomAppBarTheme: const BottomAppBarTheme(
-        color: Colors.white,
-      ),
-      colorScheme: const ColorScheme.light(),
-      iconTheme: const IconThemeData(color: Colors.white));
+    fontFamily: "Nato",
+    scaffoldBackgroundColor: const Color(0xffDADEEC),
+    bottomAppBarTheme: const BottomAppBarTheme(
+      color: Colors.white,
+    ),
+    primarySwatch: Colors.brown,
+    colorScheme: const ColorScheme.light(),
+    iconTheme: const IconThemeData(color: Colors.white),
+  );
 
   final darkTheme = ThemeData(
-      scaffoldBackgroundColor: const Color.fromRGBO(51, 51, 51, 1),
-      colorScheme: const ColorScheme.dark(),
-      bottomAppBarTheme: const BottomAppBarTheme(color: Colors.white),
-      iconTheme: const IconThemeData(color: Colors.black));
+    fontFamily: "Nato",
+    scaffoldBackgroundColor: const Color.fromRGBO(51, 51, 51, 1),
+    colorScheme: const ColorScheme.dark(),
+    bottomAppBarTheme: const BottomAppBarTheme(color: Colors.white),
+    iconTheme: const IconThemeData(color: Colors.black),
+  );
 }

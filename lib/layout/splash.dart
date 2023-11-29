@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'auth.dart';
 import 'navigation.dart';
 
 class Splash extends StatefulWidget {
@@ -13,7 +14,8 @@ class _SplashState extends State<Splash> {
   void navigationMethod() {
     Navigator.of(context).push(PageRouteBuilder(
       transitionDuration: const Duration(milliseconds: 200),
-      pageBuilder: (context, animation, secondaryAnimation) =>Navigation(),
+      pageBuilder: (context, animation, secondaryAnimation) => Navigation(),
+      // const Navigation(),
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
         const begin = Offset(1.0, 0.0);
         const end = Offset.zero;

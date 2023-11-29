@@ -32,8 +32,8 @@ class _SideBarState extends State<SideBar> {
     double aspectRatio = sizeData.aspectRatio;
 
     return Drawer(
-      backgroundColor: colorData.sideBarColor,
-      width: sizeData.sizeBarWith,
+      backgroundColor: colorData.primaryColor(1),
+      width: sizeData.sideBarWith,
       child: Builder(builder: (context) {
         return SafeArea(
           child: Container(
@@ -55,7 +55,7 @@ class _SideBarState extends State<SideBar> {
                         text: "Vectra PRO",
                         weight: FontWeight.bold,
                         color: Colors.white,
-                        size: sizeData.headerSize),
+                        size: sizeData.header),
                   ],
                 ),
                 SizedBox(
@@ -69,7 +69,7 @@ class _SideBarState extends State<SideBar> {
                       child: CustomText(
                           text: "Main",
                           color: Colors.white,
-                          size: sizeData.subHeaderSize),
+                          size: sizeData.subHeader),
                     ),
                     SizedBox(
                       height: height * 0.02,
@@ -113,7 +113,7 @@ class _SideBarState extends State<SideBar> {
                                   color: widget.index == currentListIndex
                                       ? colorData.sideBarTextColor(1)
                                       : colorData.sideBarTextColor(.7),
-                                  size: sizeData.textSize,
+                                  size: sizeData.regular,
                                 ),
                               ],
                             ),

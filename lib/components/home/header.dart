@@ -22,6 +22,8 @@ class Header extends ConsumerWidget {
     double aspectRatio = sizeData.aspectRatio;
 
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         GestureDetector(
           onTap: () => scaffoldKey.currentState?.openDrawer(),
@@ -29,7 +31,7 @@ class Header extends ConsumerWidget {
             padding: EdgeInsets.all(aspectRatio * 10),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(aspectRatio * 14),
-              color: colorData.sideBarColor,
+              color: colorData.primaryColor(1),
             ),
             child: CustomIcon(
               icon: Icons.menu_rounded,
@@ -43,7 +45,7 @@ class Header extends ConsumerWidget {
           clipBehavior: Clip.none,
           children: [
             CustomIcon(
-              size: aspectRatio * 55,
+              size: aspectRatio * 65,
               icon: Icons.notifications_outlined,
               color: colorData.fontColor(.8),
             ),
@@ -54,11 +56,11 @@ class Header extends ConsumerWidget {
                 padding: EdgeInsets.all(aspectRatio * 10),
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: colorData.sideBarColor,
+                  color: colorData.primaryColor(1),
                 ),
                 child: CustomText(
                   text: "2",
-                  size: aspectRatio * 18,
+                  size: aspectRatio * 22,
                   color: colorData.sideBarTextColor(1),
                   weight: FontWeight.bold,
                 ),
@@ -66,7 +68,24 @@ class Header extends ConsumerWidget {
             )
           ],
         ),
-        Container()
+        Container(
+          padding: EdgeInsets.all(2),
+          margin: EdgeInsets.only(left: width * 0.01),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(8),
+            color: Colors.red,
+            // border: Border.all(
+            //   color: colorData.fontColor(.1),
+            // ),
+          ),
+          child: Image(
+            height: aspectRatio * 60,
+            width: aspectRatio * 60,
+            image: const AssetImage(
+              "assets/images/redhat.png",
+            ),
+          ),
+        )
       ],
     );
   }
