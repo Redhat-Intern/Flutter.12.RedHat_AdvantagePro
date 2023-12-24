@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../Utilities/theme/size_data.dart';
+import '../pages/report.dart';
+import '../providers/navigation_index_provider.dart';
 import '../providers/drawer_provider.dart';
 
 import '../pages/forum.dart';
@@ -17,35 +19,40 @@ class Navigation extends ConsumerStatefulWidget {
 }
 
 class _NavigationState extends ConsumerState<Navigation> {
+  bool canPop = false;
   late GlobalKey<ScaffoldState> scaffoldKey;
+  int index = 0;
 
   @override
   void initState() {
     super.initState();
-    scaffoldKey = ref.read(DrawerKeyNotifier);
+    scaffoldKey = ref.read(drawerKeyNotifier);
   }
 
   List<Widget> WidgetList = [
     Home(),
     Profile(),
+    Report(),
     Forum(),
   ];
   List<Map<IconData, String>> iconNameList = [
     {Icons.home_outlined: "Home"},
     {Icons.person_outline_rounded: "Profile"},
+    {Icons.report: "Report"},
     {Icons.forest_outlined: "Forum"},
   ];
 
-  int index = 0;
-
-  void indexShifter(int index) {
-    setState(() {
-      this.index = index;
-    });
+  popFunction(WidgetRef ref) async {
+    if (ref.read(navigationIndexNotifier) == 0) {
+      return true;
+    } else {
+      ref.read(navigationIndexNotifier.notifier).jumpTo(0);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    index = ref.watch(navigationIndexNotifier);
     CustomSizeData sizeData = CustomSizeData.from(context);
 
     double width = sizeData.width;
@@ -54,6 +61,7 @@ class _NavigationState extends ConsumerState<Navigation> {
     return Scaffold(
       key: scaffoldKey,
       drawerEnableOpenDragGesture: true,
+      resizeToAvoidBottomInset: false,
       body: SafeArea(
         child: Container(
           margin: EdgeInsets.only(
@@ -61,16 +69,17 @@ class _NavigationState extends ConsumerState<Navigation> {
             right: width * 0.04,
             top: height * 0.02,
           ),
-          child: IndexedStack(
-            children: WidgetList,
-            index: index,
+          child: WillPopScope(
+            onWillPop: () => popFunction(ref),
+            child: IndexedStack(
+              children: WidgetList,
+              index: index,
+            ),
           ),
         ),
       ),
       drawer: SideBar(
         iconNameList: iconNameList,
-        index: index,
-        indexShifter: indexShifter,
       ),
       drawerScrimColor: Colors.white.withOpacity(.3),
     );

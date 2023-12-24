@@ -1,19 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../firebase/firebase_auth.dart';
 import '../Utilities/theme/color_data.dart';
 import '../Utilities/theme/size_data.dart';
 
-import '../components/common/icon.dart';
+import '../components/auth/logintext_field.dart';
 import '../components/common/text.dart';
 
-class Auth extends StatefulWidget {
+class Auth extends ConsumerStatefulWidget {
   const Auth({super.key});
 
   @override
-  State<Auth> createState() => _AuthState();
+  ConsumerState<Auth> createState() => _AuthState();
 }
 
-class _AuthState extends State<Auth> {
+class _AuthState extends ConsumerState<Auth> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
 
@@ -24,14 +26,27 @@ class _AuthState extends State<Auth> {
     super.dispose();
   }
 
+  void loginUser() {
+    print("Hello");
+    AuthFB()
+        .signInWithEmailAndPassword(
+          email: emailController.text,
+          password: passwordController.text,
+        )
+        .then((value) => print("done : 123456"))
+        .catchError((error) {
+      print("error : " + error);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     CustomSizeData sizeData = CustomSizeData.from(context);
-    CustomColorData colorData = CustomColorData.from(context);
+    CustomColorData colorData = CustomColorData.from(ref);
 
     double width = sizeData.width;
     double height = sizeData.height;
-    double aspectRatio = sizeData.aspectRatio;
+    // double aspectRatio = sizeData.aspectRatio;
 
     return Scaffold(
       // backgroundColor: Colors.white,
@@ -65,7 +80,7 @@ class _AuthState extends State<Auth> {
                   ),
                   CustomText(
                     text: "Please signin in to continue",
-                    size: sizeData.superHeader,
+                    size: sizeData.header,
                     color: colorData.fontColor(.6),
                     weight: FontWeight.bold,
                   ),
@@ -89,40 +104,43 @@ class _AuthState extends State<Auth> {
                     child: GestureDetector(
                       child: CustomText(
                         text: "Forget Password",
-                        size: aspectRatio * 32,
+                        size: sizeData.medium,
                         color: colorData.primaryColor(.7),
                         weight: FontWeight.bold,
                       ),
                     ),
                   ),
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: Container(
-                      margin: EdgeInsets.only(top: height * 0.04),
-                      padding: EdgeInsets.symmetric(vertical: height * .0125),
-                      width: width * 0.35,
-                      decoration: BoxDecoration(
-                        color: colorData.primaryColor(1),
-                        borderRadius: BorderRadius.circular(50),
-                        boxShadow: [
-                          BoxShadow(
-                            color: colorData.primaryColor(.2),
-                            blurRadius: 12,
-                            offset: const Offset(-4, -4),
-                          ),
-                          BoxShadow(
-                            color: colorData.primaryColor(.2),
-                            blurRadius: 16,
-                            offset: const Offset(4, 4),
-                          ),
-                        ],
-                      ),
-                      alignment: Alignment.center,
-                      child: CustomText(
-                        weight: FontWeight.bold,
-                        text: "LOGIN",
-                        size: aspectRatio * 35,
-                        color: Colors.white,
+                  GestureDetector(
+                    onTap: () => loginUser(),
+                    child: Align(
+                      alignment: Alignment.centerRight,
+                      child: Container(
+                        margin: EdgeInsets.only(top: height * 0.04),
+                        padding: EdgeInsets.symmetric(vertical: height * .0125),
+                        width: width * 0.325,
+                        decoration: BoxDecoration(
+                          color: colorData.primaryColor(1),
+                          borderRadius: BorderRadius.circular(50),
+                          boxShadow: [
+                            BoxShadow(
+                              color: colorData.primaryColor(.2),
+                              blurRadius: 12,
+                              offset: const Offset(-4, -4),
+                            ),
+                            BoxShadow(
+                              color: colorData.primaryColor(.2),
+                              blurRadius: 16,
+                              offset: const Offset(4, 4),
+                            ),
+                          ],
+                        ),
+                        alignment: Alignment.center,
+                        child: CustomText(
+                          weight: FontWeight.bold,
+                          text: "LOGIN",
+                          size: sizeData.medium,
+                          color: Colors.white,
+                        ),
                       ),
                     ),
                   )
@@ -130,58 +148,6 @@ class _AuthState extends State<Auth> {
               ),
             ),
           ],
-        ),
-      ),
-    );
-  }
-}
-
-class LoginTextField extends StatelessWidget {
-  final String labelText;
-  final IconData icon;
-  final TextEditingController controller;
-  final double bottomMargin;
-  const LoginTextField({
-    super.key,
-    required this.labelText,
-    required this.icon,
-    required this.controller,
-    required this.bottomMargin,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    CustomSizeData sizeData = CustomSizeData.from(context);
-    CustomColorData colorData = CustomColorData.from(context);
-
-    double height = sizeData.height;
-    double aspectRatio = sizeData.aspectRatio;
-
-    return Container(
-      margin: EdgeInsets.only(bottom: height * bottomMargin),
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(8), color: Colors.white54),
-      child: TextField(
-        controller: controller,
-        style: TextStyle(
-          fontWeight: FontWeight.bold,
-          fontSize: aspectRatio * 40,
-          color: colorData.fontColor(.8),
-        ),
-        decoration: InputDecoration(
-          contentPadding: EdgeInsets.zero,
-          border: InputBorder.none,
-          prefixIcon: CustomIcon(
-            icon: icon,
-            color: colorData.fontColor(.8),
-            size: aspectRatio * 55,
-          ),
-          labelText: labelText,
-          labelStyle: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: aspectRatio * 34,
-            color: colorData.fontColor(.7),
-          ),
         ),
       ),
     );

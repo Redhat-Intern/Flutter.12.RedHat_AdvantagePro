@@ -1,20 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 import '../../Utilities/theme/color_data.dart';
 import '../../Utilities/theme/size_data.dart';
 
+import '../../pages/show_all/batches.dart';
 import '../common/icon.dart';
 import '../common/text.dart';
 
-class Recent extends StatefulWidget {
-  Recent({super.key});
+class Recent extends ConsumerStatefulWidget {
+  const Recent({super.key});
 
   @override
-  State<Recent> createState() => _RecentState();
+  ConsumerState<Recent> createState() => _RecentState();
 }
 
-class _RecentState extends State<Recent> {
+class _RecentState extends ConsumerState<Recent> {
   TrackingScrollController controller = TrackingScrollController();
   ItemPositionsListener itemPositionsListener = ItemPositionsListener.create();
 
@@ -42,7 +44,13 @@ class _RecentState extends State<Recent> {
     },
     {
       "assets/images/certificate1.png": {"name": "iysdfb", "count": 25}
-    }
+    },
+    {
+      "assets/images/certificate1.png": {"name": "Specialist", "count": 30}
+    },
+    {
+      "assets/images/certificate1.png": {"name": "ADMS", "count": 2}
+    },
   ];
   int firstIndex = 0;
 
@@ -70,7 +78,7 @@ class _RecentState extends State<Recent> {
   @override
   Widget build(BuildContext context) {
     CustomSizeData sizeData = CustomSizeData.from(context);
-    CustomColorData colorData = CustomColorData.from(context);
+    CustomColorData colorData = CustomColorData.from(ref);
 
     double width = sizeData.width;
     double height = sizeData.height;
@@ -91,7 +99,14 @@ class _RecentState extends State<Recent> {
               weight: FontWeight.w600,
             ),
             GestureDetector(
-              onTap: () {},
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => Batches(),
+                  ),
+                );
+              },
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -121,7 +136,7 @@ class _RecentState extends State<Recent> {
             left: width * 0.02,
           ),
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(.4),
+            color: colorData.secondaryColor(.4),
             borderRadius: const BorderRadius.only(
               topLeft: Radius.circular(8),
               bottomLeft: Radius.circular(8),
@@ -223,27 +238,3 @@ class _RecentState extends State<Recent> {
     );
   }
 }
-
-
-// ListView.builder(
-//                     controller: controller,
-//                     itemCount: 15,
-//                     scrollDirection: Axis.horizontal,
-//                     addSemanticIndexes: true,
-//                     addAutomaticKeepAlives: true,
-//                     physics: const BouncingScrollPhysics(),
-                    // itemBuilder: (BuildContext context, int index) {
-                    //   double offset = width * 0.25;
-                    //   controller.addListener(() {
-                    //     print(controller.offset / offset);
-
-                    //     print(offset);
-                    //   });
-                    //   return Container(
-                    //     child: Image.asset(
-                    //       "assets/images/certificate1.png",
-                    //       width: width * 0.25,
-                    //     ),
-                    //   );
-                    // },
-//                   ),

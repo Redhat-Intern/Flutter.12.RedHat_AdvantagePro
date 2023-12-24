@@ -1,18 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:redhat_v1/components/common/text.dart';
+import 'package:redhat_v1/providers/user_detail_provider.dart';
 
 import '../../Utilities/theme/color_data.dart';
 import '../../Utilities/theme/size_data.dart';
 
-class Wisher extends StatelessWidget {
-  Wisher({super.key});
-  String name = "Harish";
-  String role = "Student";
+class Wisher extends ConsumerWidget {
+  const Wisher({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    Map<String, dynamic> userData = ref.watch(userDataNotifier);
+    String name = userData["name"];
+    String role = userData["role"];
+
     CustomSizeData sizeData = CustomSizeData.from(context);
-    CustomColorData colorData = CustomColorData.from(context);
+    CustomColorData colorData = CustomColorData.from(ref);
 
     double height = sizeData.height;
 

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import 'package:redhat_v1/Utilities/static_data.dart';
 import 'package:redhat_v1/components/common/icon.dart';
 import 'package:redhat_v1/components/common/text.dart';
@@ -6,20 +8,20 @@ import 'package:redhat_v1/components/common/text.dart';
 import '../../Utilities/theme/color_data.dart';
 import '../../Utilities/theme/size_data.dart';
 
-class Search extends StatefulWidget {
+class Search extends ConsumerStatefulWidget {
   const Search({super.key});
 
   @override
-  State<Search> createState() => _SearchState();
+  ConsumerState<Search> createState() => _SearchState();
 }
 
-class _SearchState extends State<Search> {
+class _SearchState extends ConsumerState<Search> {
   String selectedItem = "Batch";
   bool searchResult = false;
   @override
   Widget build(BuildContext context) {
     CustomSizeData sizeData = CustomSizeData.from(context);
-    CustomColorData colorData = CustomColorData.from(context);
+    CustomColorData colorData = CustomColorData.from(ref);
 
     double width = sizeData.width;
     double height = sizeData.height;
@@ -49,7 +51,7 @@ class _SearchState extends State<Search> {
             right: width * 0.01,
           ),
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(.5),
+            color: colorData.secondaryColor(.5),
             borderRadius: BorderRadius.circular(10),
           ),
           child: Row(
@@ -58,7 +60,7 @@ class _SearchState extends State<Search> {
                 height: height * 0.035,
                 padding: EdgeInsets.only(left: width * 0.02),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: colorData.secondaryColor(1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: DropdownButton(
@@ -130,7 +132,7 @@ class _SearchState extends State<Search> {
                     ),
                   ),
                 ),
-              )
+              ),
             ],
           ),
         ),
@@ -171,7 +173,7 @@ class _SearchState extends State<Search> {
                       child: CustomText(
                         text: "RHCSA",
                         size: sizeData.regular,
-                        color: Colors.white,
+                        color: colorData.secondaryColor(1),
                       ),
                     ),
                     CustomText(
@@ -188,64 +190,3 @@ class _SearchState extends State<Search> {
     );
   }
 }
-
-
-// Stack(
-//                   children: [
-//                     GestureDetector(
-//                       onTap: () {
-//                         setState(() {
-//                           selectShow = !selectShow;
-//                           Future.delayed(Duration(seconds: 2), () {
-//                             setState(() {
-//                               selectShow = false;
-//                             });
-//                           });
-//                         });
-//                       },
-//                       child: Container(
-//                         padding: EdgeInsets.symmetric(
-//                           vertical: height * 0.005,
-//                           horizontal: width * 0.03,
-//                         ),
-//                         decoration: BoxDecoration(
-//                           color: colorData.primaryColor(.2),
-//                           borderRadius: BorderRadius.circular(8),
-//                         ),
-//                         child: Text(selectedItem),
-//                       ),
-//                     ),
-//                     selectShow
-//                         ? Container(
-//                             padding: EdgeInsets.symmetric(
-//                               horizontal: width * 0.02,
-//                               vertical: height * 0.005,
-//                             ),
-//                             decoration: BoxDecoration(
-//                               borderRadius: BorderRadius.circular(8),
-//                               color: Colors.white,
-//                             ),
-//                             child: Column(
-//                                 crossAxisAlignment: CrossAxisAlignment.start,
-//                                 children: searchData
-//                                     .map(
-//                                       (e) => GestureDetector(
-//                                         onTap: () {
-//                                           setState(() {
-//                                             selectedItem = e.toString();
-//                                             selectShow = !selectShow;
-//                                           });
-//                                         },
-//                                         child: Container(
-//                                           padding: EdgeInsets.only(bottom: 2.5),
-//                                           child: Text(
-//                                             e.toString(),
-//                                           ),
-//                                         ),
-//                                       ),
-//                                     )
-//                                     .toList()),
-//                           )
-//                         : SizedBox(),
-//                   ],
-//                 )

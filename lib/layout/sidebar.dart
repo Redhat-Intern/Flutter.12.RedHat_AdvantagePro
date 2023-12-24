@@ -1,31 +1,31 @@
 import 'package:flutter/material.dart';
-import 'package:redhat_v1/components/common/icon.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../providers/navigation_index_provider.dart';
 import '../Utilities/theme/color_data.dart';
 import '../Utilities/theme/size_data.dart';
+
+import '../components/common/icon.dart';
 import '../components/common/text.dart';
 
-class SideBar extends StatefulWidget {
-  final int index;
-  final Function indexShifter;
+class SideBar extends ConsumerStatefulWidget {
   final List<Map<IconData, String>> iconNameList;
 
   const SideBar({
-    required this.index,
-    required this.indexShifter,
     required this.iconNameList,
     super.key,
   });
 
   @override
-  State<SideBar> createState() => _SideBarState();
+  ConsumerState<SideBar> createState() => _SideBarState();
 }
 
-class _SideBarState extends State<SideBar> {
+class _SideBarState extends ConsumerState<SideBar> {
   @override
   Widget build(BuildContext context) {
+    int index = ref.watch(navigationIndexNotifier);
     CustomSizeData sizeData = CustomSizeData.from(context);
-    CustomColorData colorData = CustomColorData.from(context);
+    CustomColorData colorData = CustomColorData.from(ref);
 
     double width = sizeData.width;
     double height = sizeData.height;
@@ -47,14 +47,14 @@ class _SideBarState extends State<SideBar> {
                     SizedBox(
                       width: width * 0.02,
                     ),
-                    Icon(Icons.access_alarm_outlined),
+                    const Icon(Icons.access_alarm_outlined),
                     SizedBox(
                       width: width * 0.02,
                     ),
                     CustomText(
                         text: "Vectra PRO",
                         weight: FontWeight.bold,
-                        color: Colors.white,
+                        color: colorData.sideBarTextColor(1),
                         size: sizeData.header),
                   ],
                 ),
@@ -68,7 +68,7 @@ class _SideBarState extends State<SideBar> {
                       margin: EdgeInsets.only(left: width * 0.02),
                       child: CustomText(
                           text: "Main",
-                          color: Colors.white,
+                          color: colorData.sideBarTextColor(1),
                           size: sizeData.subHeader),
                     ),
                     SizedBox(
@@ -80,7 +80,9 @@ class _SideBarState extends State<SideBar> {
                         int currentListIndex = widget.iconNameList.indexOf(e);
                         return GestureDetector(
                           onTap: () {
-                            widget.indexShifter(currentListIndex);
+                            ref
+                                .read(navigationIndexNotifier.notifier)
+                                .jumpTo(currentListIndex);
                             Navigator.pop(context);
                           },
                           child: Container(
@@ -91,7 +93,7 @@ class _SideBarState extends State<SideBar> {
                             ),
                             decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(8),
-                                color: widget.index == currentListIndex
+                                color: index == currentListIndex
                                     ? Colors.black.withOpacity(.1)
                                     : Colors.transparent),
                             child: Row(
@@ -101,8 +103,8 @@ class _SideBarState extends State<SideBar> {
                                 ),
                                 CustomIcon(
                                     icon: e.keys.first,
-                                    color: widget.index == currentListIndex
-                                        ? colorData.sideBarIconColor
+                                    color: index == currentListIndex
+                                        ? colorData.sideBarTextColor(1)
                                         : colorData.sideBarTextColor(.7),
                                     size: aspectRatio * 48),
                                 SizedBox(
@@ -110,7 +112,7 @@ class _SideBarState extends State<SideBar> {
                                 ),
                                 CustomText(
                                   text: e.values.first.toString(),
-                                  color: widget.index == currentListIndex
+                                  color: index == currentListIndex
                                       ? colorData.sideBarTextColor(1)
                                       : colorData.sideBarTextColor(.7),
                                   size: sizeData.regular,

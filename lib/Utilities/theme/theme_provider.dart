@@ -1,36 +1,38 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class ThemeProvider extends ChangeNotifier with CustomThemeDataMixin {
-  ThemeMode themeMode = ThemeMode.light;
-  bool get isDark => themeMode == ThemeMode.dark;
+import '../static_data.dart';
 
-  // True = Dark , False = Light
+class ThemeProviderNotifier extends StateNotifier<Map<ThemeMode, Color>> {
+  ThemeProviderNotifier() : super({ThemeMode.light: primaryColors[0]});
+
   void toggleThemeMode(bool ison) {
-    themeMode = ison ? ThemeMode.dark : ThemeMode.light;
-    notifyListeners();
+    state = {ison ? ThemeMode.dark : ThemeMode.light: state.values.first};
   }
 
-  ThemeData customThemeData() =>
-      themeMode == ThemeMode.dark ? darkTheme : lightTheme;
+  void changePrimaryColor(Color color) {
+    state = {state.keys.first: color};
+  }
 }
+
+final themeProvider =
+    StateNotifierProvider<ThemeProviderNotifier, Map<ThemeMode, Color>>(
+        (ref) => ThemeProviderNotifier());
 
 mixin CustomThemeDataMixin {
   final lightTheme = ThemeData(
     fontFamily: "Nato",
     scaffoldBackgroundColor: const Color(0xffDADEEC),
-    bottomAppBarTheme: const BottomAppBarTheme(
-      color: Colors.white,
-    ),
-    primarySwatch: Colors.brown,
     colorScheme: const ColorScheme.light(),
-    iconTheme: const IconThemeData(color: Colors.white),
+    iconTheme: const IconThemeData(
+      color: Color(0XFF1C2136),
+    ),
   );
 
   final darkTheme = ThemeData(
     fontFamily: "Nato",
-    scaffoldBackgroundColor: const Color.fromRGBO(51, 51, 51, 1),
+    scaffoldBackgroundColor: const Color(0XFF22223D),
     colorScheme: const ColorScheme.dark(),
-    bottomAppBarTheme: const BottomAppBarTheme(color: Colors.white),
-    iconTheme: const IconThemeData(color: Colors.black),
+    iconTheme: const IconThemeData(color: Colors.white),
   );
 }

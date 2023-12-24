@@ -48,16 +48,23 @@ dependencies:
   hive: ^2.2.3
   # State Management
   provider: ^6.1.1
+  flutter_riverpod: ^2.4.8
   # Animation
   shimmer: ^3.0.0
+  # Helpers
+  scrollable_positioned_list: ^0.3.8
   # Functional Dependencies [image picker, file creating and sharing, path provider]
   excel: ^3.0.0
   image_picker: ^1.0.4
   share_plus: ^7.2.1
   path_provider: ^2.1.1
-  open_file_plus: ^3.4.1
-  flutter_riverpod: ^2.4.8
-  scrollable_positioned_list: ^0.3.8
+  calendar_date_picker2: ^0.5.3
+  dotted_border: ^2.1.0
+  file_picker: ^6.1.1
+  open_file: ^3.3.2
+  flutter_mailer: ^2.1.2
+  mailer: ^6.0.1
+  sendgrid_mailer: ^0.1.3
 
 dev_dependencies:
   flutter_test:
