@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../providers/navigation_index_provider.dart';
 import '../providers/user_detail_provider.dart';
 import '../components/profile/color_palette.dart';
 import '../components/profile/theme_toggle.dart';
@@ -26,7 +27,7 @@ class Profile extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    Map<String, dynamic> userData = ref.watch(userDataNotifier);
+    Map<String, dynamic> userData = ref.watch(userDataProvider);
     CustomSizeData sizeData = CustomSizeData.from(context);
     CustomColorData colorData = CustomColorData.from(ref);
 
@@ -91,7 +92,10 @@ class Profile extends ConsumerWidget {
           ProfileTile(
             text: 'Logout',
             icon: Icons.logout_outlined,
-            todo: () => AuthFB().signOut(),
+            todo: () {
+              AuthFB().signOut();
+              ref.read(navigationIndexProvider.notifier).jumpTo(0);
+            },
           ),
         ],
       ),

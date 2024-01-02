@@ -5,6 +5,6 @@ class DrawerStateNotifier extends StateNotifier<GlobalKey<ScaffoldState>> {
   DrawerStateNotifier() : super(GlobalKey<ScaffoldState>());
 }
 
-final drawerKeyNotifier =
+final drawerKeyProvider =
     StateNotifierProvider<DrawerStateNotifier, GlobalKey<ScaffoldState>>(
         (ref) => DrawerStateNotifier());

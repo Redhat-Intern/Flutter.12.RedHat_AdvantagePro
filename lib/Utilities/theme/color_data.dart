@@ -7,6 +7,7 @@ class CustomColorData {
   final Color Function(double) fontColor;
   final Color Function(double) primaryColor;
   final Color Function(double) secondaryColor;
+  final Color Function(double) backgroundColor;
 
   final Color Function(double) sideBarTextColor;
 
@@ -14,6 +15,7 @@ class CustomColorData {
     required this.fontColor,
     required this.primaryColor,
     required this.secondaryColor,
+    required this.backgroundColor,
     required this.sideBarTextColor,
   });
 
@@ -34,12 +36,16 @@ class CustomColorData {
         ? Color(0XFF333354).withOpacity(opacity)
         : Colors.white.withOpacity(opacity);
 
+    Color backgroundColor(double opacity) =>
+        isDark ? const Color(0XFF22223D) : const Color(0xffDADEEC);
+
     Color sideBarTextColor(double opacity) => Colors.white.withOpacity(opacity);
 
     return CustomColorData(
       fontColor: fontColor,
       primaryColor: primaryColor,
       secondaryColor: secondaryColor,
+      backgroundColor: backgroundColor,
       sideBarTextColor: sideBarTextColor,
     );
   }

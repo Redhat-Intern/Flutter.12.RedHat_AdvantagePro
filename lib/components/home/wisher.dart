@@ -11,7 +11,7 @@ class Wisher extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    Map<String, dynamic> userData = ref.watch(userDataNotifier);
+    Map<String, dynamic> userData = ref.watch(userDataProvider);
     String name = userData["name"];
     String role = userData["role"];
 

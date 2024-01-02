@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:redhat_v1/providers/navigation_index_provider.dart';
 import 'package:redhat_v1/providers/user_detail_provider.dart';
 
 import 'firebase/firebase_auth.dart';
@@ -23,7 +22,7 @@ class AuthShifter extends ConsumerWidget {
       for (var e in event.data()!.entries) {
         userDataMap.addAll({e.key: e.value});
       }
-      ref.read(userDataNotifier.notifier).addUserData(userDataMap);
+      ref.read(userDataProvider.notifier).addUserData(userDataMap);
     });
   }
 

@@ -23,7 +23,7 @@ class SideBar extends ConsumerStatefulWidget {
 class _SideBarState extends ConsumerState<SideBar> {
   @override
   Widget build(BuildContext context) {
-    int index = ref.watch(navigationIndexNotifier);
+    int index = ref.watch(navigationIndexProvider);
     CustomSizeData sizeData = CustomSizeData.from(context);
     CustomColorData colorData = CustomColorData.from(ref);
 
@@ -81,7 +81,7 @@ class _SideBarState extends ConsumerState<SideBar> {
                         return GestureDetector(
                           onTap: () {
                             ref
-                                .read(navigationIndexNotifier.notifier)
+                                .read(navigationIndexProvider.notifier)
                                 .jumpTo(currentListIndex);
                             Navigator.pop(context);
                           },

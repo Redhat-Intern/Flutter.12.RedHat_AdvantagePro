@@ -26,7 +26,7 @@ class _NavigationState extends ConsumerState<Navigation> {
   @override
   void initState() {
     super.initState();
-    scaffoldKey = ref.read(drawerKeyNotifier);
+    scaffoldKey = ref.read(drawerKeyProvider);
   }
 
   List<Widget> WidgetList = [
@@ -43,16 +43,16 @@ class _NavigationState extends ConsumerState<Navigation> {
   ];
 
   popFunction(WidgetRef ref) async {
-    if (ref.read(navigationIndexNotifier) == 0) {
+    if (ref.read(navigationIndexProvider) == 0) {
       return true;
     } else {
-      ref.read(navigationIndexNotifier.notifier).jumpTo(0);
+      ref.read(navigationIndexProvider.notifier).jumpTo(0);
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    index = ref.watch(navigationIndexNotifier);
+    index = ref.watch(navigationIndexProvider);
     CustomSizeData sizeData = CustomSizeData.from(context);
 
     double width = sizeData.width;

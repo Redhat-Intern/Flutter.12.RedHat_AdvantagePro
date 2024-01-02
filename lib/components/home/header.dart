@@ -65,7 +65,7 @@ class Header extends ConsumerWidget {
         ),
         GestureDetector(
           onTap: () {
-            ref.read(navigationIndexNotifier.notifier).jumpTo(1);
+            ref.read(navigationIndexProvider.notifier).jumpTo(1);
           },
           child: Container(
             padding: const EdgeInsets.all(2),

@@ -14,7 +14,7 @@ class MenuButton extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    GlobalKey<ScaffoldState> scaffoldKey = ref.read(drawerKeyNotifier);
+    GlobalKey<ScaffoldState> scaffoldKey = ref.read(drawerKeyProvider);
     CustomSizeData sizeData = CustomSizeData.from(context);
     CustomColorData colorData = CustomColorData.from(ref);
 

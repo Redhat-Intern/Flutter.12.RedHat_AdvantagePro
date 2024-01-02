@@ -26,16 +26,30 @@ class _AuthState extends ConsumerState<Auth> {
     super.dispose();
   }
 
-  void loginUser() {
-    print("Hello");
+  void loginUser(
+      {required double textSize,
+      required Color textColor,
+      required Color backgroundColor}) {
     AuthFB()
         .signInWithEmailAndPassword(
           email: emailController.text,
           password: passwordController.text,
         )
-        .then((value) => print("done : 123456"))
+        .then((value) {})
         .catchError((error) {
-      print("error : " + error);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: backgroundColor,
+          content: CustomText(
+            text: error.message.toString(),
+            maxLine: 3,
+            align: TextAlign.center,
+            color: textColor,
+            size: textSize,
+            weight: FontWeight.w600,
+          ),
+        ),
+      );
     });
   }
 
@@ -111,7 +125,11 @@ class _AuthState extends ConsumerState<Auth> {
                     ),
                   ),
                   GestureDetector(
-                    onTap: () => loginUser(),
+                    onTap: () => loginUser(
+                      textColor: colorData.fontColor(.8),
+                      textSize: sizeData.regular,
+                      backgroundColor: colorData.secondaryColor(1),
+                    ),
                     child: Align(
                       alignment: Alignment.centerRight,
                       child: Container(

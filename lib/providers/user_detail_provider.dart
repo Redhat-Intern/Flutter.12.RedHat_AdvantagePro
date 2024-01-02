@@ -9,6 +9,6 @@ class UserDetailNotifier extends StateNotifier<Map<String, dynamic>> {
   }
 }
 
-final userDataNotifier =
+final userDataProvider =
     StateNotifierProvider<UserDetailNotifier, Map<String, dynamic>>(
         (ref) => UserDetailNotifier());
