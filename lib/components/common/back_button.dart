@@ -6,20 +6,20 @@ import '../../Utilities/theme/color_data.dart';
 import '../../Utilities/theme/size_data.dart';
 
 class CustomBackButton extends ConsumerWidget {
-  const CustomBackButton({super.key});
+  final Function? method;
+  const CustomBackButton({super.key, this.method});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     CustomSizeData sizeData = CustomSizeData.from(context);
     CustomColorData colorData = CustomColorData.from(ref);
 
-    double width = sizeData.width;
-    double height = sizeData.height;
     double aspectRatio = sizeData.aspectRatio;
 
     return GestureDetector(
       onTap: () {
         Navigator.pop(context);
+        method != null ? method!(ref) : null;
       },
       child: Container(
         padding: EdgeInsets.all(aspectRatio * 10),
@@ -30,7 +30,7 @@ class CustomBackButton extends ConsumerWidget {
         child: CustomIcon(
           icon: Icons.arrow_back_ios_new_rounded,
           color: colorData.sideBarTextColor(.85),
-          size: aspectRatio * 40,
+          size: aspectRatio * 42,
         ),
       ),
     );

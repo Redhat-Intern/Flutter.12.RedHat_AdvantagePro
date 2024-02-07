@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:redhat_v1/components/common/text.dart';
+import 'package:redhat_v1/pages/profile.dart';
 import 'package:redhat_v1/providers/navigation_index_provider.dart';
 
 import '../../Utilities/theme/color_data.dart';
@@ -65,18 +66,23 @@ class Header extends ConsumerWidget {
         ),
         GestureDetector(
           onTap: () {
-            ref.read(navigationIndexProvider.notifier).jumpTo(1);
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => Profile(),
+              ),
+            );
           },
           child: Container(
-            padding: const EdgeInsets.all(2),
-            margin: EdgeInsets.only(left: width * 0.01),
+            padding: EdgeInsets.all(aspectRatio * 6),
+            margin: EdgeInsets.only(left: width * 0.02),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(8),
               color: colorData.secondaryColor(1),
             ),
             child: Image(
-              height: aspectRatio * 60,
-              width: aspectRatio * 60,
+              height: aspectRatio * 65,
+              width: aspectRatio * 65,
               image: const AssetImage(
                 "assets/images/redhat.png",
               ),

@@ -7,6 +7,7 @@ import 'package:redhat_v1/providers/user_detail_provider.dart';
 import 'firebase/firebase_auth.dart';
 import 'layout/auth.dart';
 import 'layout/navigation.dart';
+import 'pages/login.dart';
 
 class AuthShifter extends ConsumerWidget {
   const AuthShifter({super.key});
@@ -35,7 +36,7 @@ class AuthShifter extends ConsumerWidget {
           pushUserData(ref: ref);
           return Navigation();
         } else {
-          return Auth();
+          return LoginPage();
         }
       },
     );

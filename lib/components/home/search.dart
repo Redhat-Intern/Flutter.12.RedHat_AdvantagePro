@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -16,8 +17,51 @@ class Search extends ConsumerStatefulWidget {
 }
 
 class _SearchState extends ConsumerState<Search> {
-  String selectedItem = "Batch";
-  bool searchResult = false;
+  TextEditingController searchCtr = TextEditingController();
+  String selectedItem = "batches";
+  Map<String, String> searchResult = {};
+
+  void searchDataFun() async {
+    var searchString = searchCtr.text.toUpperCase();
+    if (selectedItem == "batches") {
+      var document = await FirebaseFirestore.instance
+          .collection(selectedItem)
+          .doc(searchString)
+          .get();
+
+      if (document.exists) {
+        var data = document.data();
+        setState(() {
+          searchResult = {
+            "header": data!["name"],
+            "value": "Started At: ${data["time"]}"
+          };
+        });
+      } else {
+        setState(() {
+          searchResult = {"error": "Batch ID not matched"};
+        });
+      }
+    } else if (selectedItem == "staffs") {
+      var document =
+          await FirebaseFirestore.instance.collection(selectedItem).get();
+
+      var dataSnapShot = document.docs.where((value) =>
+          value.data()["id"].toString().toUpperCase() == searchString);
+      setState(() {
+        if (dataSnapShot.isNotEmpty) {
+          var data = dataSnapShot.first.data();
+          searchResult = {
+            "header": data["name"],
+            "value": "Year of experience ${data["experience"]}"
+          };
+        } else {
+          searchResult = {"error": "Staff ID not found"};
+        }
+      });
+    } else {}
+  }
+
   @override
   Widget build(BuildContext context) {
     CustomSizeData sizeData = CustomSizeData.from(context);
@@ -74,7 +118,8 @@ class _SearchState extends ConsumerState<Search> {
                   elevation: 0,
                   alignment: Alignment.center,
                   hint: CustomText(
-                    text: selectedItem,
+                    text: selectedItem.toString()[0].toUpperCase() +
+                        selectedItem.toString().substring(1),
                     size: sizeData.medium,
                     color: colorData.fontColor(.7),
                     weight: FontWeight.w600,
@@ -84,7 +129,8 @@ class _SearchState extends ConsumerState<Search> {
                         (e) => DropdownMenuItem(
                           value: e,
                           child: CustomText(
-                            text: e.toString(),
+                            text: e.toString()[0].toUpperCase() +
+                                e.toString().substring(1),
                             size: sizeData.regular,
                             color: colorData.fontColor(.8),
                           ),
@@ -102,12 +148,23 @@ class _SearchState extends ConsumerState<Search> {
                 child: Container(
                   margin: EdgeInsets.only(left: width * 0.03),
                   child: TextField(
+                    controller: searchCtr,
+                    onSubmitted: (value) {
+                      if (value.isNotEmpty)
+                        searchDataFun();
+                      else {
+                        setState(() {
+                          searchCtr.clear();
+                          searchResult.clear();
+                        });
+                      }
+                    },
                     scrollPadding: EdgeInsets.zero,
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: aspectRatio * 33,
                       color: colorData.fontColor(.8),
-                      height: 0,
+                      height: 1,
                     ),
                     decoration: InputDecoration(
                       hintText: "Enter the ID",
@@ -115,14 +172,16 @@ class _SearchState extends ConsumerState<Search> {
                         fontWeight: FontWeight.w600,
                         fontSize: sizeData.medium,
                         color: colorData.fontColor(.5),
-                        height: 0,
+                        height: 1,
                       ),
                       contentPadding: EdgeInsets.only(
-                        bottom: height * 0.015,
+                        bottom: height * 0.017,
                       ),
                       border: InputBorder.none,
                       suffixIcon: GestureDetector(
-                        onTap: () {},
+                        onTap: () {
+                          if (searchCtr.text.isNotEmpty) searchDataFun();
+                        },
                         child: CustomIcon(
                           icon: Icons.search_rounded,
                           color: colorData.fontColor(.6),
@@ -138,51 +197,79 @@ class _SearchState extends ConsumerState<Search> {
         ),
 
         // Searched Data
-        searchResult
-            ? Container(
-                margin: EdgeInsets.only(top: height * 0.01),
-                padding: EdgeInsets.symmetric(
-                  horizontal: width * 0.01,
-                  vertical: height * 0.005,
-                ),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(
-                    color: colorData.fontColor(.1),
+        searchResult.isNotEmpty
+            ? GestureDetector(
+                onTap: () {
+                  setState(() {
+                    if (searchResult.length == 1) {
+                      searchResult.clear();
+                      searchCtr.clear();
+                    }
+                  });
+                },
+                child: Container(
+                  margin: EdgeInsets.only(top: height * 0.01),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: width * 0.01,
+                    vertical: height * 0.005,
                   ),
-                ),
-                child: Row(
-                  children: [
-                    Container(
-                      margin: EdgeInsets.only(right: width * 0.03),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(8),
-                        gradient: LinearGradient(
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                          colors: [
-                            colorData.primaryColor(.2),
-                            colorData.primaryColor(1)
-                          ],
-                        ),
-                      ),
-                      padding: EdgeInsets.symmetric(
-                        horizontal: width * 0.02,
-                        vertical: height * 0.005,
-                      ),
-                      child: CustomText(
-                        text: "RHCSA",
-                        size: sizeData.regular,
-                        color: colorData.secondaryColor(1),
-                      ),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(
+                      color: colorData.fontColor(.1),
                     ),
-                    CustomText(
-                      text: "Batch Started At: 3rd March 2022",
-                      color: colorData.fontColor(.5),
-                      size: aspectRatio * 28,
-                      weight: FontWeight.bold,
-                    ),
-                  ],
+                  ),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      searchResult.length == 2
+                          ? Container(
+                              margin: EdgeInsets.only(right: width * 0.03),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(8),
+                                gradient: LinearGradient(
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                  colors: [
+                                    colorData.primaryColor(.2),
+                                    colorData.primaryColor(1)
+                                  ],
+                                ),
+                              ),
+                              padding: EdgeInsets.symmetric(
+                                horizontal: width * 0.02,
+                                vertical: height * 0.005,
+                              ),
+                              child: CustomText(
+                                text: searchResult["header"]!,
+                                size: sizeData.regular,
+                                color: colorData.secondaryColor(1),
+                              ),
+                            )
+                          : Container(
+                              margin: EdgeInsets.only(
+                                  left: width * 0.02, right: width * 0.1),
+                              child: Image.asset(
+                                "assets/icons/SNF1.png",
+                                height: height * 0.06,
+                                fit: BoxFit.fitHeight,
+                              ),
+                            ),
+                      searchResult.length == 2
+                          ? CustomText(
+                              text: searchResult["value"]!,
+                              color: colorData.fontColor(.5),
+                              size: aspectRatio * 28,
+                              weight: FontWeight.bold,
+                            )
+                          : CustomText(
+                              text: searchResult["error"]!,
+                              color: Colors.red,
+                              size: aspectRatio * 28,
+                              weight: FontWeight.bold,
+                            ),
+                    ],
+                  ),
                 ),
               )
             : const SizedBox(),

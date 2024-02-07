@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:redhat_v1/components/add_staff/send_email.dart';
 
+import '../Utilities/static_data.dart';
 import '../firebase/create/add_staff.dart';
 import '../Utilities/theme/color_data.dart';
 import '../Utilities/theme/size_data.dart';
@@ -83,7 +84,7 @@ class _AddStaffState extends ConsumerState<AddStaff> {
           .listen((event) {
         setState(() {
           if (event.keys.first == 1) {
-            sendEmail(
+            sendStaffEmail(
                 imageURL: event.values.first,
                 receiverEmail: emailController.text,
                 name: nameController.text,
@@ -150,6 +151,7 @@ class _AddStaffState extends ConsumerState<AddStaff> {
                   ),
                   PhotoPicker(
                     setter: setPhoto,
+                    from: From.add,
                   ),
                   SizedBox(
                     height: height * 0.02,
@@ -267,7 +269,7 @@ class _AddStaffState extends ConsumerState<AddStaff> {
                           ),
                         ),
                       ),
-                    )
+                    ),
             ],
           ),
         ),

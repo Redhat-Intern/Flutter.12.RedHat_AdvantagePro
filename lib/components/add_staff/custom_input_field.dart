@@ -12,11 +12,13 @@ class CustomInputField extends ConsumerWidget {
     required this.hintText,
     required this.icon,
     required this.inputType,
+    this.readOnly = false,
   });
   final TextEditingController controller;
   final String hintText;
   final IconData icon;
   final TextInputType inputType;
+  final bool readOnly;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -65,6 +67,7 @@ class CustomInputField extends ConsumerWidget {
           ),
           Expanded(
             child: TextField(
+              readOnly: readOnly,
               controller: controller,
               keyboardType: inputType,
               style: TextStyle(

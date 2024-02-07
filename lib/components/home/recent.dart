@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
+import 'package:shimmer/shimmer.dart';
 
 import '../../Utilities/theme/color_data.dart';
 import '../../Utilities/theme/size_data.dart';
@@ -10,69 +10,22 @@ import '../common/icon.dart';
 import '../common/text.dart';
 
 class Recent extends ConsumerStatefulWidget {
-  const Recent({super.key});
+  final List<Map<String, Map<String, dynamic>>> recentBatches;
+  const Recent({super.key, required this.recentBatches});
 
   @override
   ConsumerState<Recent> createState() => _RecentState();
 }
 
 class _RecentState extends ConsumerState<Recent> {
-  TrackingScrollController controller = TrackingScrollController();
-  ItemPositionsListener itemPositionsListener = ItemPositionsListener.create();
+  final ScrollController _controller = ScrollController();
 
-  List<Map<String, Map<String, dynamic>>> recentBatches = [
-    {
-      "assets/images/certificate1.png": {"name": "Specialist", "count": 30}
-    },
-    {
-      "assets/images/certificate1.png": {"name": "ADMS", "count": 2}
-    },
-    {
-      "assets/images/certificate1.png": {"name": "ljsd", "count": 23}
-    },
-    {
-      "assets/images/certificate1.png": {
-        "name": "Specialisiuiusadt",
-        "count": 12
-      }
-    },
-    {
-      "assets/images/certificate1.png": {"name": "jkhasd", "count": 6}
-    },
-    {
-      "assets/images/certificate1.png": {"name": "t34df", "count": 45}
-    },
-    {
-      "assets/images/certificate1.png": {"name": "iysdfb", "count": 25}
-    },
-    {
-      "assets/images/certificate1.png": {"name": "Specialist", "count": 30}
-    },
-    {
-      "assets/images/certificate1.png": {"name": "ADMS", "count": 2}
-    },
-  ];
   int firstIndex = 0;
-
-  @override
-  void initState() {
-    super.initState();
-    itemPositionsListener.itemPositions.addListener(() {
-      final index = itemPositionsListener.itemPositions.value.where((element) {
-        final isTopVisible = element.itemLeadingEdge >= 0;
-        final isBottomVisible = element.itemTrailingEdge <= 1;
-        return isTopVisible && isBottomVisible;
-      }).map((item) => item.index);
-      setState(() {
-        firstIndex = index.first;
-      });
-    });
-  }
 
   @override
   void dispose() {
     super.dispose();
-    controller.dispose();
+    _controller.dispose();
   }
 
   @override
@@ -164,11 +117,8 @@ class _RecentState extends ConsumerState<Recent> {
                         width: width * 0.01,
                       ),
                       CustomText(
-                        text: recentBatches[firstIndex]
-                            .values
-                            .first
-                            .values
-                            .first
+                        text: widget
+                            .recentBatches[firstIndex].values.first.values.first
                             .toString(),
                         size: sizeData.regular,
                         color: colorData.fontColor(.7),
@@ -177,16 +127,16 @@ class _RecentState extends ConsumerState<Recent> {
                         width: width * 0.05,
                       ),
                       CustomText(
-                        text: "Student count: ",
+                        text: "Student count:",
                         size: sizeData.small,
                         color: colorData.fontColor(.6),
                       ),
+                      SizedBox(
+                        width: width * 0.02,
+                      ),
                       CustomText(
-                        text: recentBatches[firstIndex]
-                            .values
-                            .first
-                            .values
-                            .last
+                        text: widget
+                            .recentBatches[firstIndex].values.first.values.last
                             .toString(),
                         size: sizeData.regular,
                         color: colorData.fontColor(.8),
@@ -200,37 +150,83 @@ class _RecentState extends ConsumerState<Recent> {
                 height: height * 0.002,
               ),
               SizedBox(
-                height: height * 0.15,
-                child: ScrollablePositionedList.builder(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: width * 0.03,
-                    vertical: height * 0.01,
-                  ),
-                  itemCount: recentBatches.length,
-                  scrollDirection: Axis.horizontal,
-                  physics: const BouncingScrollPhysics(),
-                  itemPositionsListener: itemPositionsListener,
-                  itemBuilder: (BuildContext context, int index) {
-                    bool isFirst = firstIndex == index;
-                    return Container(
-                      margin: EdgeInsets.only(right: width * 0.02),
-                      padding: EdgeInsets.all(isFirst ? 3 : 5),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(8),
-                        border: Border.all(
-                            color: isFirst
-                                ? colorData.primaryColor(.6)
-                                : Colors.transparent,
-                            width: 2),
+                  height: height * 0.15,
+                  child: NotificationListener<ScrollNotification>(
+                    onNotification: (ScrollNotification scrollInfo) {
+                      if (scrollInfo is ScrollUpdateNotification) {
+                        // Check the first visible item index
+                        int firstVisibleItemIndex =
+                            (_controller.position.maxScrollExtent > 0
+                                ? ((_controller.position.pixels /
+                                            _controller
+                                                .position.maxScrollExtent) *
+                                        (widget.recentBatches.length - 1))
+                                    .floor()
+                                : 0);
+                        firstVisibleItemIndex = firstVisibleItemIndex >= 0
+                            ? firstVisibleItemIndex
+                            : 0;
+                        setState(() {
+                          firstIndex = firstVisibleItemIndex;
+                        });
+                      }
+                      return false;
+                    },
+                    child: ListView.builder(
+                      controller: _controller,
+                      padding: EdgeInsets.symmetric(
+                        horizontal: width * 0.03,
+                        vertical: height * 0.01,
                       ),
-                      child: Image.asset(
-                        recentBatches[index].keys.first,
-                        fit: BoxFit.fill,
-                      ),
-                    );
-                  },
-                ),
-              ),
+                      itemCount: widget.recentBatches.length,
+                      scrollDirection: Axis.horizontal,
+                      physics: const BouncingScrollPhysics(),
+                      itemBuilder: (BuildContext context, int index) {
+                        bool isFirst = firstIndex == index;
+                        return Container(
+                          margin: EdgeInsets.only(right: width * 0.02),
+                          padding: EdgeInsets.all(isFirst ? 3 : 5),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(
+                                color: isFirst
+                                    ? colorData.primaryColor(.6)
+                                    : Colors.transparent,
+                                width: 2),
+                          ),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(8),
+                            child: Image.network(
+                              widget.recentBatches[index].keys.first,
+                              width: width * 0.25,
+                              fit: BoxFit.fill,
+                              loadingBuilder: (BuildContext context,
+                                  Widget child,
+                                  ImageChunkEvent? loadingProgress) {
+                                if (loadingProgress == null) {
+                                  return child;
+                                } else {
+                                  return Shimmer.fromColors(
+                                    baseColor: colorData.backgroundColor(.1),
+                                    highlightColor:
+                                        colorData.secondaryColor(.1),
+                                    child: Container(
+                                      width: width * 0.25,
+                                      decoration: BoxDecoration(
+                                        color: colorData.secondaryColor(.5),
+                                        borderRadius:
+                                            BorderRadius.circular(8.0),
+                                      ),
+                                    ),
+                                  );
+                                }
+                              },
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  )),
             ],
           ),
         )

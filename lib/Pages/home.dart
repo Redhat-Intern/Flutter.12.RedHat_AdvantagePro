@@ -1,4 +1,6 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:redhat_v1/components/home/recent_place_holder.dart';
 
 import '../Utilities/theme/size_data.dart';
 
@@ -26,21 +28,44 @@ class Home extends StatelessWidget {
           height: height * 0.015,
         ),
         const Wisher(),
-        SizedBox(
-          height: height * 0.03,
-        ),
+        const Spacer(),
         const Search(),
-        SizedBox(
-          height: height * 0.03,
-        ),
-        const Recent(),
-        SizedBox(
-          height: height * 0.03,
-        ),
+        const Spacer(),
+        StreamBuilder(
+            stream:
+                FirebaseFirestore.instance.collection("batches").snapshots(),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                if (snapshot.data!.docs.isNotEmpty) {
+                  List<QueryDocumentSnapshot<Map<String, dynamic>>> docs =
+                      snapshot.data!.docs;
+
+                  List<Map<String, Map<String, dynamic>>> recentBatches = [];
+                  for (QueryDocumentSnapshot<Map<String, dynamic>> i in docs) {
+                    Map<String, dynamic> data = i.data();
+                    int count = List.from(data["students"]).length;
+                    recentBatches.add({
+                      data["certificateImg"]: {
+                        "name": data["certificateName"],
+                        "count": count
+                      }
+                    });
+                  }
+                  return Recent(recentBatches: recentBatches);
+                } else {
+                  return RecentPlaceHolder();
+                }
+              } else {
+                return const Center(
+                  child: Text("loading"),
+                );
+              }
+            }),
+        const Spacer(),
         const StaffsList(),
-        const Spacer(),
+        const Spacer(flex: 2,),
         const CreateBatchButton(),
-        const Spacer(),
+        const Spacer(flex: 2,),
       ],
     );
   }

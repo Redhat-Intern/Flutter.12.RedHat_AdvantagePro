@@ -5,13 +5,21 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../Utilities/static_data.dart';
 import '../../Utilities/theme/color_data.dart';
 import '../../Utilities/theme/size_data.dart';
 import '../common/text.dart';
 
 class PhotoPicker extends ConsumerStatefulWidget {
+  final From from;
   final Function setter;
-  const PhotoPicker({super.key, required this.setter});
+  final String photoURL;
+  const PhotoPicker({
+    super.key,
+    required this.setter,
+    required this.from,
+    this.photoURL = "",
+  });
 
   @override
   ConsumerState<PhotoPicker> createState() => _PhotoPickerState();
@@ -63,14 +71,19 @@ class _PhotoPickerState extends ConsumerState<PhotoPicker> {
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: photo == null
-                    ? Center(
-                        child: CustomText(
-                          text: "PHOTO",
-                          size: sizeData.regular,
-                          color: colorData.primaryColor(.6),
-                          weight: FontWeight.w600,
-                        ),
-                      )
+                    ? widget.from == From.detail
+                        ? Image.network(
+                            widget.photoURL,
+                            fit: BoxFit.cover,
+                          )
+                        : Center(
+                            child: CustomText(
+                              text: "PHOTO",
+                              size: sizeData.regular,
+                              color: colorData.primaryColor(.6),
+                              weight: FontWeight.w600,
+                            ),
+                          )
                     : Image.file(
                         photo!,
                         fit: BoxFit.cover,
@@ -85,7 +98,9 @@ class _PhotoPickerState extends ConsumerState<PhotoPicker> {
         Align(
           alignment: Alignment.center,
           child: CustomText(
-            text: "Tap to add profile photo",
+            text: widget.from == From.detail
+                ? "Tap to edit profile photo"
+                : "Tap to add profile photo",
             size: sizeData.small,
             color: colorData.fontColor(.5),
             weight: FontWeight.w600,

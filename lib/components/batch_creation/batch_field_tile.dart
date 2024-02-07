@@ -25,6 +25,7 @@ class BatchFieldTile extends ConsumerWidget {
     return Container(
       margin: EdgeInsets.only(bottom: height * 0.005),
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           CustomText(

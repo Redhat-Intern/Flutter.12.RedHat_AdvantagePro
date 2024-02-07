@@ -1,10 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:redhat_v1/components/home/staffs_list_place_holder.dart';
+import 'package:shimmer/shimmer.dart';
 
 import '../../Utilities/theme/color_data.dart';
 import '../../Utilities/theme/size_data.dart';
 import '../../pages/add_staff.dart';
+import '../../pages/details/staff_detail.dart';
 import '../../pages/show_all/staffs.dart';
 import '../common/icon.dart';
 import '../common/text.dart';
@@ -13,7 +16,7 @@ class StaffsList extends ConsumerWidget {
   const StaffsList({super.key});
 
   @override
-  Widget build(BuildContext context,WidgetRef ref) {
+  Widget build(BuildContext context, WidgetRef ref) {
     CustomSizeData sizeData = CustomSizeData.from(context);
     CustomColorData colorData = CustomColorData.from(ref);
 
@@ -93,11 +96,12 @@ class StaffsList extends ConsumerWidget {
                 child: SizedBox(
                   height: height * 0.075,
                   child: StreamBuilder(
-                      stream: FirebaseFirestore.instance
-                          .collection("staffs")
-                          .snapshots(),
-                      builder: (context, snapshot) {
-                        if (snapshot.hasData) {
+                    stream: FirebaseFirestore.instance
+                        .collection("staffs")
+                        .snapshots(),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        if (snapshot.data!.docs.isNotEmpty) {
                           List<Map<String, dynamic>> staffsList = [];
                           for (var element in snapshot.data!.docs) {
                             Map<String, dynamic> staffList = {
@@ -116,18 +120,62 @@ class StaffsList extends ConsumerWidget {
                                 EdgeInsets.symmetric(horizontal: width * 0.02),
                             itemCount: staffsList.length,
                             itemBuilder: (BuildContext context, int index) {
-                              return Container(
-                                width: width*0.145,
-                                margin: EdgeInsets.only(
-                                  right: width * 0.04,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: colorData.secondaryColor(1),
-                                  borderRadius: BorderRadius.circular(8),
-                                  image: DecorationImage(
-                                    fit: BoxFit.cover,
-                                    image: NetworkImage(
+                              return GestureDetector(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => StaffDetail(
+                                        name: staffsList[index]["name"],
+                                        email: staffsList[index]["email"],
+                                        phoneNumber: staffsList[index]
+                                            ["phoneNo"],
+                                        photoURL: staffsList[index]["photo"],
+                                        experience: staffsList[index]
+                                            ["experience"],
+                                        certificatesURL: staffsList[index]
+                                            ["certificates"],
+                                      ),
+                                    ),
+                                  );
+                                },
+                                child: Container(
+                                  width: width * 0.145,
+                                  margin: EdgeInsets.only(
+                                    right: width * 0.04,
+                                  ),
+                                  padding: const EdgeInsets.all(2),
+                                  decoration: BoxDecoration(
+                                    color: colorData.secondaryColor(1),
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(8),
+                                    child: Image.network(
                                       staffsList[index]["photo"],
+                                      fit: BoxFit.fill,
+                                      loadingBuilder: (BuildContext context,
+                                          Widget child,
+                                          ImageChunkEvent? loadingProgress) {
+                                        if (loadingProgress == null) {
+                                          return child;
+                                        } else {
+                                          return Shimmer.fromColors(
+                                            baseColor:
+                                                colorData.backgroundColor(.1),
+                                            highlightColor:
+                                                colorData.secondaryColor(.1),
+                                            child: Container(
+                                              decoration: BoxDecoration(
+                                                color: colorData
+                                                    .secondaryColor(.5),
+                                                borderRadius:
+                                                    BorderRadius.circular(8.0),
+                                              ),
+                                            ),
+                                          );
+                                        }
+                                      },
                                     ),
                                   ),
                                 ),
@@ -135,16 +183,20 @@ class StaffsList extends ConsumerWidget {
                             },
                           );
                         } else {
-                          return Center(
-                            child: CustomText(
-                              text: "No Staff Available",
-                              size: sizeData.regular,
-                              color: colorData.fontColor(.6),
-                              weight: FontWeight.w600,
-                            ),
-                          );
+                          return StaffsListPlaceHolder();
                         }
-                      }),
+                      } else {
+                        return Center(
+                          child: CustomText(
+                            text: "No Staff Available",
+                            size: sizeData.regular,
+                            color: colorData.fontColor(.6),
+                            weight: FontWeight.w600,
+                          ),
+                        );
+                      }
+                    },
+                  ),
                 ),
               ),
             ],

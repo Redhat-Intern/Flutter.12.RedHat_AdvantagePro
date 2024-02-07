@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:redhat_v1/pages/add_certification.dart';
 
 import '../Utilities/theme/size_data.dart';
 import '../pages/report.dart';
@@ -31,15 +32,15 @@ class _NavigationState extends ConsumerState<Navigation> {
 
   List<Widget> WidgetList = [
     Home(),
-    Profile(),
     Report(),
     Forum(),
+    AddCertification(),
   ];
   List<Map<IconData, String>> iconNameList = [
     {Icons.home_outlined: "Home"},
-    {Icons.person_outline_rounded: "Profile"},
     {Icons.report: "Report"},
     {Icons.forest_outlined: "Forum"},
+    {Icons.add_moderator_rounded: "Certification"},
   ];
 
   popFunction(WidgetRef ref) async {
@@ -71,10 +72,7 @@ class _NavigationState extends ConsumerState<Navigation> {
           ),
           child: WillPopScope(
             onWillPop: () => popFunction(ref),
-            child: IndexedStack(
-              children: WidgetList,
-              index: index,
-            ),
+            child: WidgetList[index],
           ),
         ),
       ),
