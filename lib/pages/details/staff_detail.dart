@@ -2,35 +2,61 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:redhat_v1/components/add_staff/send_email.dart';
 
-import '../Utilities/static_data.dart';
-import '../firebase/create/add_staff.dart';
-import '../Utilities/theme/color_data.dart';
-import '../Utilities/theme/size_data.dart';
+import '../../utilities/static_data.dart';
+import '../../firebase/create/add_staff.dart';
+import '../../utilities/theme/color_data.dart';
+import '../../utilities/theme/size_data.dart';
 
-import '../components/add_staff/add_staff_certificate.dart';
-import '../components/add_staff/custom_input_field.dart';
-import '../components/add_staff/photo_picker.dart';
-import '../components/common/back_button.dart';
-import '../components/common/text.dart';
+import '../../components/add_staff/add_staff_certificate.dart';
+import '../../components/add_staff/custom_input_field.dart';
+import '../../components/add_staff/photo_picker.dart';
+import '../../components/common/back_button.dart';
+import '../../components/common/text.dart';
 
-class AddStaff extends ConsumerStatefulWidget {
-  const AddStaff({super.key});
+class StaffDetail extends ConsumerStatefulWidget {
+  final String name;
+  final String email;
+  final String phoneNumber;
+  final String experience;
+  final List<dynamic> certificatesURL;
+  final String photoURL;
+
+  const StaffDetail({
+    required this.photoURL,
+    required this.name,
+    required this.email,
+    required this.phoneNumber,
+    required this.experience,
+    required this.certificatesURL,
+  });
 
   @override
-  ConsumerState<AddStaff> createState() => _AddStaffState();
+  ConsumerState<StaffDetail> createState() => _StaffDetailState();
 }
 
-class _AddStaffState extends ConsumerState<AddStaff> {
+class _StaffDetailState extends ConsumerState<StaffDetail> {
   Map<File, String> photo = {};
-  TextEditingController nameController = TextEditingController();
-  TextEditingController emailController = TextEditingController();
-  TextEditingController phoneNoController = TextEditingController();
-  TextEditingController experienceController = TextEditingController();
+  TextEditingController nameController = TextEditingController(text: "...");
+  TextEditingController emailController = TextEditingController(text: "...");
+  TextEditingController phoneNoController = TextEditingController(text: "");
+  TextEditingController experienceController = TextEditingController(text: "");
   List<Map<File, Map<String, dynamic>>> certificates = [];
 
   Map<int, String> completionCount = {};
+
+  @override
+  void initState() {
+    super.initState();
+    initializeData();
+  }
+
+  void initializeData() {
+    nameController = TextEditingController(text: widget.name);
+    emailController = TextEditingController(text: widget.email);
+    phoneNoController = TextEditingController(text: widget.phoneNumber);
+    experienceController = TextEditingController(text: widget.experience);
+  }
 
   void setPhoto(File photo, String photoName) {
     setState(() {
@@ -81,21 +107,7 @@ class _AddStaffState extends ConsumerState<AddStaff> {
               phoneNoController: phoneNoController,
               experienceController: experienceController,
               certificates: certificates)
-          .listen((event) {
-        setState(() {
-          if (event.keys.first == 1) {
-            sendStaffEmail(
-                imageURL: event.values.first,
-                receiverEmail: emailController.text,
-                name: nameController.text,
-                registrationNo: "RHCSA123");
-            completionCount = {1: "Photo uploaded"};
-          } else if (event.keys.first == 3) {
-            completionCount = event;
-            Navigator.pop(context);
-          }
-        });
-      });
+          .listen((event) {});
     }
   }
 
@@ -139,7 +151,7 @@ class _AddStaffState extends ConsumerState<AddStaff> {
                         width: width * 0.28,
                       ),
                       CustomText(
-                        text: "Add Staff",
+                        text: "Staff Detail",
                         size: sizeData.header,
                         color: colorData.fontColor(1),
                         weight: FontWeight.w600,
@@ -151,34 +163,39 @@ class _AddStaffState extends ConsumerState<AddStaff> {
                   ),
                   PhotoPicker(
                     setter: setPhoto,
-                    from: From.add,
+                    photoURL: widget.photoURL,
+                    from: From.detail,
                   ),
                   SizedBox(
                     height: height * 0.02,
                   ),
                   CustomInputField(
                     controller: nameController,
-                    hintText: "Enter the Name",
+                    hintText: "Edit the Name",
                     icon: Icons.person_rounded,
                     inputType: TextInputType.name,
+                    readOnly: true,
                   ),
                   CustomInputField(
                     controller: emailController,
-                    hintText: "Enter the Email",
+                    hintText: "Edit the Email",
                     icon: Icons.email_rounded,
                     inputType: TextInputType.emailAddress,
+                    readOnly: true,
                   ),
                   CustomInputField(
                     controller: phoneNoController,
-                    hintText: "Enter the Phone No",
+                    hintText: "Edit the Phone No",
                     icon: Icons.numbers_rounded,
                     inputType: TextInputType.phone,
+                    readOnly: true,
                   ),
                   CustomInputField(
                     controller: experienceController,
-                    hintText: "Enter the Year of Experience",
+                    hintText: "Edit the Year of Experience",
                     icon: Icons.grade_rounded,
                     inputType: TextInputType.number,
+                    readOnly: true,
                   ),
                   SizedBox(
                     height: height * 0.01,
@@ -199,7 +216,7 @@ class _AddStaffState extends ConsumerState<AddStaff> {
                           color: colorData.secondaryColor(.5),
                         ),
                         child: CustomText(
-                          text: "Add Staff",
+                          text: "Save Staff",
                           size: sizeData.medium,
                           color: colorData.fontColor(.8),
                           weight: FontWeight.w800,
@@ -269,7 +286,7 @@ class _AddStaffState extends ConsumerState<AddStaff> {
                           ),
                         ),
                       ),
-                    ),
+                    )
             ],
           ),
         ),

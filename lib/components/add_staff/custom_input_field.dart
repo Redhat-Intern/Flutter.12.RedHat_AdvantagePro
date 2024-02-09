@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../Utilities/theme/color_data.dart';
-import '../../Utilities/theme/size_data.dart';
+import '../../utilities/theme/color_data.dart';
+import '../../utilities/theme/size_data.dart';
 import '../common/icon.dart';
 
 class CustomInputField extends ConsumerWidget {
@@ -13,12 +13,16 @@ class CustomInputField extends ConsumerWidget {
     required this.icon,
     required this.inputType,
     this.readOnly = false,
+    this.bottomMar,
+    this.visibleText = true,
   });
   final TextEditingController controller;
   final String hintText;
   final IconData icon;
   final TextInputType inputType;
   final bool readOnly;
+  final double? bottomMar;
+  final bool visibleText;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -33,7 +37,7 @@ class CustomInputField extends ConsumerWidget {
     return Container(
       height: height * 0.045,
       margin: EdgeInsets.only(
-        bottom: height * 0.02,
+        bottom: bottomMar ?? height * 0.0175,
       ),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(8),
@@ -71,22 +75,26 @@ class CustomInputField extends ConsumerWidget {
               controller: controller,
               keyboardType: inputType,
               style: TextStyle(
-                fontWeight: FontWeight.w600,
+                fontWeight: FontWeight.w800,
                 fontSize: sizeData.regular,
                 color: colorData.fontColor(.8),
-                height: 0,
+                height: 1,
               ),
               cursorColor: colorData.primaryColor(1),
               cursorWidth: 2,
+              obscureText: !visibleText,
               decoration: InputDecoration(
                 hintText: hintText,
                 hintStyle: TextStyle(
                   fontWeight: FontWeight.w600,
                   fontSize: sizeData.regular,
                   color: colorData.fontColor(.5),
-                  height: 0,
+                  height: 1,
                 ),
                 border: InputBorder.none,
+                contentPadding: EdgeInsets.only(
+                  bottom: height * 0.015,
+                ),
               ),
             ),
           ),

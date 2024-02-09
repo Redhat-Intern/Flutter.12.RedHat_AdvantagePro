@@ -6,8 +6,8 @@ import 'package:intl/intl.dart';
 import 'package:redhat_v1/providers/create_batch_provider.dart';
 import 'package:shimmer/shimmer.dart';
 
-import '../../Utilities/theme/color_data.dart';
-import '../../Utilities/theme/size_data.dart';
+import '../../utilities/theme/color_data.dart';
+import '../../utilities/theme/size_data.dart';
 
 import '../common/text.dart';
 import 'batch_field_tile.dart';

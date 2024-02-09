@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:redhat_v1/components/home/recent_place_holder.dart';
 
-import '../Utilities/theme/size_data.dart';
+import '../utilities/theme/size_data.dart';
 
 import '../components/home/create_batch_button.dart';
 import '../components/home/header.dart';

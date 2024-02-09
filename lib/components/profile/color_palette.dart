@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../Utilities/static_data.dart';
-import '../../Utilities/theme/size_data.dart';
-import '../../Utilities/theme/theme_provider.dart';
+import '../../utilities/static_data.dart';
+import '../../utilities/theme/size_data.dart';
+import '../../utilities/theme/theme_provider.dart';
 
 class ColorPalette extends ConsumerWidget {
   const ColorPalette({

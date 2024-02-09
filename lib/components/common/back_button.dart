@@ -2,12 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:redhat_v1/components/common/icon.dart';
 
-import '../../Utilities/theme/color_data.dart';
-import '../../Utilities/theme/size_data.dart';
+import '../../utilities/theme/color_data.dart';
+import '../../utilities/theme/size_data.dart';
 
 class CustomBackButton extends ConsumerWidget {
   final Function? method;
-  const CustomBackButton({super.key, this.method});
+  final Widget? tomove;
+  const CustomBackButton({super.key, this.method, this.tomove});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -18,6 +19,10 @@ class CustomBackButton extends ConsumerWidget {
 
     return GestureDetector(
       onTap: () {
+        // tomove != null
+        //     ? Navigator.push(
+        //         context, MaterialPageRoute(builder: (context) => tomove!))
+        //     : Navigator.pop(context);
         Navigator.pop(context);
         method != null ? method!(ref) : null;
       },

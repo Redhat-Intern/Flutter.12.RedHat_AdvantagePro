@@ -1,21 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../firebase/firebase_auth.dart';
-import '../utilities/theme/color_data.dart';
-import '../utilities/theme/size_data.dart';
+import '../../auth_shifter.dart';
+import '../../components/auth/loginsingup_shifter.dart';
+import '../../components/common/back_button.dart';
+import '../../components/common/footer.dart';
+import '../../providers/user_select_provider.dart';
+import '../../utilities/static_data.dart';
+import '../../utilities/theme/size_data.dart';
+import '../../firebase/firebase_auth.dart';
 
-import '../components/auth/logintext_field.dart';
-import '../components/common/text.dart';
+import '../../components/auth/logintext_field.dart';
+import '../../components/common/text.dart';
+import '../auth.dart';
 
-class Auth extends ConsumerStatefulWidget {
-  const Auth({super.key});
+class Login extends ConsumerStatefulWidget {
+  const Login({super.key});
 
   @override
-  ConsumerState<Auth> createState() => _AuthState();
+  ConsumerState<Login> createState() => _LoginState();
 }
 
-class _AuthState extends ConsumerState<Auth> {
+class _LoginState extends ConsumerState<Login> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
 
@@ -32,11 +38,17 @@ class _AuthState extends ConsumerState<Auth> {
       required Color backgroundColor}) {
     AuthFB()
         .signInWithEmailAndPassword(
-          email: emailController.text,
-          password: passwordController.text,
-        )
-        .then((value) {})
-        .catchError((error) {
+      email: emailController.text,
+      password: passwordController.text,
+    )
+        .then((value) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const AuthShifter(),
+        ),
+      );
+    }).catchError((error) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           backgroundColor: backgroundColor,
@@ -55,19 +67,32 @@ class _AuthState extends ConsumerState<Auth> {
 
   @override
   Widget build(BuildContext context) {
+    UserRole? role = ref.watch(userRoleProvider);
+
     CustomSizeData sizeData = CustomSizeData.from(context);
-    CustomColorData colorData = CustomColorData.from(ref);
 
     double width = sizeData.width;
     double height = sizeData.height;
+
+    Color fontColor(double opacity) =>
+        const Color(0XFF1C2136).withOpacity(opacity);
+    Color secondaryColor(double opacity) => Colors.white.withOpacity(opacity);
     // double aspectRatio = sizeData.aspectRatio;
 
     return Scaffold(
-      // backgroundColor: Colors.white,
+      backgroundColor: const Color(0xffDADEEC),
+      resizeToAvoidBottomInset: false,
       body: SafeArea(
         child: Stack(
           clipBehavior: Clip.none,
           children: [
+            Positioned(
+              top: height * 0.02,
+              left: width * 0.04,
+              child: const CustomBackButton(
+                tomove: MainAuthPage(),
+              ),
+            ),
             Positioned(
               top: 0,
               right: 0,
@@ -86,7 +111,7 @@ class _AuthState extends ConsumerState<Auth> {
                   CustomText(
                     text: "Login",
                     size: sizeData.superHeader,
-                    color: colorData.fontColor(1),
+                    color: fontColor(1),
                     weight: FontWeight.bold,
                   ),
                   SizedBox(
@@ -95,7 +120,7 @@ class _AuthState extends ConsumerState<Auth> {
                   CustomText(
                     text: "Please signin in to continue",
                     size: sizeData.header,
-                    color: colorData.fontColor(.6),
+                    color: fontColor(.6),
                     weight: FontWeight.bold,
                   ),
                   SizedBox(
@@ -112,6 +137,7 @@ class _AuthState extends ConsumerState<Auth> {
                     labelText: "PASSWORD",
                     controller: passwordController,
                     bottomMargin: 0.01,
+                    isVisible: false,
                   ),
                   Align(
                     alignment: Alignment.centerRight,
@@ -119,16 +145,16 @@ class _AuthState extends ConsumerState<Auth> {
                       child: CustomText(
                         text: "Forget Password",
                         size: sizeData.medium,
-                        color: colorData.primaryColor(.7),
+                        color: primaryColors[0].withOpacity(.7),
                         weight: FontWeight.bold,
                       ),
                     ),
                   ),
                   GestureDetector(
                     onTap: () => loginUser(
-                      textColor: colorData.fontColor(.8),
+                      textColor: fontColor(.8),
                       textSize: sizeData.regular,
-                      backgroundColor: colorData.secondaryColor(1),
+                      backgroundColor: secondaryColor(1),
                     ),
                     child: Align(
                       alignment: Alignment.centerRight,
@@ -137,16 +163,16 @@ class _AuthState extends ConsumerState<Auth> {
                         padding: EdgeInsets.symmetric(vertical: height * .0125),
                         width: width * 0.325,
                         decoration: BoxDecoration(
-                          color: colorData.primaryColor(1),
+                          color: primaryColors[0].withOpacity(1),
                           borderRadius: BorderRadius.circular(50),
                           boxShadow: [
                             BoxShadow(
-                              color: colorData.primaryColor(.2),
+                              color: primaryColors[0].withOpacity(.2),
                               blurRadius: 12,
                               offset: const Offset(-4, -4),
                             ),
                             BoxShadow(
-                              color: colorData.primaryColor(.2),
+                              color: primaryColors[0].withOpacity(.2),
                               blurRadius: 16,
                               offset: const Offset(4, 4),
                             ),
@@ -161,7 +187,12 @@ class _AuthState extends ConsumerState<Auth> {
                         ),
                       ),
                     ),
-                  )
+                  ),
+                  const Spacer(),
+                  role != UserRole.admin
+                      ? const LoginSingupShifter(shifter: LoginSignup.login)
+                      : const SizedBox(),
+                  const Footer(),
                 ],
               ),
             ),

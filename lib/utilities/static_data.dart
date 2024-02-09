@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 enum From { detail, add, edit }
 enum CourseContentShifter {Title, Topics}
+enum UserRole { students, staffs, admin }
+enum LoginSignup {login, singup}
 
 const List<String> searchData = ["batches", "staffs", "students"];
 

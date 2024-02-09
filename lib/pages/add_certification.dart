@@ -5,8 +5,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:redhat_v1/components/common/icon.dart';
 import 'package:redhat_v1/firebase/create/create_certficate.dart';
 
-import '../Utilities/theme/color_data.dart';
-import '../Utilities/theme/size_data.dart';
+import '../utilities/theme/color_data.dart';
+import '../utilities/theme/size_data.dart';
 import '../components/add_certificate/model/course_data.dart';
 
 import '../components/add_certificate/certificate_pdf_picker.dart';

@@ -6,8 +6,8 @@ import '../providers/user_detail_provider.dart';
 import '../components/profile/color_palette.dart';
 import '../components/profile/theme_toggle.dart';
 import '../firebase/firebase_auth.dart';
-import '../Utilities/theme/color_data.dart';
-import '../Utilities/theme/size_data.dart';
+import '../utilities/theme/color_data.dart';
+import '../utilities/theme/size_data.dart';
 
 import '../components/common/back_button.dart';
 import '../components/common/text.dart';

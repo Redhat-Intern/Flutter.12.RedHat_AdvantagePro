@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:redhat_v1/pages/add_certification.dart';
 
-import '../Utilities/theme/size_data.dart';
+import '../utilities/theme/size_data.dart';
 import '../pages/report.dart';
 import '../providers/navigation_index_provider.dart';
 import '../providers/drawer_provider.dart';
@@ -72,7 +72,10 @@ class _NavigationState extends ConsumerState<Navigation> {
           ),
           child: WillPopScope(
             onWillPop: () => popFunction(ref),
-            child: WidgetList[index],
+            child: IndexedStack(
+              index: index,
+              children: WidgetList,
+            ),
           ),
         ),
       ),

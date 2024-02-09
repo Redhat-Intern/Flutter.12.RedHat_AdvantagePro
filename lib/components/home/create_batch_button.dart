@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../Utilities/theme/size_data.dart';
+import '../../utilities/theme/size_data.dart';
 import '../../pages/create_batch.dart';
 
 class CreateBatchButton extends StatelessWidget {

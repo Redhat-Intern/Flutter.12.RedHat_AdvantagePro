@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../Utilities/theme/color_data.dart';
-import '../../Utilities/theme/size_data.dart';
+import '../../utilities/theme/color_data.dart';
+import '../../utilities/theme/size_data.dart';
 import '../common/icon.dart';
 
 class LoginTextField extends ConsumerWidget {
@@ -10,12 +10,17 @@ class LoginTextField extends ConsumerWidget {
   final IconData icon;
   final TextEditingController controller;
   final double bottomMargin;
+  final bool isReadOnly;
+  final bool isVisible;
+
   const LoginTextField({
     super.key,
     required this.labelText,
     required this.icon,
     required this.controller,
     required this.bottomMargin,
+    this.isReadOnly = false,
+    this.isVisible = true,
   });
 
   @override
@@ -33,7 +38,9 @@ class LoginTextField extends ConsumerWidget {
         color: colorData.secondaryColor(.4),
       ),
       child: TextField(
+        readOnly: isReadOnly,
         controller: controller,
+        obscureText: !isVisible,
         style: TextStyle(
           fontWeight: FontWeight.bold,
           fontSize: sizeData.medium,

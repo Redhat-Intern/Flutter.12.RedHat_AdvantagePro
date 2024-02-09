@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:redhat_v1/Utilities/static_data.dart';
+import 'package:redhat_v1/utilities/static_data.dart';
 import 'package:redhat_v1/providers/create_batch_provider.dart';
 
-import '../../Utilities/theme/color_data.dart';
-import '../../Utilities/theme/size_data.dart';
+import '../../utilities/theme/color_data.dart';
+import '../../utilities/theme/size_data.dart';
 
 import '../../providers/class/student.dart';
 import 'add_individual_student_overlay.dart';

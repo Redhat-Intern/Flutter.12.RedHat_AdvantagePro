@@ -4,8 +4,8 @@ import 'package:redhat_v1/components/common/text.dart';
 import 'package:redhat_v1/pages/profile.dart';
 import 'package:redhat_v1/providers/navigation_index_provider.dart';
 
-import '../../Utilities/theme/color_data.dart';
-import '../../Utilities/theme/size_data.dart';
+import '../../utilities/theme/color_data.dart';
+import '../../utilities/theme/size_data.dart';
 
 import '../../pages/notification.dart';
 import '../common/icon.dart';

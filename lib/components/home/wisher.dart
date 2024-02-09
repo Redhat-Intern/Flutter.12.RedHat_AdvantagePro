@@ -3,8 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:redhat_v1/components/common/text.dart';
 import 'package:redhat_v1/providers/user_detail_provider.dart';
 
-import '../../Utilities/theme/color_data.dart';
-import '../../Utilities/theme/size_data.dart';
+import '../../utilities/theme/color_data.dart';
+import '../../utilities/theme/size_data.dart';
 
 class Wisher extends ConsumerWidget {
   const Wisher({super.key});
