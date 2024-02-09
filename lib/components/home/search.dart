@@ -150,9 +150,9 @@ class _SearchState extends ConsumerState<Search> {
                   child: TextField(
                     controller: searchCtr,
                     onSubmitted: (value) {
-                      if (value.isNotEmpty)
+                      if (value.isNotEmpty) {
                         searchDataFun();
-                      else {
+                      } else {
                         setState(() {
                           searchCtr.clear();
                           searchResult.clear();

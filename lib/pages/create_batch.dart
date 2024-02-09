@@ -94,7 +94,7 @@ class CreateBatch extends ConsumerWidget {
                               docs: docs,
                             );
                           } else {
-                            return Text("loading");
+                            return const Text("loading");
                           }
                         }),
                     SizedBox(

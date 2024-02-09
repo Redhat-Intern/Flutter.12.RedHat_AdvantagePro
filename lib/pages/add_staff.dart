@@ -69,7 +69,7 @@ class _AddStaffState extends ConsumerState<AddStaff> {
         photo.isEmpty ||
         certificates.isEmpty) {
       ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text("Kindly enter all the data")));
+          .showSnackBar(const SnackBar(content: Text("Kindly enter all the data")));
     } else {
       setState(() {
         completionCount = {0: "Started"};

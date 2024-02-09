@@ -239,7 +239,7 @@ class _addCertificateState extends ConsumerState<AddCertification> {
         Row(
           children: [
             const MenuButton(),
-            Spacer(),
+            const Spacer(),
             CustomText(
               text: "Create Certificates",
               size: sizeData.header,

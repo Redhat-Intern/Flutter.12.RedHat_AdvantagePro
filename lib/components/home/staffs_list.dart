@@ -74,11 +74,11 @@ class StaffsList extends ConsumerWidget {
                 onTap: () => Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => AddStaff(),
+                    builder: (context) => const AddStaff(),
                   ),
                 ),
                 child: Container(
-                  padding: EdgeInsets.all(6),
+                  padding: const EdgeInsets.all(6),
                   margin:
                       EdgeInsets.only(right: width * 0.02, left: width * 0.01),
                   decoration: BoxDecoration(
@@ -183,7 +183,7 @@ class StaffsList extends ConsumerWidget {
                             },
                           );
                         } else {
-                          return StaffsListPlaceHolder();
+                          return const StaffsListPlaceHolder();
                         }
                       } else {
                         return Center(

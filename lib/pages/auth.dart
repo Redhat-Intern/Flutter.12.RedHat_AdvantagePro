@@ -119,7 +119,7 @@ class _MainAuthPageState extends ConsumerState<MainAuthPage> {
                 margin: EdgeInsets.symmetric(horizontal: width * 0.06),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(12),
-                  color: Color.fromARGB(153, 240, 240, 246),
+                  color: const Color.fromARGB(153, 240, 240, 246),
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,

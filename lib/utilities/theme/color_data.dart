@@ -33,7 +33,7 @@ class CustomColorData {
         statePrimaryColor.withOpacity(opacity);
 
     Color secondaryColor(double opacity) => isDark
-        ? Color(0XFF333354).withOpacity(opacity)
+        ? const Color(0XFF333354).withOpacity(opacity)
         : Colors.white.withOpacity(opacity);
 
     Color backgroundColor(double opacity) =>

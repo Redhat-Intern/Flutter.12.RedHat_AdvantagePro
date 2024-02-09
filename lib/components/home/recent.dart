@@ -56,7 +56,7 @@ class _RecentState extends ConsumerState<Recent> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => Batches(),
+                    builder: (context) => const Batches(),
                   ),
                 );
               },

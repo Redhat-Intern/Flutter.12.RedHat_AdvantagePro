@@ -9,7 +9,6 @@ import '../providers/drawer_provider.dart';
 
 import '../pages/forum.dart';
 import '../pages/home.dart';
-import '../pages/profile.dart';
 import 'sidebar.dart';
 
 class Navigation extends ConsumerStatefulWidget {
@@ -31,10 +30,10 @@ class _NavigationState extends ConsumerState<Navigation> {
   }
 
   List<Widget> WidgetList = [
-    Home(),
-    Report(),
-    Forum(),
-    AddCertification(),
+    const Home(),
+    const Report(),
+    const Forum(),
+    const AddCertification(),
   ];
   List<Map<IconData, String>> iconNameList = [
     {Icons.home_outlined: "Home"},

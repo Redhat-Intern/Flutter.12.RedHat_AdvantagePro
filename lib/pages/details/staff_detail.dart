@@ -22,7 +22,7 @@ class StaffDetail extends ConsumerStatefulWidget {
   final List<dynamic> certificatesURL;
   final String photoURL;
 
-  const StaffDetail({
+  const StaffDetail({super.key, 
     required this.photoURL,
     required this.name,
     required this.email,
@@ -95,7 +95,7 @@ class _StaffDetailState extends ConsumerState<StaffDetail> {
         photo.isEmpty ||
         certificates.isEmpty) {
       ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text("Kindly enter all the data")));
+          .showSnackBar(const SnackBar(content: Text("Kindly enter all the data")));
     } else {
       setState(() {
         completionCount = {0: "Started"};

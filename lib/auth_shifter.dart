@@ -1,12 +1,8 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'firebase/firebase_auth.dart';
-import 'utilities/static_data.dart';
-import 'providers/user_select_provider.dart';
-import 'providers/user_detail_provider.dart';
 
 import 'layout/navigation.dart';
 import 'pages/auth.dart';
@@ -60,9 +56,9 @@ class AuthShifter extends ConsumerWidget {
       builder: (BuildContext context, AsyncSnapshot<User?> snapshot) {
         if (snapshot.hasData) {
           pushUserData(ref: ref);
-          return Navigation();
+          return const Navigation();
         } else {
-          return MainAuthPage();
+          return const MainAuthPage();
         }
       },
     );

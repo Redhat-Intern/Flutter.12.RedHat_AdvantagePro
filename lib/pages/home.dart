@@ -53,7 +53,7 @@ class Home extends StatelessWidget {
                   }
                   return Recent(recentBatches: recentBatches);
                 } else {
-                  return RecentPlaceHolder();
+                  return const RecentPlaceHolder();
                 }
               } else {
                 return const Center(

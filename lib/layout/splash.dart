@@ -13,7 +13,7 @@ class _SplashState extends State<Splash> {
 
     Navigator.of(context).push(PageRouteBuilder(
       transitionDuration: const Duration(milliseconds: 200),
-      pageBuilder: (context, animation, secondaryAnimation) => AuthShifter(),
+      pageBuilder: (context, animation, secondaryAnimation) => const AuthShifter(),
       // const Navigation(),
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
         const begin = Offset(1.0, 0.0);
@@ -46,7 +46,7 @@ class _SplashState extends State<Splash> {
     return Scaffold(
       body: SafeArea(
           child: Container(
-        child: Column(
+        child: const Column(
           children: [Text("This is the Splah screen"), Icon(Icons.splitscreen)],
         ),
       )),
