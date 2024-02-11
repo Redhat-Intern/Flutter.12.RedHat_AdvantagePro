@@ -1,36 +1,31 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:redhat_v1/components/home/recent_place_holder.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../utilities/theme/size_data.dart';
+import '../../providers/user_select_provider.dart';
+import '../../utilities/static_data.dart';
+import '../../utilities/theme/size_data.dart';
 
-import '../components/home/create_batch_button.dart';
-import '../components/home/header.dart';
-import '../components/home/recent.dart';
-import '../components/home/search.dart';
-import '../components/home/staffs_list.dart';
-import '../components/home/wisher.dart';
+import '../../components/home/admin/recent_place_holder.dart';
+import '../../components/home/admin/create_batch_button.dart';
+import '../../components/home/header.dart';
+import '../../components/home/admin/recent.dart';
+import '../../components/home/admin/search.dart';
+import '../../components/home/admin/staffs_list.dart';
 
-class Home extends StatelessWidget {
-  const Home({super.key});
+class StaffHome extends ConsumerWidget {
+  const StaffHome({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     CustomSizeData sizeData = CustomSizeData.from(context);
-
-    // double width = sizeData.width;
+    double width = sizeData.width;
     double height = sizeData.height;
 
     return Column(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         const Header(),
-        SizedBox(
-          height: height * 0.015,
-        ),
-        const Wisher(),
-        const Spacer(),
-        const Search(),
-        const Spacer(),
         StreamBuilder(
             stream:
                 FirebaseFirestore.instance.collection("batches").snapshots(),
@@ -61,12 +56,8 @@ class Home extends StatelessWidget {
                 );
               }
             }),
-        const Spacer(),
-        const StaffsList(),
-        const Spacer(flex: 2,),
-        const CreateBatchButton(),
-        const Spacer(flex: 2,),
       ],
     );
   }
 }
+

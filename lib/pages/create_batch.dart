@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:redhat_v1/components/batch_creation/available_certification_placeholder.dart';
+import 'package:redhat_v1/components/home/student/certifications_place_holder.dart';
 
 import '../utilities/theme/color_data.dart';
 import '../utilities/theme/size_data.dart';
@@ -72,11 +74,15 @@ class CreateBatch extends ConsumerWidget {
                           if (snapshot.hasData) {
                             List<QueryDocumentSnapshot<Map<String, dynamic>>>
                                 docs = snapshot.data!.docs;
+                            if(docs.isNotEmpty){
                             return AvailableCertifications(
                               docs: docs,
                             );
+                            }else{
+                              return const CertifcatesPlaceHolder();
+                            }
                           } else {
-                            return const Text("loading");
+                            return const CertificationsPlaceHolder();
                           }
                         }),
                     SizedBox(
@@ -110,8 +116,7 @@ class CreateBatch extends ConsumerWidget {
                     SizedBox(
                       height: height * 0.02,
                     ),
-                    const BatchButton(
-                    ),
+                    const BatchButton(),
                     SizedBox(
                       height: height * 0.02,
                     ),

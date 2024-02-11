@@ -33,6 +33,7 @@ class CustomText extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     CustomSizeData sizeData = CustomSizeData.from(context);
     CustomColorData colorData = CustomColorData.from(ref);
+    double fontSize = sizeData.regular;
     double width = sizeData.width;
     return !loadingState
         ? Text(
@@ -41,11 +42,10 @@ class CustomText extends ConsumerWidget {
             maxLines: maxLine,
             overflow: TextOverflow.ellipsis,
             style: TextStyle(
-              fontSize: size,
+              fontSize: size ?? fontSize,
               fontWeight: weight,
               color: color,
               height: height,
-              
             ),
           )
         : Shimmer.fromColors(

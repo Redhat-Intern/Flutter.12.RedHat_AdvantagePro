@@ -126,7 +126,7 @@ class _MainAuthPageState extends ConsumerState<MainAuthPage> {
                   children: [
                      const UserSelect(
                       togo: Login(),
-                      role: UserRole.students,
+                      role: UserRole.student,
                       text: "STUDENT",
                       shaderColors: [
                         Color(0XFF5D44F8),
@@ -146,7 +146,7 @@ class _MainAuthPageState extends ConsumerState<MainAuthPage> {
                     ),
                     const UserSelect(
                       togo: Login(),
-                      role: UserRole.staffs,
+                      role: UserRole.staff,
                       text: "STAFF",
                       shaderColors: [
                         Color.fromARGB(255, 194, 13, 1),

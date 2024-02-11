@@ -4,7 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 
-import '../../components/add_certificate/model/course_data.dart';
+import '../../model/course_data.dart';
 
 Stream<Map<int, String>> createCertificate({
   required Map<File, String> image,

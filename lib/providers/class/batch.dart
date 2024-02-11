@@ -5,8 +5,7 @@ import 'student.dart';
 class Batch {
   DateTime creationTime;
   String name;
-  String certificateName;
-  String certificateImg;
+  Map certificateData;
   List<String> dates;
   List<String> staffs;
   String adminStaff;
@@ -15,8 +14,7 @@ class Batch {
   Batch({
     required this.creationTime,
     required this.name,
-    required this.certificateName,
-    required this.certificateImg,
+    required this.certificateData,
     required this.dates,
     required this.staffs,
     required this.adminStaff,
@@ -27,8 +25,7 @@ class Batch {
     return Batch(
       creationTime: DateTime.now(),
       name: '',
-      certificateName: '',
-      certificateImg: '',
+      certificateData: {},
       adminStaff: '',
       dates: [],
       staffs: [],
@@ -39,8 +36,7 @@ class Batch {
   Batch copyWith({
     DateTime? creationTime,
     String? name,
-    String? certificateName,
-    String? certificateImg,
+    Map? certificateData,
     List<String>? dates,
     List<String>? staffs,
     String? adminStaff,
@@ -49,8 +45,7 @@ class Batch {
     return Batch(
       creationTime: creationTime ?? this.creationTime,
       name: name ?? this.name,
-      certificateName: certificateName ?? this.certificateName,
-      certificateImg: certificateImg ?? this.certificateImg,
+      certificateData: certificateData ?? this.certificateData,
       dates: dates ?? this.dates,
       staffs: staffs ?? this.staffs,
       adminStaff: adminStaff ?? this.adminStaff,
@@ -62,8 +57,7 @@ class Batch {
     return {
       'time': DateFormat("dd-MM-yyyy").format(creationTime),
       'name': name,
-      'certificateName': certificateName,
-      'certificateImg': certificateImg,
+      'certificate': certificateData,
       'dates': dates,
       'staffs': staffs,
       "admin": adminStaff,

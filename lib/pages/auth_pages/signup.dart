@@ -1,4 +1,3 @@
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -44,8 +43,7 @@ class _SignupState extends ConsumerState<Signup> {
       required Color textColor,
       required Color backgroundColor}) async {
     UserRole role = ref.watch(userRoleProvider)!;
-    String colName =
-        role == UserRole.staffs ? "staffRequest" : "studentRequest";
+    String colName = role == UserRole.staff ? "staffRequest" : "studentRequest";
     QuerySnapshot<Map<String, dynamic>> queryData = await FirebaseFirestore
         .instance
         .collection(colName)
@@ -97,16 +95,36 @@ class _SignupState extends ConsumerState<Signup> {
           .collection("users")
           .doc(emailCtr.text)
           .set({"role": role.name.toString()});
+
+      Map<String, dynamic> studentData = {
+        "email": generatedData["email"],
+        "name": generatedData["name"],
+        "phoneNo": generatedData["phoneNo"],
+        "occupation": generatedData["occupation"],
+        "occDetail": generatedData["occDetail"],
+        "regID": [generatedData["regID"]],
+      };
+      
       FirebaseFirestore.instance
-          .collection(role.name.toString())
+          .collection('${role.name}s')
           .doc(emailCtr.text)
-          .set(generatedData);
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const AuthShifter(),
-        ),
-      );
+          .set(studentData);
+      FirebaseFirestore.instance
+          .collection('${role.name}s')
+          .doc(emailCtr.text)
+          .collection("certifications")
+          .doc(generatedData["batchName"])
+          .set({
+        "name": generatedData["batchName"],
+        "certificateName": generatedData["certificateName"],
+      });
+      FirebaseFirestore.instance
+          .collection("studentRequest")
+          .doc(emailCtr.text)
+          .delete();
+      Navigator.pop(context);
+      Navigator.pop(context);
+
     }).catchError((error) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -136,7 +154,7 @@ class _SignupState extends ConsumerState<Signup> {
     Color secondaryColor(double opacity) => Colors.white.withOpacity(opacity);
 
     UserRole? role = ref.watch(userRoleProvider);
-    String hintText = role == UserRole.staffs ? "STAFF ID" : "STUDENT ID";
+    String hintText = role == UserRole.staff ? "STAFF ID" : "STUDENT ID";
 
     return Scaffold(
       resizeToAvoidBottomInset: false,

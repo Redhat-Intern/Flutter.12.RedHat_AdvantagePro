@@ -1,16 +1,16 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:redhat_v1/components/home/staffs_list_place_holder.dart';
 import 'package:shimmer/shimmer.dart';
 
-import '../../utilities/theme/color_data.dart';
-import '../../utilities/theme/size_data.dart';
-import '../../pages/add_staff.dart';
-import '../../pages/details/staff_detail.dart';
-import '../../pages/show_all/staffs.dart';
-import '../common/icon.dart';
-import '../common/text.dart';
+import '../../../utilities/theme/color_data.dart';
+import '../../../utilities/theme/size_data.dart';
+import '../../../pages/add_staff.dart';
+import '../../../pages/details/staff_detail.dart';
+import '../../../pages/show_all/staffs.dart';
+import '../../common/icon.dart';
+import '../../common/text.dart';
+import 'staffs_list_place_holder.dart';
 
 class StaffsList extends ConsumerWidget {
   const StaffsList({super.key});

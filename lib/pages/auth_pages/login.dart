@@ -42,12 +42,7 @@ class _LoginState extends ConsumerState<Login> {
       password: passwordController.text,
     )
         .then((value) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const AuthShifter(),
-        ),
-      );
+      Navigator.pop(context);
     }).catchError((error) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(

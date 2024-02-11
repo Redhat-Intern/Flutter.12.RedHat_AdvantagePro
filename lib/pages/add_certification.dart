@@ -7,7 +7,7 @@ import 'package:redhat_v1/firebase/create/create_certficate.dart';
 
 import '../utilities/theme/color_data.dart';
 import '../utilities/theme/size_data.dart';
-import '../components/add_certificate/model/course_data.dart';
+import '../model/course_data.dart';
 
 import '../components/add_certificate/certificate_pdf_picker.dart';
 import '../components/add_certificate/course_content_textfield.dart';

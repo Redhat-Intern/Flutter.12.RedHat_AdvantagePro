@@ -17,14 +17,19 @@ Future<bool> createBatch({
 
   for (var element in batch.students) {
     String regID =
-        "${batch.name}STU${batch.students.indexOf(element).toString().padLeft(3, '0')}";
+        "${batch.name}STU${(batch.students.indexOf(element)+1).toString().padLeft(3, '0')}";
     Map<String, dynamic> studentData = element.toMap();
-    studentData.addEntries([MapEntry("regID", regID)]);
+    studentData.addEntries([
+      MapEntry("regID", regID),
+      MapEntry("batchName", batch.name),
+      MapEntry("certificateName", batch.certificateData["name"]),
+      MapEntry("certificateImg", batch.certificateData["image"]),
+    ]);
 
     await FirebaseFirestore.instance
         .collection("studentRequest")
-        .doc(batch.name)
-        .set({"regID": studentData});
+        .doc(element.email)
+        .set(studentData);
     await sendStudentEmail(
       receiverEmail: element.email,
       name: element.name,

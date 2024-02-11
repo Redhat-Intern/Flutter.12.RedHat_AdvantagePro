@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../utilities/theme/color_data.dart';
-import '../../utilities/theme/size_data.dart';
+import '../../../utilities/theme/color_data.dart';
+import '../../../utilities/theme/size_data.dart';
 import '../common/text.dart';
 
-class RecentPlaceHolder extends ConsumerWidget {
-  const RecentPlaceHolder({super.key});
+class CertifcatesPlaceHolder extends ConsumerWidget {
+  const CertifcatesPlaceHolder({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -21,7 +21,7 @@ class RecentPlaceHolder extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         CustomText(
-          text: "Recent",
+          text: "Available Certificates",
           size: sizeData.subHeader,
           color: colorData.fontColor(.8),
           weight: FontWeight.w600,
@@ -44,9 +44,17 @@ class RecentPlaceHolder extends ConsumerWidget {
           ),
           child: Row(
             children: [
+              SizedBox(
+                width: width * 0.02,
+              ),
+              Image.asset(
+                "assets/icons/DNF2.png",
+                height: height * 0.1,
+                fit: BoxFit.fitHeight,
+              ),
               Expanded(
                 child: CustomText(
-                  text: "No Batches have been crested till NOW!",
+                  text: "No Certificates have been created till NOW!",
                   maxLine: 2,
                   weight: FontWeight.bold,
                   color: colorData.fontColor(.6),
@@ -54,15 +62,6 @@ class RecentPlaceHolder extends ConsumerWidget {
                   align: TextAlign.center,
                 ),
               ),
-              Image.asset(
-                "assets/icons/DNF1.png",
-                height: height * 0.1,
-                fit: BoxFit.fitHeight,
-              ),
-              SizedBox(
-                width: width * 0.02,
-              ),
-
             ],
           ),
         ),

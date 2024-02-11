@@ -22,10 +22,9 @@ class CreateBatchNotifier extends StateNotifier<Batch> {
   }
 
   void updateCertificate(
-      {required String newCertificateName, required String newCertificateImg}) {
+      {required Map newCertificateData}) {
     state = state.copyWith(
-      certificateName: newCertificateName,
-      certificateImg: newCertificateImg,
+      certificateData: newCertificateData,
     );
   }
 

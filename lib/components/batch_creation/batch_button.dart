@@ -29,7 +29,7 @@ class BatchButton extends ConsumerWidget {
             ref.read(createBatchProvider.notifier).updateTime();
             createBatch(batch: ref.watch(createBatchProvider));
             await updateBatchList(
-              certificateName: ref.watch(createBatchProvider).certificateName,
+              certificateName: ref.watch(createBatchProvider).certificateData["name"],
               batch: ref.watch(createBatchProvider).name,
             );
             ref.read(createBatchProvider.notifier).clearData();
@@ -77,7 +77,7 @@ class BatchButton extends ConsumerWidget {
             ref.read(createBatchProvider.notifier).updateTime();
             saveBatch(batch: ref.watch(createBatchProvider));
             await updateBatchList(
-              certificateName: ref.watch(createBatchProvider).certificateName,
+              certificateName: ref.watch(createBatchProvider).certificateData["name"],
               batch: ref.watch(createBatchProvider).name,
             );
             ref.read(createBatchProvider.notifier).clearData();

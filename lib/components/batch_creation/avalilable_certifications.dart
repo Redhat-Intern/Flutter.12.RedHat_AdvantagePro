@@ -30,6 +30,7 @@ class _AvailableCertificationsState
 
   List<Map<String, dynamic>> certifications = [];
   Map<String, dynamic> selectedCertificate = {};
+  List<String> selectedDates = [];
 
   DateTime? startDate;
   DateTime? endDate;
@@ -67,12 +68,11 @@ class _AvailableCertificationsState
       setState(() {
         startDate = dates.first;
         endDate = dates.last;
-        List<String> selectedDates =
+        selectedDates =
             dates.map((e) => DateFormat('dd-MM-yyyy').format(e!)).toList();
 
         ref.read(createBatchProvider.notifier).updateCertificate(
-              newCertificateName: selectedCertificate["name"],
-              newCertificateImg: selectedCertificate["image"],
+              newCertificateData: selectedCertificate,
             );
 
         ref
@@ -339,8 +339,9 @@ class _AvailableCertificationsState
                             ),
                             BatchFieldTile(
                               field: "duration",
-                              value:
-                                  "${Map.from(selectedCertificate["courseContent"]).length} Days",
+                              value: selectedDates.isEmpty
+                                  ? "${Map.from(selectedCertificate["courseContent"]).length} Days"
+                                  : "${selectedDates.length} Days",
                             ),
                             BatchFieldTile(
                               field: "start",
@@ -424,6 +425,59 @@ class _AvailableCertificationsState
                   )
                 ],
               ),
+        SizedBox(
+          height: height * 0.01,
+        ),
+        selectedDates.isNotEmpty
+            ? Container(
+                width: width,
+                height: height * 0.06,
+                padding: EdgeInsets.only(
+                  left: width * 0.03,
+                  right: width * 0.03,
+                  top: height * 0.006,
+                  bottom: height * 0.006,
+                ),
+                decoration: BoxDecoration(
+                  color: colorData.secondaryColor(.15),
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(10),
+                    bottomLeft: Radius.circular(10),
+                  ),
+                ),
+                child: ListView.builder(
+                  physics: const BouncingScrollPhysics(),
+                  padding: EdgeInsets.symmetric(
+                    vertical: height * 0.005,
+                  ),
+                  scrollDirection: Axis.horizontal,
+                  itemCount: selectedDates.length,
+                  itemBuilder: (context, index) {
+                    return Container(
+                      margin: EdgeInsets.only(right: width * 0.03),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: width * 0.02,
+                        vertical: height * 0.005,
+                      ),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(6),
+                        color: colorData.secondaryColor(.4),
+                      ),
+                      child: Center(
+                        child: CustomText(
+                          text: selectedDates[index],
+                          size: sizeData.regular,
+                          color: firstIndex == index
+                              ? colorData.primaryColor(.8)
+                              : colorData.fontColor(.4),
+                          weight: FontWeight.w800,
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              )
+            : const SizedBox(),
       ],
     );
   }

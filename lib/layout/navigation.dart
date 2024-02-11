@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:redhat_v1/pages/add_certification.dart';
+import 'package:redhat_v1/providers/user_select_provider.dart';
 
+import '../pages/home/admin_home.dart';
+import '../pages/home/staff_home.dart';
+import '../pages/home/student_home.dart';
+import '../utilities/static_data.dart';
 import '../utilities/theme/size_data.dart';
 import '../pages/report.dart';
 import '../providers/navigation_index_provider.dart';
 import '../providers/drawer_provider.dart';
 
 import '../pages/forum.dart';
-import '../pages/home.dart';
 import 'sidebar.dart';
 
 class Navigation extends ConsumerStatefulWidget {
@@ -20,27 +24,8 @@ class Navigation extends ConsumerStatefulWidget {
 
 class _NavigationState extends ConsumerState<Navigation> {
   bool canPop = false;
-  late GlobalKey<ScaffoldState> scaffoldKey;
+  late GlobalKey<ScaffoldState> scaffoldKey ;
   int index = 0;
-
-  @override
-  void initState() {
-    super.initState();
-    scaffoldKey = ref.read(drawerKeyProvider);
-  }
-
-  List<Widget> WidgetList = [
-    const Home(),
-    const Report(),
-    const Forum(),
-    const AddCertification(),
-  ];
-  List<Map<IconData, String>> iconNameList = [
-    {Icons.home_outlined: "Home"},
-    {Icons.report: "Report"},
-    {Icons.forest_outlined: "Forum"},
-    {Icons.add_moderator_rounded: "Certification"},
-  ];
 
   popFunction(WidgetRef ref) async {
     if (ref.read(navigationIndexProvider) == 0) {
@@ -52,11 +37,48 @@ class _NavigationState extends ConsumerState<Navigation> {
 
   @override
   Widget build(BuildContext context) {
+    scaffoldKey = ref.watch(drawerKeyProvider);
     index = ref.watch(navigationIndexProvider);
+    UserRole? role = ref.watch(userRoleProvider);
     CustomSizeData sizeData = CustomSizeData.from(context);
 
     double width = sizeData.width;
     double height = sizeData.height;
+    List<Widget> WidgetList = [];
+    List<Map<IconData, String>> iconNameList = [];
+
+    if (role == UserRole.admin) {
+      WidgetList = [
+        const AdminHome(),
+        const Report(),
+        const Forum(),
+        const AddCertification(),
+      ];
+      iconNameList = [
+        {Icons.home_outlined: "Home"},
+        {Icons.report: "Report"},
+        {Icons.forest_outlined: "Forum"},
+        {Icons.add_moderator_rounded: "Certification"},
+      ];
+    } else if (role == UserRole.staff) {
+      WidgetList = [
+        const StaffHome(),
+        const Forum(),
+      ];
+      iconNameList = [
+        {Icons.home_outlined: "Home"},
+        {Icons.forest_outlined: "Forum"},
+      ];
+    } else {
+      WidgetList = [
+        const StudentHome(),
+        const Forum(),
+      ];
+      iconNameList = [
+        {Icons.home_outlined: "Home"},
+        {Icons.forest_outlined: "Forum"},
+      ];
+    }
 
     return Scaffold(
       key: scaffoldKey,
@@ -70,12 +92,12 @@ class _NavigationState extends ConsumerState<Navigation> {
             top: height * 0.02,
           ),
           child: WillPopScope(
-            onWillPop: () => popFunction(ref),
-            child: IndexedStack(
-              index: index,
-              children: WidgetList,
-            ),
-          ),
+              onWillPop: () => popFunction(ref), child: WidgetList[index]
+              // IndexedStack(
+              //   index: index,
+              //   children: WidgetList,
+              // ),
+              ),
         ),
       ),
       drawer: SideBar(
