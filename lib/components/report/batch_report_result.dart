@@ -26,12 +26,12 @@ class BatchReportResult extends ConsumerWidget {
     double aspectRatio = sizeData.aspectRatio;
 
     return Padding(
-      padding: EdgeInsets.only(bottom: height*0.01),
+      padding: EdgeInsets.only(bottom: height*0.02),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           CustomText(
-            text: "Start Date:",
+            text: header,
             color: colorData.fontColor(.6),
             weight: FontWeight.w700,
           ),
@@ -40,7 +40,7 @@ class BatchReportResult extends ConsumerWidget {
           ),
           widgetValue ??
               CustomText(
-                text: "19:06:2021",
+                text: value,
                 color: colorData.fontColor(.9),
                 weight: FontWeight.w800,
                 size: sizeData.medium,

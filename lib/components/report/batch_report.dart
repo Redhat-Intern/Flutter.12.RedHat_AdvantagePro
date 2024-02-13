@@ -216,9 +216,13 @@ class _BatchReport extends ConsumerState<BatchReport> {
                 horizontal: width * 0.02,
                 vertical: height * 0.01,
               ),
-              child: Column(
+              child: const Column(
                 children: [
                   BatchReportResult(header: "Start Date:", value: "19:06:2023"),
+                  BatchReportResult(header: "End Date:", value: "21:07:2023"),
+                  BatchReportResult(header: "Students Enrolled:", value: "15"),
+                  BatchReportResult(header: "Certified Students:", value: "11"),
+                  BatchReportResult(header: "Centum Count:", value: "9"),
                 ],
               ),
             ),

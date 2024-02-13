@@ -143,6 +143,7 @@ class _AssignStaffState extends ConsumerState<AssignStaff> {
                                 child: Image.network(
                                   availableStaffs[index]["photo"],
                                   width: aspectRatio * 90,
+                                  height: aspectRatio * 90,
                                   fit: BoxFit.cover,
                                 ),
                               ),

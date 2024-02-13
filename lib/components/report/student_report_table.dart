@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:linked_scroll_controller/linked_scroll_controller.dart';
 
 import '../../utilities/theme/color_data.dart';
 import '../../utilities/theme/size_data.dart';
 import '../common/text.dart';
+import 'student_namer.dart';
 
 class StudentReportTable extends ConsumerStatefulWidget {
   const StudentReportTable({
@@ -19,6 +21,27 @@ class StudentReportTable extends ConsumerStatefulWidget {
 class _StudentReportTableState extends ConsumerState<StudentReportTable> {
   String selectedItem = "attendance";
   List<String> searchData = ["attendance", "tests", "exams"];
+  LinkedScrollControllerGroup commonCtr = LinkedScrollControllerGroup();
+
+  // Initialize controllers dynamically in initState
+  List<ScrollController> controllers = [];
+
+  @override
+  void initState() {
+    super.initState();
+    for (int i = 0; i <= widget.studentsData.length; i++) {
+      controllers.add(commonCtr.addAndGet());
+    }
+  }
+
+  @override
+  void dispose() {
+    // Dispose controllers in dispose
+    for (final controller in controllers) {
+      controller.dispose();
+    }
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -91,15 +114,96 @@ class _StudentReportTableState extends ConsumerState<StudentReportTable> {
           SizedBox(
             height: height * 0.01,
           ),
-          // Expanded(
-          //   child: Container(
-          //     padding: EdgeInsets.symmetric(
-          //       vertical: height * 0.01,
-          //       horizontal: width * 0.02,
-          //     ),
-          //     child: 
-          //   ),
-          // ),
+          Expanded(
+            child: ListView.builder(
+              padding: EdgeInsets.only(left: width * 0.01),
+              physics: const BouncingScrollPhysics(),
+              scrollDirection: Axis.vertical,
+              itemCount: widget.studentsData.length + 1,
+              itemBuilder: (context, index) {
+                // Header
+                if (index == 0) {
+                  return Container(
+                    height: height * .05,
+                    margin: EdgeInsets.symmetric(vertical: height * 0.008),
+                    child: Row(children: [
+                      Expanded(
+                        flex: 5,
+                        child: CustomText(
+                          text: "Name",
+                          size: sizeData.medium,
+                          color: colorData.fontColor(.8),
+                          weight: FontWeight.w800,
+                        ),
+                      ),
+                      SizedBox(
+                        width: width * 0.02,
+                      ),
+                      Expanded(
+                        flex: 3,
+                        child: ListView.builder(
+                          controller: controllers[index],
+                          scrollDirection: Axis.horizontal,
+                          itemCount: 10,
+                          itemBuilder: (context, index) => SizedBox(
+                            width: width * .2,
+                            child: Center(
+                              child: CustomText(
+                                text: "Day $index",
+                                size: sizeData.medium,
+                                color: colorData.fontColor(.8),
+                                weight: FontWeight.w800,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ]),
+                  );
+                } else {
+                  return Container(
+                    height: height * 0.065,
+                    margin: EdgeInsets.only(bottom: height * 0.01),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          flex: 5,
+                          child: StudentReportTableNamer(
+                              name: "Student 1",
+                              id: "Rhcsa001200",
+                              imageUrl: "assets/images/staff1.png"),
+                        ),
+                        SizedBox(
+                          width: width * 0.02,
+                        ),
+                        Expanded(
+                          flex: 3,
+                          child: ListView.builder(
+                            controller: controllers[index],
+                            scrollDirection: Axis.horizontal,
+                            itemCount: 10,
+                            itemBuilder: (context, index) {
+                              return SizedBox(
+                                width: width * .2,
+                                child: Center(
+                                  child: CustomText(
+                                    text: "text",
+                                    color: colorData.fontColor(.9),
+                                    weight: FontWeight.w800,
+                                    size: sizeData.medium,
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                }
+              },
+            ),
+          ),
         ],
       ),
     );
