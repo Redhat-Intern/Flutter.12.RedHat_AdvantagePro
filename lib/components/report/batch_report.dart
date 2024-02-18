@@ -14,6 +14,7 @@ class BatchReport extends ConsumerStatefulWidget {
     super.key,
   });
 
+  @override
   ConsumerState<BatchReport> createState() => _BatchReport();
 }
 
@@ -133,7 +134,7 @@ class _BatchReport extends ConsumerState<BatchReport> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => DetailedBatchReport(),
+                          builder: (context) => const DetailedBatchReport(),
                         ),
                       );
                     });

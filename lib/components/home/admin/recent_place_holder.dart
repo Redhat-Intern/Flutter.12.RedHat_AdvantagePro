@@ -6,7 +6,11 @@ import '../../../utilities/theme/size_data.dart';
 import '../../common/text.dart';
 
 class RecentPlaceHolder extends ConsumerWidget {
-  const RecentPlaceHolder({super.key});
+  const RecentPlaceHolder(
+      {super.key, required this.header, required this.text});
+
+  final String header;
+  final String text;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -21,7 +25,7 @@ class RecentPlaceHolder extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         CustomText(
-          text: "Recent",
+          text: header,
           size: sizeData.subHeader,
           color: colorData.fontColor(.8),
           weight: FontWeight.w600,
@@ -46,7 +50,7 @@ class RecentPlaceHolder extends ConsumerWidget {
             children: [
               Expanded(
                 child: CustomText(
-                  text: "No Batches have been crested till NOW!",
+                  text: text,
                   maxLine: 2,
                   weight: FontWeight.bold,
                   color: colorData.fontColor(.6),
@@ -62,7 +66,6 @@ class RecentPlaceHolder extends ConsumerWidget {
               SizedBox(
                 width: width * 0.02,
               ),
-
             ],
           ),
         ),

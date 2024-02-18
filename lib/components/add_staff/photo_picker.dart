@@ -70,24 +70,27 @@ class _PhotoPickerState extends ConsumerState<PhotoPicker> {
                   color: colorData.secondaryColor(.3),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: photo == null
-                    ? widget.from == From.detail
-                        ? Image.network(
-                            widget.photoURL,
-                            fit: BoxFit.cover,
-                          )
-                        : Center(
-                            child: CustomText(
-                              text: "PHOTO",
-                              size: sizeData.regular,
-                              color: colorData.primaryColor(.6),
-                              weight: FontWeight.w600,
-                            ),
-                          )
-                    : Image.file(
-                        photo!,
-                        fit: BoxFit.cover,
-                      ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: photo == null
+                      ? widget.from == From.detail
+                          ? Image.network(
+                              widget.photoURL,
+                              fit: BoxFit.cover,
+                            )
+                          : Center(
+                              child: CustomText(
+                                text: "PHOTO",
+                                size: sizeData.regular,
+                                color: colorData.primaryColor(.6),
+                                weight: FontWeight.w600,
+                              ),
+                            )
+                      : Image.file(
+                          photo!,
+                          fit: BoxFit.cover,
+                        ),
+                ),
               ),
             ),
           ),

@@ -1,11 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shimmer/shimmer.dart';
 
 import '../providers/user_detail_provider.dart';
 import '../components/profile/color_palette.dart';
 import '../components/profile/theme_toggle.dart';
-import '../firebase/firebase_auth.dart';
+import '../functions/firebase_auth.dart';
 import '../utilities/theme/color_data.dart';
 import '../utilities/theme/size_data.dart';
 
@@ -14,15 +15,7 @@ import '../components/common/text.dart';
 import '../components/profile/profile_tile.dart';
 
 class Profile extends ConsumerWidget {
-  Profile({super.key});
-
-  final String email = AuthFB().currentUser!.email.toString();
-
-  final Stream<DocumentSnapshot<Map<String, dynamic>>> userDataStream =
-      FirebaseFirestore.instance
-          .collection("users")
-          .doc(AuthFB().currentUser!.email)
-          .snapshots();
+  const Profile({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -32,6 +25,7 @@ class Profile extends ConsumerWidget {
 
     double height = sizeData.height;
     double width = sizeData.width;
+    double aspectRatio = sizeData.aspectRatio;
 
     return Scaffold(
       body: SafeArea(
@@ -56,15 +50,35 @@ class Profile extends ConsumerWidget {
                 height: height * 0.02,
               ),
               Container(
-                height: height * 0.15,
-                decoration: const BoxDecoration(
+                padding: EdgeInsets.all(aspectRatio * 8),
+                decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  image: DecorationImage(
-                    fit: BoxFit.contain,
-                    image: AssetImage(
-                      'assets/images/profile.png',
-                    ),
-                  ),
+                  color: colorData.secondaryColor(1),
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(width),
+                  child: Image.network(userData["photo"],
+                      height: aspectRatio * 250,
+                      width: aspectRatio * 250,
+                      fit: BoxFit.cover, loadingBuilder: (BuildContext context,
+                          Widget child, ImageChunkEvent? loadingProgress) {
+                    if (loadingProgress == null) {
+                      return child;
+                    } else {
+                      return Shimmer.fromColors(
+                        baseColor: colorData.backgroundColor(.1),
+                        highlightColor: colorData.secondaryColor(.1),
+                        child: Container(
+                          height: aspectRatio * 250,
+                          width: aspectRatio * 250,
+                          decoration: BoxDecoration(
+                            color: colorData.secondaryColor(.5),
+                            borderRadius: BorderRadius.circular(width),
+                          ),
+                        ),
+                      );
+                    }
+                  }),
                 ),
               ),
               SizedBox(height: height * 0.02),

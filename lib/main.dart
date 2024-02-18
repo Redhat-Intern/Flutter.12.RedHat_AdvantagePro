@@ -6,7 +6,7 @@ import 'package:firebase_core/firebase_core.dart';
 
 // Functions and utility logics
 import 'utilities/theme/theme_provider.dart';
-import 'firebase/firebase_options.dart';
+import 'functions/firebase_options.dart';
 import 'layout/splash.dart';
 
 bool? isFirstTimeView;

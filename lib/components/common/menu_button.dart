@@ -24,13 +24,13 @@ class MenuButton extends ConsumerWidget {
       child: Container(
         padding: EdgeInsets.all(aspectRatio * 10),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(aspectRatio * 14),
+          borderRadius: BorderRadius.circular(8),
           color: colorData.primaryColor(1),
         ),
         child: CustomIcon(
           icon: Icons.menu_rounded,
           color: colorData.sideBarTextColor(.85),
-          size: aspectRatio * 44,
+          size: aspectRatio * 47,
         ),
       ),
     );

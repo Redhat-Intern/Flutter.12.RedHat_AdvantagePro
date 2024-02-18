@@ -74,24 +74,27 @@ class _CertificateImagePickerState
                   color: colorData.secondaryColor(.3),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: image == null
-                    ? widget.from == From.detail
-                        ? Image.network(
-                            widget.imageURL,
-                            fit: BoxFit.cover,
-                          )
-                        : Center(
-                            child: CustomText(
-                              text: "Image",
-                              size: sizeData.regular,
-                              color: colorData.primaryColor(.6),
-                              weight: FontWeight.w600,
-                            ),
-                          )
-                    : Image.file(
-                        image!,
-                        fit: BoxFit.cover,
-                      ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: image == null
+                      ? widget.from == From.detail
+                          ? Image.network(
+                              widget.imageURL,
+                              fit: BoxFit.cover,
+                            )
+                          : Center(
+                              child: CustomText(
+                                text: "Image",
+                                size: sizeData.regular,
+                                color: colorData.primaryColor(.6),
+                                weight: FontWeight.w600,
+                              ),
+                            )
+                      : Image.file(
+                          image!,
+                          fit: BoxFit.cover,
+                        ),
+                ),
               ),
             ),
           ),

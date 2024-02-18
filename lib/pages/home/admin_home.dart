@@ -34,20 +34,22 @@ class AdminHome extends ConsumerWidget {
                   List<QueryDocumentSnapshot<Map<String, dynamic>>> docs =
                       snapshot.data!.docs;
 
-                  List<Map<String, Map<String, dynamic>>> recentBatches = [];
+                  List<Map<String, dynamic>> recentBatches = [];
                   for (QueryDocumentSnapshot<Map<String, dynamic>> i in docs) {
                     Map<String, dynamic> data = i.data();
                     int count = List.from(data["students"]).length;
                     recentBatches.add({
-                      data["certificate"]["image"]: {
-                        "name": data["certificate"]["name"],
-                        "count": count
-                      }
+                      "certificateID": data["certificateID"],
+                      "count": count,
+                      "id": i.id,
                     });
                   }
                   return Recent(recentBatches: recentBatches);
                 } else {
-                  return const RecentPlaceHolder();
+                  return const RecentPlaceHolder(
+                    header: "Recent",
+                    text: "No Batches have been crested till NOW!",
+                  );
                 }
               } else {
                 return const Center(
@@ -57,7 +59,9 @@ class AdminHome extends ConsumerWidget {
             }),
         const StaffsList(),
         const CreateBatchButton(),
-        SizedBox(height: height*0.02,),
+        SizedBox(
+          height: height * 0.02,
+        ),
       ],
     );
   }

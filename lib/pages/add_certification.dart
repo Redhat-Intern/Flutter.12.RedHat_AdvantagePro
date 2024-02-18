@@ -3,7 +3,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:redhat_v1/components/common/icon.dart';
-import 'package:redhat_v1/firebase/create/create_certficate.dart';
+import 'package:redhat_v1/functions/create/create_certficate.dart';
+import 'package:redhat_v1/providers/navigation_index_provider.dart';
 
 import '../utilities/theme/color_data.dart';
 import '../utilities/theme/size_data.dart';
@@ -24,7 +25,6 @@ class AddCertification extends ConsumerStatefulWidget {
 }
 
 class _addCertificateState extends ConsumerState<AddCertification> {
-
   TextEditingController name = TextEditingController();
   TextEditingController discription = TextEditingController();
 
@@ -120,6 +120,12 @@ class _addCertificateState extends ConsumerState<AddCertification> {
     });
   }
 
+  void removeCourseContent(int day) {
+    setState(() {
+      courseContent.remove(day);
+    });
+  }
+
   void addToFirestore({
     required CustomSizeData sizeData,
     required CustomColorData colorData,
@@ -162,36 +168,7 @@ class _addCertificateState extends ConsumerState<AddCertification> {
       setState(() {
         completionCount = {0: "Started"};
       });
-      showDialog(
-        barrierDismissible: false,
-        barrierColor: Colors.black38,
-        useSafeArea: true,
-        context: context,
-        builder: (context) {
-          return Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                CircularProgressIndicator(
-                  strokeWidth: aspectRatio * 14,
-                  strokeAlign: 8,
-                  color: colorData.primaryColor(1),
-                  strokeCap: StrokeCap.round,
-                ),
-                SizedBox(
-                  height: height * 0.07,
-                ),
-                CustomText(
-                  text: completionCount.values.toString(),
-                  size: sizeData.medium,
-                  color: colorData.secondaryColor(1),
-                ),
-              ],
-            ),
-          );
-        },
-      );
+
       createCertificate(
         image: image,
         nameController: name,
@@ -208,7 +185,7 @@ class _addCertificateState extends ConsumerState<AddCertification> {
             completionCount = event;
           } else if (event.keys.first == 4) {
             clearData();
-            Navigator.pop(context);
+            ref.read(navigationIndexProvider.notifier).jumpTo(0);
           }
         });
       });
@@ -233,171 +210,257 @@ class _addCertificateState extends ConsumerState<AddCertification> {
     double width = sizeData.width;
     double aspectRatio = sizeData.aspectRatio;
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            const MenuButton(),
-            const Spacer(),
-            CustomText(
-              text: "Create Certificates",
-              size: sizeData.header,
-              color: colorData.fontColor(1),
-              weight: FontWeight.w600,
-            ),
-            GestureDetector(
-              onTap: () {
-                addToFirestore(
-                  colorData: colorData,
-                  sizeData: sizeData,
-                );
-              },
-              child: Container(
-                margin:
-                    EdgeInsets.only(right: width * 0.01, left: width * 0.05),
-                padding: EdgeInsets.only(
-                  left: width * 0.01,
-                  right: width * 0.02,
-                  top: height * 0.005,
-                  bottom: height * 0.005,
-                ),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8),
-                  color: colorData.secondaryColor(.3),
-                ),
-                child: Center(
-                  child: Row(
-                    children: [
-                      CustomIcon(
-                        size: aspectRatio * 45,
-                        icon: Icons.add_rounded,
-                        color: colorData.primaryColor(1),
-                      ),
-                      CustomText(
-                        text: "ADD",
-                        size: sizeData.regular,
-                        color: colorData.primaryColor(1),
-                        weight: FontWeight.w800,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-        SizedBox(
-          height: height * .03,
-        ),
-        CertificateDetail(
-          discription: discription,
-          name: name,
-          imageSetter: setCertificateImage,
-        ),
-        SizedBox(
-          height: height * .03,
-        ),
-        CertificatePDF(
-          setter: setCoursePDF,
-        ),
-        SizedBox(
-          height: height * .03,
-        ),
-        Expanded(
-          child: Column(
+    return completionCount.isEmpty
+        ? Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              CustomText(
-                text: "Course content",
-                size: sizeData.medium,
-                color: colorData.fontColor(.8),
-                weight: FontWeight.w800,
+              Row(
+                children: [
+                  const MenuButton(),
+                  const Spacer(),
+                  CustomText(
+                    text: "Create Certificates",
+                    size: sizeData.header,
+                    color: colorData.fontColor(1),
+                    weight: FontWeight.w600,
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      addToFirestore(
+                        colorData: colorData,
+                        sizeData: sizeData,
+                      );
+                    },
+                    child: Container(
+                      margin: EdgeInsets.only(
+                          right: width * 0.01, left: width * 0.05),
+                      padding: EdgeInsets.only(
+                        left: width * 0.01,
+                        right: width * 0.02,
+                        top: height * 0.005,
+                        bottom: height * 0.005,
+                      ),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(8),
+                        color: colorData.secondaryColor(.3),
+                      ),
+                      child: Center(
+                        child: Row(
+                          children: [
+                            CustomIcon(
+                              size: aspectRatio * 45,
+                              icon: Icons.add_rounded,
+                              color: colorData.primaryColor(1),
+                            ),
+                            CustomText(
+                              text: "ADD",
+                              size: sizeData.regular,
+                              color: colorData.primaryColor(1),
+                              weight: FontWeight.w800,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
               SizedBox(
-                height: height * .01,
+                height: height * .03,
               ),
-              Container(
-                height: height * 0.06,
-                padding: EdgeInsets.only(
-                  left: width * 0.03,
-                  top: height * 0.006,
-                  bottom: height * 0.006,
-                ),
-                decoration: BoxDecoration(
-                  color: colorData.secondaryColor(.15),
-                  borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(10),
-                    bottomLeft: Radius.circular(10),
-                  ),
-                ),
-                child: Row(
+              CertificateDetail(
+                discription: discription,
+                name: name,
+                imageSetter: setCertificateImage,
+              ),
+              SizedBox(
+                height: height * .03,
+              ),
+              CertificatePDF(
+                setter: setCoursePDF,
+              ),
+              SizedBox(
+                height: height * .03,
+              ),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Expanded(
-                      child: ListView.builder(
-                        physics: const BouncingScrollPhysics(),
-                        padding: EdgeInsets.symmetric(
-                          vertical: height * 0.005,
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        CustomText(
+                          text: "Course content",
+                          size: sizeData.medium,
+                          color: colorData.fontColor(.8),
+                          weight: FontWeight.w800,
                         ),
-                        scrollDirection: Axis.horizontal,
-                        itemCount: courseContent.length,
-                        itemBuilder: (context, index) {
-                          return GestureDetector(
+                        Tooltip(
+                          message: "Long press a day to remove it",
+                          textAlign: TextAlign.center,
+                          textStyle: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            color: colorData.fontColor(.6),
+                            fontSize: sizeData.small,
+                          ),
+                          waitDuration: const Duration(microseconds: 1),
+                          showDuration: const Duration(seconds: 1),
+                          padding: EdgeInsets.symmetric(
+                              horizontal: width * 0.02,
+                              vertical: height * 0.005),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8),
+                            color: colorData.secondaryColor(.8),
+                          ),
+                          child: Container(
+                            padding: const EdgeInsets.all(2),
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: colorData.secondaryColor(.5),
+                            ),
+                            child: CustomIcon(
+                              size: aspectRatio * 32,
+                              icon: Icons.question_mark_rounded,
+                              color: colorData.primaryColor(1),
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                    SizedBox(
+                      height: height * .01,
+                    ),
+                    Container(
+                      height: height * 0.06,
+                      padding: EdgeInsets.only(
+                        left: width * 0.03,
+                        top: height * 0.006,
+                        bottom: height * 0.006,
+                      ),
+                      decoration: BoxDecoration(
+                        color: colorData.secondaryColor(.15),
+                        borderRadius: const BorderRadius.only(
+                          topLeft: Radius.circular(10),
+                          bottomLeft: Radius.circular(10),
+                        ),
+                      ),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: ListView.builder(
+                              physics: const BouncingScrollPhysics(),
+                              padding: EdgeInsets.symmetric(
+                                vertical: height * 0.005,
+                              ),
+                              scrollDirection: Axis.horizontal,
+                              itemCount: courseContent.length,
+                              itemBuilder: (context, index) {
+                                return GestureDetector(
+                                  onTap: () => setState(() {
+                                    firstIndex = index;
+                                    dayChange(day: index);
+                                  }),
+                                  onLongPress: () {
+                                    firstIndex = index - 1;
+                                    if (index > 0) {
+                                      removeCourseContent(index);
+                                    }
+                                  },
+                                  child: Container(
+                                    margin:
+                                        EdgeInsets.only(right: width * 0.03),
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: width * 0.02,
+                                      vertical: height * 0.005,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(6),
+                                      color: colorData.secondaryColor(
+                                          firstIndex == index ? .4 : .3),
+                                    ),
+                                    child: Center(
+                                      child: CustomText(
+                                        text: "Day $index",
+                                        size: sizeData.regular,
+                                        color: firstIndex == index
+                                            ? colorData.primaryColor(.8)
+                                            : colorData.fontColor(.4),
+                                        weight: FontWeight.w800,
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                          GestureDetector(
                             onTap: () => setState(() {
-                              firstIndex = index;
-                              dayChange(day: index);
+                              courseContent.addAll({
+                                courseContent.length:
+                                    CourseData(files: {}, title: "", topics: "")
+                              });
                             }),
                             child: Container(
-                              margin: EdgeInsets.only(right: width * 0.03),
+                              margin: EdgeInsets.only(
+                                  right: width * 0.01, left: width * 0.03),
                               padding: EdgeInsets.symmetric(
-                                horizontal: width * 0.02,
+                                horizontal: width * 0.025,
                                 vertical: height * 0.005,
                               ),
                               decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(6),
-                                color: colorData.secondaryColor(
-                                    firstIndex == index ? .4 : .3),
+                                borderRadius: BorderRadius.circular(8),
+                                color: colorData.secondaryColor(.3),
                               ),
                               child: Center(
                                 child: CustomText(
-                                  text: "Day $index",
+                                  text: "Add Day",
                                   size: sizeData.regular,
-                                  color: firstIndex == index
-                                      ? colorData.primaryColor(.8)
-                                      : colorData.fontColor(.4),
+                                  color: colorData.primaryColor(.8),
                                   weight: FontWeight.w800,
                                 ),
                               ),
                             ),
-                          );
-                        },
+                          ),
+                        ],
                       ),
                     ),
-                    GestureDetector(
-                      onTap: () => setState(() {
-                        courseContent.addAll({
-                          courseContent.length:
-                              CourseData(files: {}, title: "", topics: "")
-                        });
-                      }),
+                    SizedBox(
+                      height: height * 0.01,
+                    ),
+                    Expanded(
                       child: Container(
-                        margin: EdgeInsets.only(
-                            right: width * 0.01, left: width * 0.03),
                         padding: EdgeInsets.symmetric(
-                          horizontal: width * 0.025,
-                          vertical: height * 0.005,
+                          horizontal: width * 0.03,
+                          vertical: height * 0.01,
                         ),
                         decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8),
-                          color: colorData.secondaryColor(.3),
+                          color: colorData.secondaryColor(.15),
+                          borderRadius: BorderRadius.circular(10),
                         ),
-                        child: Center(
-                          child: CustomText(
-                            text: "Add Day",
-                            size: sizeData.regular,
-                            color: colorData.primaryColor(.8),
-                            weight: FontWeight.w800,
-                          ),
+                        child: Column(
+                          children: [
+                            CourseContentInputField(
+                              controller: title,
+                              header: "Title: ",
+                              hintText: "Main topic of the day",
+                            ),
+                            SizedBox(
+                              height: height * 0.01,
+                            ),
+                            CourseContentInputField(
+                              controller: topics,
+                              header: "Topics: ",
+                              hintText: "All topics seperated by comma",
+                            ),
+                            //
+                            SizedBox(
+                              height: height * 0.01,
+                            ),
+                            CourseFilePicker(
+                              content: courseContent[firstIndex]!,
+                              handleFile: handleFile,
+                            ),
+                          ],
                         ),
                       ),
                     ),
@@ -405,52 +468,65 @@ class _addCertificateState extends ConsumerState<AddCertification> {
                 ),
               ),
               SizedBox(
-                height: height * 0.01,
+                height: height * .02,
               ),
-              Expanded(
+            ],
+          )
+        : Center(
+            child: Container(
+              height: height,
+              width: width,
+              decoration: BoxDecoration(boxShadow: [
+                BoxShadow(
+                  color: colorData.secondaryColor(.5),
+                  blurRadius: 400,
+                  spreadRadius: 400,
+                ),
+              ]),
+              child: Center(
                 child: Container(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: width * 0.03,
-                    vertical: height * 0.01,
-                  ),
+                  // width: width * .5,
+                  height: height * .23,
+                  padding: EdgeInsets.symmetric(horizontal: width * 0.05),
                   decoration: BoxDecoration(
-                    color: colorData.secondaryColor(.15),
-                    borderRadius: BorderRadius.circular(10),
+                    borderRadius: BorderRadius.circular(8),
+                    gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [
+                          colorData.primaryColor(.2),
+                          colorData.primaryColor(.6)
+                        ]),
                   ),
                   child: Column(
                     children: [
-                      CourseContentInputField(
-                        controller: title,
-                        header: "Title: ",
-                        hintText: "Main topic of the day",
+                      SizedBox(
+                        height: height * 0.06,
+                      ),
+                      CircularProgressIndicator.adaptive(
+                        strokeWidth: 8,
+                        strokeAlign: 5,
+                        strokeCap: StrokeCap.round,
+                        backgroundColor: Colors.white,
+                        valueColor: AlwaysStoppedAnimation(
+                          colorData.primaryColor(1),
+                        ),
+                        value: completionCount.keys.first * 0.33,
                       ),
                       SizedBox(
-                        height: height * 0.01,
+                        height: height * 0.06,
                       ),
-                      CourseContentInputField(
-                        controller: topics,
-                        header: "Topics: ",
-                        hintText: "All topics seperated by comma",
-                      ),
-                      //
-                      SizedBox(
-                        height: height * 0.01,
-                      ),
-                      CourseFilePicker(
-                        content: courseContent[firstIndex]!,
-                        handleFile: handleFile,
-                      ),
+                      CustomText(
+                        text: completionCount.values.first,
+                        size: sizeData.medium,
+                        color: colorData.secondaryColor(1),
+                        weight: FontWeight.w600,
+                      )
                     ],
                   ),
                 ),
               ),
-            ],
-          ),
-        ),
-        SizedBox(
-          height: height * .02,
-        ),
-      ],
-    );
+            ),
+          );
   }
 }

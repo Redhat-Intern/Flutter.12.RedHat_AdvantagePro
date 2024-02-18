@@ -17,17 +17,23 @@ Stream<Map<int, String>> addStaff({
   String phoneNo = phoneNoController.text;
   String experience = experienceController.text;
 
+  QuerySnapshot<Map<String, dynamic>> staffList =
+      await FirebaseFirestore.instance.collection("staffs").get();
+  int staffCount = staffList.docs.length;
+  String staffId = "STAFF${(staffCount + 1).toString().padLeft(3, '0')}";
+
   Reference storageRef = FirebaseStorage.instance.ref();
 
   String photoURL =
       await uploadPhoto(ref: storageRef, photo: photo, email: email);
-  yield {1: photoURL};
+  yield {1: staffId};
 
   List<String> certificatesURL = await uploadCertificates(
       ref: storageRef, certificates: certificates, email: email);
   yield {2: "uploaded certificates"};
 
   Map<String, dynamic> staffData = {
+    "id": staffId,
     "name": name,
     "photo": photoURL,
     "phoneNo": phoneNo,
@@ -35,7 +41,10 @@ Stream<Map<int, String>> addStaff({
     "certificates": certificatesURL,
   };
 
-  FirebaseFirestore.instance.collection("staffs").doc(email).set(staffData);
+  FirebaseFirestore.instance
+      .collection("staffRequest")
+      .doc(email)
+      .set(staffData);
   yield {3: "Uploaded Data to firebase"};
 }
 

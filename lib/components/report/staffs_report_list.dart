@@ -4,7 +4,6 @@ import 'package:shimmer/shimmer.dart';
 
 import '../../../utilities/theme/color_data.dart';
 import '../../../utilities/theme/size_data.dart';
-import '../common/icon.dart';
 import '../common/text.dart';
 
 class StaffsReportList extends ConsumerWidget {

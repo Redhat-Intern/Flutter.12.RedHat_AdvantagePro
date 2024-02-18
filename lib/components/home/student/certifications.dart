@@ -195,7 +195,7 @@ class _CertificationsState extends ConsumerState<Certifications> {
             ],
           );
           }else{
-            return CertificationsPlaceHolder();
+            return const CertificationsPlaceHolder();
           }
         });
   }

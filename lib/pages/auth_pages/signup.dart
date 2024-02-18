@@ -1,8 +1,8 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../auth_shifter.dart';
+import '../../functions/create/create_user.dart';
+import '../../functions/create/generate_userdata.dart';
 import '../../providers/user_select_provider.dart';
 import '../../components/add_staff/custom_input_field.dart';
 import '../../components/auth/loginsingup_shifter.dart';
@@ -10,7 +10,6 @@ import '../../components/common/back_button.dart';
 import '../../components/common/footer.dart';
 import '../../utilities/static_data.dart';
 import '../../utilities/theme/size_data.dart';
-import '../../firebase/firebase_auth.dart';
 
 import '../../components/common/text.dart';
 
@@ -38,108 +37,30 @@ class _SignupState extends ConsumerState<Signup> {
     super.dispose();
   }
 
-  void generateUserData(
-      {required double textSize,
-      required Color textColor,
-      required Color backgroundColor}) async {
-    UserRole role = ref.watch(userRoleProvider)!;
-    String colName = role == UserRole.staff ? "staffRequest" : "studentRequest";
-    QuerySnapshot<Map<String, dynamic>> queryData = await FirebaseFirestore
-        .instance
-        .collection(colName)
-        .where("regID", isEqualTo: idCtr.text.toString())
-        .get();
-    if (queryData.docs.isNotEmpty) {
+  void _generateUserData() async {
+    Map<String, dynamic>? userData = await generateUserData(
+        context: context, id: idCtr.text.trim(), ref: ref);
+    if (userData != null) {
       setState(() {
-        Map<String, dynamic> data =
-            Map.fromEntries(queryData.docs.first.data().entries);
-        generatedData = data;
-        emailCtr.text = data["email"];
-        nameCtr.text = data["name"];
+        generatedData = userData;
+        emailCtr.text = userData["email"];
+        nameCtr.text = userData["name"];
       });
-    } else {
-      ScaffoldMessenger.of(context).clearSnackBars();
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          backgroundColor: backgroundColor,
-          content: CustomText(
-            text:
-                "The Provided ${role.name.toString().toUpperCase()} ID is not available!",
-            maxLine: 3,
-            align: TextAlign.center,
-            color: textColor,
-            size: textSize,
-            weight: FontWeight.w600,
-          ),
-        ),
-      );
     }
   }
 
-  void loginUser(
-      {required double textSize,
-      required Color textColor,
-      required Color backgroundColor}) {
-    UserRole role = ref.watch(userRoleProvider)!;
+  void _createUser() async {
     setState(() {
-      generatedData["name"] = nameCtr.text;
-      generatedData["password"] = passwordCtr.text;
+      generatedData["name"] = nameCtr.text.trim();
+      generatedData["password"] = passwordCtr.text.trim();
     });
-    AuthFB()
-        .createUserWithEmailAndPassword(
-      email: emailCtr.text,
-      password: passwordCtr.text,
-    )
-        .then((value) {
-      FirebaseFirestore.instance
-          .collection("users")
-          .doc(emailCtr.text)
-          .set({"role": role.name.toString()});
-
-      Map<String, dynamic> studentData = {
-        "email": generatedData["email"],
-        "name": generatedData["name"],
-        "phoneNo": generatedData["phoneNo"],
-        "occupation": generatedData["occupation"],
-        "occDetail": generatedData["occDetail"],
-        "regID": [generatedData["regID"]],
-      };
-      
-      FirebaseFirestore.instance
-          .collection('${role.name}s')
-          .doc(emailCtr.text)
-          .set(studentData);
-      FirebaseFirestore.instance
-          .collection('${role.name}s')
-          .doc(emailCtr.text)
-          .collection("certifications")
-          .doc(generatedData["batchName"])
-          .set({
-        "name": generatedData["batchName"],
-        "certificateName": generatedData["certificateName"],
-      });
-      FirebaseFirestore.instance
-          .collection("studentRequest")
-          .doc(emailCtr.text)
-          .delete();
-      Navigator.pop(context);
-      Navigator.pop(context);
-
-    }).catchError((error) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          backgroundColor: backgroundColor,
-          content: CustomText(
-            text: error.message.toString(),
-            maxLine: 3,
-            align: TextAlign.center,
-            color: textColor,
-            size: textSize,
-            weight: FontWeight.w600,
-          ),
-        ),
-      );
-    });
+    await createUser(
+      ref: ref,
+      email: emailCtr.text.trim(),
+      password: passwordCtr.text.trim(),
+      generatedData: generatedData,
+      context: context,
+    );
   }
 
   @override
@@ -214,11 +135,7 @@ class _SignupState extends ConsumerState<Signup> {
                         ),
                       ),
                       GestureDetector(
-                        onTap: () => generateUserData(
-                          textColor: fontColor(.8),
-                          textSize: sizeData.regular,
-                          backgroundColor: secondaryColor(1),
-                        ),
+                        onTap: () => _generateUserData(),
                         child: Container(
                           margin: EdgeInsets.only(left: width * 0.02),
                           padding: EdgeInsets.symmetric(
@@ -274,13 +191,8 @@ class _SignupState extends ConsumerState<Signup> {
                     visibleText: false,
                   ),
                   GestureDetector(
-                    onTap: generatedData.isNotEmpty
-                        ? () => loginUser(
-                              textColor: fontColor(.8),
-                              textSize: sizeData.regular,
-                              backgroundColor: secondaryColor(1),
-                            )
-                        : () {},
+                    onTap:
+                        generatedData.isNotEmpty ? () => _createUser() : () {},
                     child: Align(
                       alignment: Alignment.centerRight,
                       child: AnimatedContainer(

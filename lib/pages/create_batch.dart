@@ -104,7 +104,7 @@ class CreateBatch extends ConsumerWidget {
                           }
                         }),
                     SizedBox(
-                      height: height * 0.03,
+                      height: height * 0.025,
                     ),
                     const AddStudents(),
                     SizedBox(

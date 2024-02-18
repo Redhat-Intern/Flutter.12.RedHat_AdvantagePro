@@ -140,7 +140,7 @@ class StaffsList extends ConsumerWidget {
                                   );
                                 },
                                 child: Container(
-                                  width: width * 0.145,
+                                  width: height * 0.075,
                                   margin: EdgeInsets.only(
                                     right: width * 0.04,
                                   ),

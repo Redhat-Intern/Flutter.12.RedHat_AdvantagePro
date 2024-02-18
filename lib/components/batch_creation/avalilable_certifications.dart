@@ -82,14 +82,17 @@ class _AvailableCertificationsState
     }
   }
 
-  void setBatchName() {
+  setBatchName() async {
     String batchName = selectedCertificate["name"] + "001";
-    List<dynamic> registeredBatches = selectedCertificate["batches"] ?? [];
+    QuerySnapshot<Map<String, dynamic>> docList = await FirebaseFirestore
+        .instance
+        .collection("certificates")
+        .doc(selectedCertificate["name"])
+        .collection("instances")
+        .get();
 
-    if (registeredBatches.isNotEmpty) {
-      String lastBatch = registeredBatches.last;
-      int batchesCount =
-          int.parse(lastBatch.substring(lastBatch.length - 3).toString()) + 1;
+    if (docList.docs.isNotEmpty) {
+      int batchesCount = docList.docs.length + 1;
       batchName =
           selectedCertificate["name"] + batchesCount.toString().padLeft(3, '0');
     }
@@ -149,6 +152,9 @@ class _AvailableCertificationsState
                     onTap: () {
                       setState(() {
                         selectedCertificate = {};
+                        selectedDates = [];
+                        startDate = null;
+                        endDate = null;
                       });
                     },
                     child: CustomText(
@@ -247,11 +253,11 @@ class _AvailableCertificationsState
                           itemBuilder: (BuildContext context, int index) {
                             bool isFirst = firstIndex == index;
                             return GestureDetector(
-                              onTap: () {
+                              onTap: () async {
                                 setState(() {
                                   selectedCertificate = certifications[index];
-                                  setBatchName();
                                 });
+                                await setBatchName();
                               },
                               child: Container(
                                 margin: EdgeInsets.only(right: width * 0.02),

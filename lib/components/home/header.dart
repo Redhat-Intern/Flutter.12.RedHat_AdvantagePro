@@ -1,8 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:redhat_v1/components/common/text.dart';
-import 'package:redhat_v1/pages/profile.dart';
 
+import '../../functions/update/update_notification_data.dart';
+import '../../pages/profile.dart';
 import '../../providers/user_detail_provider.dart';
 import '../../utilities/theme/color_data.dart';
 import '../../utilities/theme/size_data.dart';
@@ -10,12 +11,18 @@ import '../../utilities/theme/size_data.dart';
 import '../../pages/notification.dart';
 import '../common/icon.dart';
 import '../common/menu_button.dart';
+import '../common/text.dart';
 
-class Header extends ConsumerWidget {
+class Header extends ConsumerStatefulWidget {
   const Header({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<Header> createState() => _HeaderState();
+}
+
+class _HeaderState extends ConsumerState<Header> {
+  @override
+  Widget build(BuildContext context) {
     CustomSizeData sizeData = CustomSizeData.from(context);
     CustomColorData colorData = CustomColorData.from(ref);
 
@@ -35,41 +42,60 @@ class Header extends ConsumerWidget {
           children: [
             const MenuButton(),
             const Spacer(),
-            GestureDetector(
-              onTap: () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (BuildContext context) => const Notifications(),
-                ),
-              ),
-              child: Stack(
-                clipBehavior: Clip.none,
-                children: [
-                  CustomIcon(
-                    size: aspectRatio * 65,
-                    icon: Icons.notifications_outlined,
-                    color: colorData.fontColor(.8),
-                  ),
-                  Positioned(
-                    top: -6,
-                    left: -1,
-                    child: Container(
-                      padding: EdgeInsets.all(aspectRatio * 10),
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: colorData.primaryColor(1),
+            StreamBuilder(
+                stream: FirebaseFirestore.instance
+                    .collection("notifications")
+                    .snapshots(),
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    List<QueryDocumentSnapshot<Map<String, dynamic>>> data =
+                        snapshot.data!.docs.toList();
+                    int messageCount = updateNotificationData(
+                        ref: ref, data: data, email: userData["email"]);
+
+                    return GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (BuildContext context) => const Notifications(),
+                          ),
+                        );
+                      },
+                      child: Stack(
+                        clipBehavior: Clip.none,
+                        children: [
+                          CustomIcon(
+                            size: aspectRatio * 65,
+                            icon: Icons.notifications_outlined,
+                            color: colorData.fontColor(.8),
+                          ),
+                          Positioned(
+                            top: -6,
+                            left: -1,
+                            child: Container(
+                              padding: EdgeInsets.all(aspectRatio * 10),
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: colorData.primaryColor(1),
+                              ),
+                              child: CustomText(
+                                text: messageCount.toString(),
+                                size: aspectRatio * 22,
+                                color: colorData.sideBarTextColor(1),
+                                weight: FontWeight.bold,
+                              ),
+                            ),
+                          )
+                        ],
                       ),
-                      child: CustomText(
-                        text: "2",
-                        size: aspectRatio * 22,
-                        color: colorData.sideBarTextColor(1),
-                        weight: FontWeight.bold,
-                      ),
-                    ),
-                  )
-                ],
-              ),
-            ),
+                    );
+                  } else {
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  }
+                }),
             GestureDetector(
               onTap: () {
                 Navigator.push(
@@ -87,8 +113,8 @@ class Header extends ConsumerWidget {
                   color: colorData.secondaryColor(1),
                 ),
                 child: Image(
-                  height: aspectRatio * 65,
-                  width: aspectRatio * 65,
+                  height: aspectRatio * 70,
+                  width: aspectRatio * 70,
                   image: const AssetImage(
                     "assets/images/redhat.png",
                   ),
@@ -97,7 +123,9 @@ class Header extends ConsumerWidget {
             )
           ],
         ),
-        SizedBox(height: height*0.015,),
+        SizedBox(
+          height: height * 0.015,
+        ),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.end,

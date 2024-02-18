@@ -13,6 +13,7 @@ class CustomSizeData {
   final double regular;
   final double small;
   final double verySmall;
+  final double tooSmall;
 
   final double sideBarWith;
 
@@ -31,6 +32,7 @@ class CustomSizeData {
     double regular = aspectRatio * 30;
     double small = aspectRatio * 27;
     double verySmall = aspectRatio * 24;
+    double tooSmall = aspectRatio * 22;
 
     double sideBarWidth = width * 0.65;
 
@@ -47,6 +49,7 @@ class CustomSizeData {
       small: small,
       subHeader: subHeader,
       verySmall: verySmall,
+      tooSmall: tooSmall,
     );
   }
 
@@ -62,6 +65,7 @@ class CustomSizeData {
     required this.regular,
     required this.small,
     required this.verySmall,
+    required this.tooSmall,
     required this.sideBarWith,
   });
 }

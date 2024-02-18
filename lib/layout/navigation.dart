@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:redhat_v1/pages/add_certification.dart';
-import 'package:redhat_v1/providers/user_select_provider.dart';
 
+import '../pages/add_certification.dart';
 import '../pages/home/admin_home.dart';
 import '../pages/home/staff_home.dart';
 import '../pages/home/student_home.dart';
+import '../providers/user_select_provider.dart';
 import '../utilities/static_data.dart';
 import '../utilities/theme/size_data.dart';
 import '../pages/report.dart';
@@ -24,7 +24,7 @@ class Navigation extends ConsumerStatefulWidget {
 
 class _NavigationState extends ConsumerState<Navigation> {
   bool canPop = false;
-  late GlobalKey<ScaffoldState> scaffoldKey ;
+  late GlobalKey<ScaffoldState> scaffoldKey;
   int index = 0;
 
   popFunction(WidgetRef ref) async {
@@ -91,13 +91,17 @@ class _NavigationState extends ConsumerState<Navigation> {
             right: width * 0.04,
             top: height * 0.02,
           ),
-          child: WillPopScope(
-              onWillPop: () => popFunction(ref), child: WidgetList[index]
-              // IndexedStack(
-              //   index: index,
-              //   children: WidgetList,
-              // ),
-              ),
+          child: role == null
+              ? const Center(
+                  child: CircularProgressIndicator(),
+                )
+              : WillPopScope(
+                  onWillPop: () => popFunction(ref), child: WidgetList[index]
+                  // IndexedStack(
+                  //   index: index,
+                  //   children: WidgetList,
+                  // ),
+                  ),
         ),
       ),
       drawer: SideBar(

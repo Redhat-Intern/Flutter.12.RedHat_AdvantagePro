@@ -1,18 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../auth_shifter.dart';
 import '../../components/auth/loginsingup_shifter.dart';
 import '../../components/common/back_button.dart';
 import '../../components/common/footer.dart';
 import '../../providers/user_select_provider.dart';
 import '../../utilities/static_data.dart';
 import '../../utilities/theme/size_data.dart';
-import '../../firebase/firebase_auth.dart';
+import '../../functions/firebase_auth.dart';
 
 import '../../components/auth/logintext_field.dart';
 import '../../components/common/text.dart';
-import '../auth.dart';
+import '../../layout/auth.dart';
 
 class Login extends ConsumerStatefulWidget {
   const Login({super.key});
@@ -35,11 +34,13 @@ class _LoginState extends ConsumerState<Login> {
   void loginUser(
       {required double textSize,
       required Color textColor,
-      required Color backgroundColor}) {
+      required Color backgroundColor,
+      required UserRole role}) {
     AuthFB()
         .signInWithEmailAndPassword(
-      email: emailController.text,
-      password: passwordController.text,
+      email: emailController.text.trim(),
+      password: passwordController.text.trim(),
+      role: role,
     )
         .then((value) {
       Navigator.pop(context);
@@ -72,7 +73,6 @@ class _LoginState extends ConsumerState<Login> {
     Color fontColor(double opacity) =>
         const Color(0XFF1C2136).withOpacity(opacity);
     Color secondaryColor(double opacity) => Colors.white.withOpacity(opacity);
-    // double aspectRatio = sizeData.aspectRatio;
 
     return Scaffold(
       backgroundColor: const Color(0xffDADEEC),
@@ -150,6 +150,7 @@ class _LoginState extends ConsumerState<Login> {
                       textColor: fontColor(.8),
                       textSize: sizeData.regular,
                       backgroundColor: secondaryColor(1),
+                      role: role!,
                     ),
                     child: Align(
                       alignment: Alignment.centerRight,

@@ -6,7 +6,7 @@ import 'package:redhat_v1/providers/create_batch_provider.dart';
 import '../../utilities/theme/color_data.dart';
 import '../../utilities/theme/size_data.dart';
 
-import '../../providers/class/student.dart';
+import '../../model/student.dart';
 import 'add_individual_student_overlay.dart';
 
 class DataPreview extends ConsumerWidget {

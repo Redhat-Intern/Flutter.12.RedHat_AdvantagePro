@@ -5,7 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:redhat_v1/components/add_staff/send_email.dart';
 
 import '../utilities/static_data.dart';
-import '../firebase/create/add_staff.dart';
+import '../functions/create/add_staff.dart';
 import '../utilities/theme/color_data.dart';
 import '../utilities/theme/size_data.dart';
 
@@ -68,8 +68,8 @@ class _AddStaffState extends ConsumerState<AddStaff> {
         experienceController.text.isEmpty ||
         photo.isEmpty ||
         certificates.isEmpty) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(const SnackBar(content: Text("Kindly enter all the data")));
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Kindly enter all the data")));
     } else {
       setState(() {
         completionCount = {0: "Started"};
@@ -88,7 +88,7 @@ class _AddStaffState extends ConsumerState<AddStaff> {
                 imageURL: event.values.first,
                 receiverEmail: emailController.text,
                 name: nameController.text,
-                registrationNo: "RHCSA123");
+                registrationNo: event.values.first.toString());
             completionCount = {1: "Photo uploaded"};
           } else if (event.keys.first == 3) {
             completionCount = event;
@@ -252,7 +252,8 @@ class _AddStaffState extends ConsumerState<AddStaff> {
                                   strokeCap: StrokeCap.round,
                                   backgroundColor: Colors.white,
                                   valueColor: AlwaysStoppedAnimation(
-                                      colorData.primaryColor(1)),
+                                    colorData.primaryColor(1),
+                                  ),
                                   value: completionCount.keys.first * 0.33,
                                 ),
                                 SizedBox(

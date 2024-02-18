@@ -68,6 +68,7 @@ dependencies:
   cached_network_image: ^3.3.1
   syncfusion_flutter_charts: ^24.2.4+3
   linked_scroll_controller: ^0.2.0
+  rxdart: ^0.27.7
 
 dev_dependencies:
   flutter_test:

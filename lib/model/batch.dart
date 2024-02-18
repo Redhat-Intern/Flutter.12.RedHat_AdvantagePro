@@ -5,10 +5,10 @@ import 'student.dart';
 class Batch {
   DateTime creationTime;
   String name;
-  Map certificateData;
+  Map<String, dynamic> certificateData;
   List<String> dates;
-  List<String> staffs;
-  String adminStaff;
+  List<Map<String, dynamic>> staffs;
+  Map<String, dynamic> adminStaff;
   List<Student> students;
 
   Batch({
@@ -26,7 +26,7 @@ class Batch {
       creationTime: DateTime.now(),
       name: '',
       certificateData: {},
-      adminStaff: '',
+      adminStaff: {},
       dates: [],
       staffs: [],
       students: [],
@@ -36,10 +36,10 @@ class Batch {
   Batch copyWith({
     DateTime? creationTime,
     String? name,
-    Map? certificateData,
+    Map<String, dynamic>? certificateData,
     List<String>? dates,
-    List<String>? staffs,
-    String? adminStaff,
+    List<Map<String, dynamic>>? staffs,
+    Map<String, dynamic>? adminStaff,
     List<Student>? students,
   }) {
     return Batch(
@@ -53,11 +53,20 @@ class Batch {
     );
   }
 
+  bool isEmpty() {
+    return name.isEmpty &&
+        certificateData.isEmpty &&
+        dates.isEmpty &&
+        staffs.isEmpty &&
+        adminStaff.isEmpty &&
+        students.isEmpty;
+  }
+
   Map<String, dynamic> toMap() {
     return {
       'time': DateFormat("dd-MM-yyyy").format(creationTime),
       'name': name,
-      'certificate': certificateData,
+      'certificateID': certificateData["name"],
       'dates': dates,
       'staffs': staffs,
       "admin": adminStaff,

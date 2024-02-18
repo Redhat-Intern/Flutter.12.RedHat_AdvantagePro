@@ -166,7 +166,7 @@ class _StudentReportTableState extends ConsumerState<StudentReportTable> {
                     margin: EdgeInsets.only(bottom: height * 0.01),
                     child: Row(
                       children: [
-                        Expanded(
+                        const Expanded(
                           flex: 5,
                           child: StudentReportTableNamer(
                               name: "Student 1",

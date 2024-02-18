@@ -155,11 +155,11 @@ class _CourseFilePickerState extends ConsumerState<CourseFilePicker> {
                               int.parse(thisFileMap.value["size"].toString());
                           double kb = size / 1024;
                           double mb = kb / 1024;
-
+        
                           String fileSize = mb >= 1
                               ? "${mb.toStringAsFixed(2)} MBs"
                               : "${kb.toStringAsFixed(2)} KBs";
-
+        
                           return Stack(
                             children: [
                               GestureDetector(

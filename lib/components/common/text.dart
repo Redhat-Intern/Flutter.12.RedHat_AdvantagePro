@@ -19,7 +19,7 @@ class CustomText extends ConsumerWidget {
   const CustomText({
     super.key,
     required this.text,
-    this.weight = FontWeight.w500,
+    this.weight = FontWeight.w600,
     this.size,
     this.color,
     this.height = 0,
@@ -44,7 +44,7 @@ class CustomText extends ConsumerWidget {
             style: TextStyle(
               fontSize: size ?? fontSize,
               fontWeight: weight,
-              color: color,
+              color: color ?? colorData.fontColor(.8),
               height: height,
             ),
           )
@@ -55,7 +55,7 @@ class CustomText extends ConsumerWidget {
               height: size,
               width: length * width,
               decoration: BoxDecoration(
-              color: colorData.fontColor(.7),
+                color: colorData.fontColor(.7),
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
