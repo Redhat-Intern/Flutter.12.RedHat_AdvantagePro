@@ -29,7 +29,7 @@ class BatchButton extends ConsumerWidget {
             Batch batchData = ref.watch(createBatchProvider);
         
             if (!batchData.isEmpty()) {
-              createBatch(batch: batchData);
+              createBatch(batch: batchData,ref: ref);
               ref.read(createBatchProvider.notifier).clearData();
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(

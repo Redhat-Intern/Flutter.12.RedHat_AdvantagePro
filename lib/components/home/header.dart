@@ -26,7 +26,7 @@ class _HeaderState extends ConsumerState<Header> {
     CustomSizeData sizeData = CustomSizeData.from(context);
     CustomColorData colorData = CustomColorData.from(ref);
 
-    Map<String, dynamic> userData = ref.watch(userDataProvider);
+    Map<String, dynamic> userData = ref.watch(userDataProvider)!;
     String name = userData["name"];
     String role = userData["role"];
 

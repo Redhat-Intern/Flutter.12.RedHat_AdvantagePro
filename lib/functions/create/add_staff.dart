@@ -28,7 +28,7 @@ Stream<Map<int, String>> addStaff({
       await uploadPhoto(ref: storageRef, photo: photo, email: email);
   yield {1: staffId};
 
-  List<String> certificatesURL = await uploadCertificates(
+  Map<String, Map<String, dynamic>> certificatesURL = await uploadCertificates(
       ref: storageRef, certificates: certificates, email: email);
   yield {2: "uploaded certificates"};
 
@@ -61,12 +61,12 @@ Future<String> uploadPhoto(
   return url;
 }
 
-Future<List<String>> uploadCertificates(
+Future<Map<String, Map<String, dynamic>>> uploadCertificates(
     {required List<Map<File, Map<String, dynamic>>> certificates,
     required String email,
     required Reference ref}) async {
   String path = "staff/$email/certificates";
-  List<String> downloadableURL = [];
+  Map<String, Map<String, dynamic>> downloadableURL = {};
 
   for (var certificate in certificates) {
     File file = certificate.keys.first;
@@ -76,7 +76,9 @@ Future<List<String>> uploadCertificates(
     TaskSnapshot onCompleted = await fileUploadTask.whenComplete(() {});
     String url = await onCompleted.ref.getDownloadURL();
     // url
-    downloadableURL.add(url);
+    downloadableURL.addAll({
+      url: {"name": fileName, "extnsion": fileName.split(".").last}
+    });
 
     fileUploadTask.snapshotEvents.listen((TaskSnapshot taskSnapshot) {
       switch (taskSnapshot.state) {

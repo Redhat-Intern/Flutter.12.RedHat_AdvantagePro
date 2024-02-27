@@ -5,6 +5,7 @@ import '../pages/add_certification.dart';
 import '../pages/home/admin_home.dart';
 import '../pages/home/staff_home.dart';
 import '../pages/home/student_home.dart';
+import '../providers/user_detail_provider.dart';
 import '../providers/user_select_provider.dart';
 import '../utilities/static_data.dart';
 import '../utilities/theme/size_data.dart';
@@ -40,6 +41,7 @@ class _NavigationState extends ConsumerState<Navigation> {
     scaffoldKey = ref.watch(drawerKeyProvider);
     index = ref.watch(navigationIndexProvider);
     UserRole? role = ref.watch(userRoleProvider);
+    Map<String, dynamic>? userData = ref.watch(userDataProvider);
     CustomSizeData sizeData = CustomSizeData.from(context);
 
     double width = sizeData.width;
@@ -91,7 +93,7 @@ class _NavigationState extends ConsumerState<Navigation> {
             right: width * 0.04,
             top: height * 0.02,
           ),
-          child: role == null
+          child: userData == null
               ? const Center(
                   child: CircularProgressIndicator(),
                 )

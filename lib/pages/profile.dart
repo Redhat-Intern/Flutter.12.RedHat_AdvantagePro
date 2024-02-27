@@ -1,12 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:redhat_v1/providers/user_select_provider.dart';
 import 'package:shimmer/shimmer.dart';
 
 import '../providers/user_detail_provider.dart';
 import '../components/profile/color_palette.dart';
 import '../components/profile/theme_toggle.dart';
 import '../functions/firebase_auth.dart';
+import '../utilities/static_data.dart';
 import '../utilities/theme/color_data.dart';
 import '../utilities/theme/size_data.dart';
 
@@ -19,7 +21,8 @@ class Profile extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    Map<String, dynamic> userData = ref.watch(userDataProvider);
+    Map<String, dynamic> userData = ref.watch(userDataProvider)!;
+    UserRole role = ref.watch(userRoleProvider)!;
     CustomSizeData sizeData = CustomSizeData.from(context);
     CustomColorData colorData = CustomColorData.from(ref);
 
@@ -49,38 +52,41 @@ class Profile extends ConsumerWidget {
               SizedBox(
                 height: height * 0.02,
               ),
-              Container(
-                padding: EdgeInsets.all(aspectRatio * 8),
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: colorData.secondaryColor(1),
-                ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(width),
-                  child: Image.network(userData["photo"],
-                      height: aspectRatio * 250,
-                      width: aspectRatio * 250,
-                      fit: BoxFit.cover, loadingBuilder: (BuildContext context,
-                          Widget child, ImageChunkEvent? loadingProgress) {
-                    if (loadingProgress == null) {
-                      return child;
-                    } else {
-                      return Shimmer.fromColors(
-                        baseColor: colorData.backgroundColor(.1),
-                        highlightColor: colorData.secondaryColor(.1),
-                        child: Container(
-                          height: aspectRatio * 250,
-                          width: aspectRatio * 250,
-                          decoration: BoxDecoration(
-                            color: colorData.secondaryColor(.5),
-                            borderRadius: BorderRadius.circular(width),
-                          ),
-                        ),
-                      );
-                    }
-                  }),
-                ),
-              ),
+              role != UserRole.student
+                  ? Container(
+                      padding: EdgeInsets.all(aspectRatio * 8),
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: colorData.secondaryColor(1),
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(width),
+                        child: Image.network(userData["photo"],
+                            height: aspectRatio * 250,
+                            width: aspectRatio * 250,
+                            fit: BoxFit.cover, loadingBuilder:
+                                (BuildContext context, Widget child,
+                                    ImageChunkEvent? loadingProgress) {
+                          if (loadingProgress == null) {
+                            return child;
+                          } else {
+                            return Shimmer.fromColors(
+                              baseColor: colorData.backgroundColor(.1),
+                              highlightColor: colorData.secondaryColor(.1),
+                              child: Container(
+                                height: aspectRatio * 250,
+                                width: aspectRatio * 250,
+                                decoration: BoxDecoration(
+                                  color: colorData.secondaryColor(.5),
+                                  borderRadius: BorderRadius.circular(width),
+                                ),
+                              ),
+                            );
+                          }
+                        }),
+                      ),
+                    )
+                  : const SizedBox(),
               SizedBox(height: height * 0.02),
               CustomText(
                 text: userData["name"],

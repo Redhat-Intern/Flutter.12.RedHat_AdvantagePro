@@ -14,7 +14,9 @@ enum NotificationsCategory { invitations, admin, batches, students, staffs }
 
 enum Status { online, offline }
 
-enum MessageType { text, image, video, file, link }
+enum MessageType { text, image, file }
+
+enum WorkStatus { completed, pending, not_Started }
 
 const List<String> searchData = ["batches", "staffs", "students"];
 
@@ -23,4 +25,49 @@ const List<Color> primaryColors = [
   Color(0XFFFA61D7),
   Color(0XFFFFAA57),
   Color(0XFF2ADDC7),
+];
+
+const List<Map<String, dynamic>> sample_data = [
+  {
+    "question": "What is the default package manager in Red Hat Linux?",
+    "options": {"A": "Yum", "B": "Apt", "C": "Dnf", "D": "RPM"},
+    "answer": "A"
+  },
+  {
+    "question": "How do you change the hostname in Red Hat Linux?",
+    "options": {
+      "A": "hostnamectl",
+      "B": "ifconfig",
+      "C": "uname",
+      "D": "ipconfig"
+    },
+    "answer": "A"
+  },
+  {
+    "question":
+        "What command is used to list all currently running processes in Red Hat Linux?",
+    "options": {"A": "ps", "B": "ls", "C": "top", "D": "ps aux"},
+    "answer": "A"
+  },
+  {
+    "question":
+        "What command is used to change file permissions in Red Hat Linux?",
+    "options": {"A": "chmod", "B": "chown", "C": "chgrp", "D": "perm"},
+    "answer": "A"
+  },
+  {
+    "question": "How do you determine the size of a file in Red Hat Linux?",
+    "options": {"A": "size", "B": "ls -l", "C": "du", "D": "file_size"},
+    "answer": "C"
+  },
+  {
+    "question": "What is the purpose of the /etc/passwd file in Red Hat Linux?",
+    "options": {
+      "A": "Stores password hashes",
+      "B": "Stores user login information",
+      "C": "Stores system configuration",
+      "D": "Stores software repositories"
+    },
+    "answer": "B"
+  },
 ];

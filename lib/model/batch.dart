@@ -71,7 +71,7 @@ class Batch {
       'staffs': staffs,
       "admin": adminStaff,
       'students': students.map((student) => {
-            "${name}STU${students.indexOf(student).toString().padLeft(3, '0')}":
+            "${name}STU${(students.indexOf(student)+1).toString().padLeft(3, '0')}":
                 student.email
           }),
     };

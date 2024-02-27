@@ -7,7 +7,7 @@ import '../../utilities/theme/size_data.dart';
 import '../common/icon.dart';
 import '../common/text.dart';
 import 'batch_report_result.dart';
-import 'detailed_batch_report.dart';
+import '../../pages/detailed_batch_report.dart';
 
 class BatchReport extends ConsumerStatefulWidget {
   const BatchReport({

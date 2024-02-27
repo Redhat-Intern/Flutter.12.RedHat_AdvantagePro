@@ -12,11 +12,11 @@ import '../common/text.dart';
 
 class PhotoPicker extends ConsumerStatefulWidget {
   final From from;
-  final Function setter;
+  final Function? setter;
   final String photoURL;
   const PhotoPicker({
     super.key,
-    required this.setter,
+    this.setter,
     required this.from,
     this.photoURL = "",
   });
@@ -48,18 +48,20 @@ class _PhotoPickerState extends ConsumerState<PhotoPicker> {
             radius: const Radius.circular(8),
             child: GestureDetector(
               onTap: () async {
-                FilePickerResult? file = await FilePicker.platform.pickFiles(
-                    allowedExtensions: ['png', 'jpg'],
-                    type: FileType.custom,
-                    allowMultiple: false);
-                if (file == null) {
-                  return;
-                } else {
-                  setState(() {
-                    photo = File(file.files.first.path!);
-                    String photoName = file.files.first.name;
-                    widget.setter(photo, photoName);
-                  });
+                if (widget.setter != null) {
+                  FilePickerResult? file = await FilePicker.platform.pickFiles(
+                      allowedExtensions: ['png', 'jpg'],
+                      type: FileType.custom,
+                      allowMultiple: false);
+                  if (file == null) {
+                    return;
+                  } else {
+                    setState(() {
+                      photo = File(file.files.first.path!);
+                      String photoName = file.files.first.name;
+                      widget.setter!(photo, photoName);
+                    });
+                  }
                 }
               },
               child: Container(
@@ -98,17 +100,17 @@ class _PhotoPickerState extends ConsumerState<PhotoPicker> {
         SizedBox(
           height: height * 0.01,
         ),
-        Align(
-          alignment: Alignment.center,
-          child: CustomText(
-            text: widget.from == From.detail
-                ? "Tap to edit profile photo"
-                : "Tap to add profile photo",
-            size: sizeData.small,
-            color: colorData.fontColor(.5),
-            weight: FontWeight.w600,
-          ),
-        ),
+        widget.from == From.add
+            ? Align(
+                alignment: Alignment.center,
+                child: CustomText(
+                  text: "Tap to add profile photo",
+                  size: sizeData.small,
+                  color: colorData.fontColor(.5),
+                  weight: FontWeight.w600,
+                ),
+              )
+            : const SizedBox(),
       ],
     );
   }

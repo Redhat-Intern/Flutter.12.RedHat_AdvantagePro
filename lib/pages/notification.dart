@@ -118,16 +118,35 @@ class _NotificationsState extends ConsumerState<Notifications> {
                 ),
               ),
               Expanded(
-                child: ListView.builder(
-                  padding: EdgeInsets.symmetric(horizontal: width * 0.02),
-                  itemCount: data.length,
-                  itemBuilder: (context, index) {
-                    return InvitationMessage(
-                      batchID: data[index]["batch"],
-                      message: data[index]["message"],
-                    );
-                  },
-                ),
+                child: data.isNotEmpty
+                    ? ListView.builder(
+                        padding: EdgeInsets.symmetric(horizontal: width * 0.02),
+                        itemCount: data.length,
+                        itemBuilder: (context, index) {
+                          return InvitationMessage(
+                            batchID: data[index]["batch"],
+                            message: data[index]["message"],
+                          );
+                        },
+                      )
+                    : Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          SizedBox(
+                            height: height * 0.02,
+                          ),
+                          const CustomText(
+                              text: "No notifications have been received!"),
+                          SizedBox(
+                            height: height * 0.02,
+                          ),
+                          Image.asset(
+                            "assets/images/no_data.png",
+                            height: height * 0.45,
+                            fit: BoxFit.cover,
+                          ),
+                        ],
+                      ),
               ),
             ],
           ),

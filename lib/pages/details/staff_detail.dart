@@ -1,8 +1,12 @@
 import 'dart:io';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:redhat_v1/components/home/student/course_content.dart';
 
+import '../../components/home/student/course_files.dart';
 import '../../utilities/static_data.dart';
 import '../../functions/create/add_staff.dart';
 import '../../utilities/theme/color_data.dart';
@@ -22,7 +26,8 @@ class StaffDetail extends ConsumerStatefulWidget {
   final List<dynamic> certificatesURL;
   final String photoURL;
 
-  const StaffDetail({super.key, 
+  const StaffDetail({
+    super.key,
     required this.photoURL,
     required this.name,
     required this.email,
@@ -43,7 +48,46 @@ class _StaffDetailState extends ConsumerState<StaffDetail> {
   TextEditingController experienceController = TextEditingController(text: "");
   List<Map<File, Map<String, dynamic>>> certificates = [];
 
-  Map<int, String> completionCount = {};
+  Map<File, Map<String, dynamic>> dynamicCourseFiles = {};
+  Future<File?> downloadFile(String path, String name) async {
+    try {
+      final response = await Dio()
+          .get(path, options: Options(responseType: ResponseType.bytes));
+
+      final directory = await getExternalStorageDirectory();
+      final filePath = '${directory!.path}/$name';
+      final file = await File(filePath).writeAsBytes(response.data);
+      return file;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  // void updateCourseFiles() {
+  //   dynamicCourseFiles.clear();
+  //   widget.certificatesURL.forEach((key, value) async {
+  //     File? file = await downloadFile(key, value["name"]);
+  //     if (file != null) {
+  //       setState(() {
+  //         dynamicCourseFiles.addAll({file: value});
+  //       });
+  //     }
+  //   });
+  // }
+
+  // @override
+  // void didUpdateWidget(CourseFiles oldWidget) {
+  //   super.didUpdateWidget(oldWidget);
+  //   if (widget.courseFiles.keys.first != oldWidget.courseFiles.keys.first) {
+  //     updateCourseFiles();
+  //   }
+  // }
+
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   updateCourseFiles();
+  // }
 
   @override
   void initState() {
@@ -58,59 +102,6 @@ class _StaffDetailState extends ConsumerState<StaffDetail> {
     experienceController = TextEditingController(text: widget.experience);
   }
 
-  void setPhoto(File photo, String photoName) {
-    setState(() {
-      this.photo = {photo: photoName};
-    });
-  }
-
-  bool hasDuplicate({required Map<File, Map<String, dynamic>> certificate}) {
-    for (var element in certificates) {
-      if (element.values.first["name"] == certificate.values.first["name"]) {
-        return false;
-      }
-    }
-    return true;
-  }
-
-  void handleCertificate(
-      {required Map<File, Map<String, dynamic>> certificate,
-      required bool set}) {
-    setState(() {
-      if (set) {
-        if (hasDuplicate(certificate: certificate)) {
-          certificates.add(certificate);
-        }
-      } else {
-        certificates.remove(certificate);
-      }
-    });
-  }
-
-  void addStaffValidate() async {
-    if (nameController.text.isEmpty ||
-        emailController.text.isEmpty ||
-        phoneNoController.text.isEmpty ||
-        experienceController.text.isEmpty ||
-        photo.isEmpty ||
-        certificates.isEmpty) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(const SnackBar(content: Text("Kindly enter all the data")));
-    } else {
-      setState(() {
-        completionCount = {0: "Started"};
-      });
-      addStaff(
-              photo: photo,
-              nameController: nameController,
-              emailController: emailController,
-              phoneNoController: phoneNoController,
-              experienceController: experienceController,
-              certificates: certificates)
-          .listen((event) {});
-    }
-  }
-
   @override
   void dispose() {
     super.dispose();
@@ -122,6 +113,7 @@ class _StaffDetailState extends ConsumerState<StaffDetail> {
 
   @override
   Widget build(BuildContext context) {
+    print(widget.certificatesURL);
     CustomSizeData sizeData = CustomSizeData.from(context);
     CustomColorData colorData = CustomColorData.from(ref);
 
@@ -139,154 +131,66 @@ class _StaffDetailState extends ConsumerState<StaffDetail> {
             right: width * 0.04,
             top: height * 0.02,
           ),
-          child: Stack(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              Row(
                 children: [
-                  Row(
-                    children: [
-                      const CustomBackButton(),
-                      SizedBox(
-                        width: width * 0.28,
-                      ),
-                      CustomText(
-                        text: "Staff Detail",
-                        size: sizeData.header,
-                        color: colorData.fontColor(1),
-                        weight: FontWeight.w600,
-                      ),
-                    ],
-                  ),
+                  const CustomBackButton(),
                   SizedBox(
-                    height: height * 0.04,
+                    width: width * 0.28,
                   ),
-                  PhotoPicker(
-                    setter: setPhoto,
-                    photoURL: widget.photoURL,
-                    from: From.detail,
-                  ),
-                  SizedBox(
-                    height: height * 0.02,
-                  ),
-                  CustomInputField(
-                    controller: nameController,
-                    hintText: "Edit the Name",
-                    icon: Icons.person_rounded,
-                    inputType: TextInputType.name,
-                    readOnly: true,
-                  ),
-                  CustomInputField(
-                    controller: emailController,
-                    hintText: "Edit the Email",
-                    icon: Icons.email_rounded,
-                    inputType: TextInputType.emailAddress,
-                    readOnly: true,
-                  ),
-                  CustomInputField(
-                    controller: phoneNoController,
-                    hintText: "Edit the Phone No",
-                    icon: Icons.numbers_rounded,
-                    inputType: TextInputType.phone,
-                    readOnly: true,
-                  ),
-                  CustomInputField(
-                    controller: experienceController,
-                    hintText: "Edit the Year of Experience",
-                    icon: Icons.grade_rounded,
-                    inputType: TextInputType.number,
-                    readOnly: true,
-                  ),
-                  SizedBox(
-                    height: height * 0.01,
-                  ),
-                  AddStaffCertificates(
-                    handleCertificate: handleCertificate,
-                  ),
-                  const Spacer(),
-                  GestureDetector(
-                    onTap: () => addStaffValidate(),
-                    child: Align(
-                      alignment: Alignment.center,
-                      child: Container(
-                        padding: EdgeInsets.symmetric(
-                            horizontal: width * 0.02, vertical: height * 0.008),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8),
-                          color: colorData.secondaryColor(.5),
-                        ),
-                        child: CustomText(
-                          text: "Save Staff",
-                          size: sizeData.medium,
-                          color: colorData.fontColor(.8),
-                          weight: FontWeight.w800,
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    height: height * 0.02,
+                  CustomText(
+                    text: "Staff Detail",
+                    size: sizeData.header,
+                    color: colorData.fontColor(1),
+                    weight: FontWeight.w600,
                   ),
                 ],
               ),
-              completionCount.isEmpty
-                  ? const SizedBox()
-                  : Center(
-                      child: Container(
-                        height: height,
-                        width: width,
-                        decoration: BoxDecoration(boxShadow: [
-                          BoxShadow(
-                            color: colorData.secondaryColor(.5),
-                            blurRadius: 400,
-                            spreadRadius: 400,
-                          ),
-                        ]),
-                        child: Center(
-                          child: Container(
-                            // width: width * .5,
-                            height: height * .23,
-                            padding:
-                                EdgeInsets.symmetric(horizontal: width * 0.05),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(8),
-                              gradient: LinearGradient(
-                                  begin: Alignment.topLeft,
-                                  end: Alignment.bottomRight,
-                                  colors: [
-                                    colorData.primaryColor(.2),
-                                    colorData.primaryColor(.6)
-                                  ]),
-                            ),
-                            child: Column(
-                              children: [
-                                SizedBox(
-                                  height: height * 0.06,
-                                ),
-                                CircularProgressIndicator.adaptive(
-                                  strokeWidth: 8,
-                                  strokeAlign: 5,
-                                  strokeCap: StrokeCap.round,
-                                  backgroundColor: Colors.white,
-                                  valueColor: AlwaysStoppedAnimation(
-                                      colorData.primaryColor(1)),
-                                  value: completionCount.keys.first * 0.33,
-                                ),
-                                SizedBox(
-                                  height: height * 0.06,
-                                ),
-                                CustomText(
-                                  text: completionCount.values.first,
-                                  size: sizeData.medium,
-                                  color: colorData.secondaryColor(1),
-                                  weight: FontWeight.w600,
-                                )
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                    )
+              SizedBox(
+                height: height * 0.04,
+              ),
+              PhotoPicker(
+                photoURL: widget.photoURL,
+                from: From.detail,
+              ),
+              SizedBox(
+                height: height * 0.02,
+              ),
+              CustomInputField(
+                controller: nameController,
+                hintText: "Edit the Name",
+                icon: Icons.person_rounded,
+                inputType: TextInputType.name,
+                readOnly: true,
+              ),
+              CustomInputField(
+                controller: emailController,
+                hintText: "Edit the Email",
+                icon: Icons.email_rounded,
+                inputType: TextInputType.emailAddress,
+                readOnly: true,
+              ),
+              CustomInputField(
+                controller: phoneNoController,
+                hintText: "Edit the Phone No",
+                icon: Icons.numbers_rounded,
+                inputType: TextInputType.phone,
+                readOnly: true,
+              ),
+              CustomInputField(
+                controller: experienceController,
+                hintText: "Edit the Year of Experience",
+                icon: Icons.grade_rounded,
+                inputType: TextInputType.number,
+                readOnly: true,
+              ),
+              SizedBox(
+                height: height * 0.01,
+              ),
+              CourseFiles(courseFiles: {}),
+              const Spacer(),
             ],
           ),
         ),

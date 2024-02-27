@@ -1,8 +1,8 @@
 // import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class UserDetailNotifier extends StateNotifier<Map<String, dynamic>> {
-  UserDetailNotifier() : super({"name": "", "role": ""});
+class UserDetailNotifier extends StateNotifier<Map<String, dynamic>?> {
+  UserDetailNotifier() : super(null);
 
   void addUserData(Map<String, dynamic> userData) {
     state = userData;
@@ -10,5 +10,5 @@ class UserDetailNotifier extends StateNotifier<Map<String, dynamic>> {
 }
 
 final userDataProvider =
-    StateNotifierProvider<UserDetailNotifier, Map<String, dynamic>>(
+    StateNotifierProvider<UserDetailNotifier, Map<String, dynamic>?>(
         (ref) => UserDetailNotifier());

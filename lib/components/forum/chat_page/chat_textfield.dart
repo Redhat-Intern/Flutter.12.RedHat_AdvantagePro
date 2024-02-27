@@ -1,24 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../functions/update/update_chat_message.dart';
 import '../../../utilities/theme/color_data.dart';
 import '../../../utilities/theme/size_data.dart';
 import '../../common/icon.dart';
 
-
-
 class ChatTextField extends ConsumerStatefulWidget {
   const ChatTextField({
     super.key,
+    required this.index,
   });
+  final int index;
+
   @override
   ConsumerState<ChatTextField> createState() => _ChatTextFieldState();
 }
 
 class _ChatTextFieldState extends ConsumerState<ChatTextField> {
   TextEditingController controller = TextEditingController();
-
-  searchDataFun() {}
 
   @override
   void dispose() {
@@ -50,12 +50,13 @@ class _ChatTextFieldState extends ConsumerState<ChatTextField> {
                 controller: controller,
                 onSubmitted: (value) {
                   if (value.isNotEmpty) {
-                    searchDataFun();
-                  } else {
-                    setState(() {
-                      controller.clear();
-                    });
+                    uploadChat(
+                      text: controller.text.trim(),
+                      ref: ref,
+                      index: widget.index,
+                    );
                   }
+                  controller.clear();
                 },
                 scrollPadding: EdgeInsets.zero,
                 style: TextStyle(
@@ -79,7 +80,14 @@ class _ChatTextFieldState extends ConsumerState<ChatTextField> {
                   border: InputBorder.none,
                   suffixIcon: GestureDetector(
                     onTap: () {
-                      if (controller.text.isNotEmpty) searchDataFun();
+                      if (controller.text.isNotEmpty) {
+                        uploadChat(
+                          text: controller.text.trim(),
+                          ref: ref,
+                          index: widget.index,
+                        );
+                        controller.clear();
+                      }
                     },
                     child: CustomIcon(
                       icon: Icons.send_rounded,

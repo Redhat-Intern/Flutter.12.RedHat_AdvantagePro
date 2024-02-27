@@ -4,9 +4,9 @@ import 'package:redhat_v1/components/common/back_button.dart';
 import 'package:redhat_v1/components/report/staffs_report_list.dart';
 import 'package:redhat_v1/components/report/student_report_table.dart';
 
-import '../../utilities/theme/color_data.dart';
-import '../../utilities/theme/size_data.dart';
-import '../common/text.dart';
+import '../utilities/theme/color_data.dart';
+import '../utilities/theme/size_data.dart';
+import '../components/common/text.dart';
 
 class DetailedBatchReport extends ConsumerStatefulWidget {
   const DetailedBatchReport({super.key});

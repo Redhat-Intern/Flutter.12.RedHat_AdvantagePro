@@ -30,7 +30,7 @@ class MenuButton extends ConsumerWidget {
         child: CustomIcon(
           icon: Icons.menu_rounded,
           color: colorData.sideBarTextColor(.85),
-          size: aspectRatio * 47,
+          size: aspectRatio * 55,
         ),
       ),
     );

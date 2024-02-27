@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../providers/forum_provider.dart';
+import '../../providers/forum_category_provider.dart';
+import '../../providers/user_select_provider.dart';
 import '../../utilities/static_data.dart';
 import '../../utilities/theme/color_data.dart';
 import '../../utilities/theme/size_data.dart';
+
 import '../common/icon.dart';
 import '../common/text.dart';
 import 'category_selection.dart';
@@ -47,6 +49,7 @@ class _ForumHeaderState extends ConsumerState<ForumHeader> {
   @override
   Widget build(BuildContext context) {
     ForumCategory category = ref.watch(forumCategoryProvider);
+    UserRole userRole = ref.watch(userRoleProvider)!;
     CustomSizeData sizeData = CustomSizeData.from(context);
     CustomColorData colorData = CustomColorData.from(ref);
 
@@ -61,40 +64,42 @@ class _ForumHeaderState extends ConsumerState<ForumHeader> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              Container(
-                padding: EdgeInsets.symmetric(
-                    horizontal: width * 0.04, vertical: height * 0.01),
-                decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [
-                        colorData.primaryColor(.3),
-                        colorData.primaryColor(1),
-                      ],
-                    ),
-                    borderRadius: BorderRadius.circular(8)),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    CustomIcon(
-                      size: aspectRatio * 40,
-                      icon: Icons.create_new_folder_rounded,
-                      color: Colors.white.withOpacity(.9),
-                    ),
-                    SizedBox(
-                      width: width * .02,
-                    ),
-                    CustomText(
-                      text: "New Group",
-                      size: sizeData.regular,
-                      weight: FontWeight.w800,
-                      color: Colors.white.withOpacity(.9),
+              userRole == UserRole.admin
+                  ? Container(
+                      padding: EdgeInsets.symmetric(
+                          horizontal: width * 0.04, vertical: height * 0.01),
+                      decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                            colors: [
+                              colorData.primaryColor(.3),
+                              colorData.primaryColor(1),
+                            ],
+                          ),
+                          borderRadius: BorderRadius.circular(8)),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          CustomIcon(
+                            size: aspectRatio * 40,
+                            icon: Icons.create_new_folder_rounded,
+                            color: Colors.white.withOpacity(.9),
+                          ),
+                          SizedBox(
+                            width: width * .02,
+                          ),
+                          CustomText(
+                            text: "New Group",
+                            size: sizeData.regular,
+                            weight: FontWeight.w800,
+                            color: Colors.white.withOpacity(.9),
+                          )
+                        ],
+                      ),
                     )
-                  ],
-                ),
-              ),
+                  : const SizedBox(),
               const Spacer(),
               CustomText(
                 text: category.name.toUpperCase(),
@@ -170,11 +175,13 @@ class _ForumHeaderState extends ConsumerState<ForumHeader> {
                             icon: Icons.school_rounded,
                             onDone: toggleShowCategorySelection,
                           ),
-                          CategorySelection(
-                            category: ForumCategory.students,
-                            icon: Icons.person_rounded,
-                            onDone: toggleShowCategorySelection,
-                          ),
+                          userRole != UserRole.student
+                              ? CategorySelection(
+                                  category: ForumCategory.students,
+                                  icon: Icons.person_rounded,
+                                  onDone: toggleShowCategorySelection,
+                                )
+                              : const SizedBox(),
                         ],
                       ),
                     ),

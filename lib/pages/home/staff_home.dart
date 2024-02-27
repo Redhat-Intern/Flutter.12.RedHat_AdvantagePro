@@ -1,10 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 
+import '../../components/common/text.dart';
 import '../../components/home/staff/batches.dart';
-import '../../model/notification.dart';
-import '../../providers/notification_data_provider.dart';
+import '../../components/home/staff/work_setter.dart';
 import '../../providers/user_detail_provider.dart';
 import '../../utilities/theme/size_data.dart';
 
@@ -16,7 +17,7 @@ class StaffHome extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    Map<String, dynamic> userData = ref.watch(userDataProvider);
+    Map<String, dynamic> userData = ref.watch(userDataProvider)!;
     CustomSizeData sizeData = CustomSizeData.from(context);
     double width = sizeData.width;
     double height = sizeData.height;
@@ -25,41 +26,79 @@ class StaffHome extends ConsumerWidget {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         const Header(),
-        // StreamBuilder(
-        //     stream: FirebaseFirestore.instance
-        //         .collection("batches")
-        //         .where("staffs", arrayContains: userData["email"])
-        //         .snapshots(),
-        //     builder: (context, snapshot) {
-        //       if (snapshot.hasData) {
-        //         if (snapshot.data!.docs.isNotEmpty) {
-        //           List<QueryDocumentSnapshot<Map<String, dynamic>>> docs =
-        //               snapshot.data!.docs;
+        SizedBox(
+          height: height * 0.02,
+        ),
+        StreamBuilder(
+            stream: FirebaseFirestore.instance.collection("batches").where(
+                "staffs",
+                arrayContains: {userData["id"]: userData["email"]}).snapshots(),
+            builder: (context, snapshot) {
+              if (snapshot.hasData && snapshot.data!.docs.isNotEmpty) {
+                List<QueryDocumentSnapshot<Map<String, dynamic>>> docs =
+                    snapshot.data!.docs;
 
-        //           List<Map<String, Map<String, dynamic>>> recentBatches = [];
-        //           for (QueryDocumentSnapshot<Map<String, dynamic>> i in docs) {
-        //             Map<String, dynamic> data = i.data();
-        //             int count = List.from(data["students"]).length;
-        //             recentBatches.add({
-        //               data["certificateImg"]: {
-        //                 "name": data["certificateName"],
-        //                 "count": count
-        //               }
-        //             });
-        //           }
-        //           return StaffBatches(batches: recentBatches);
-        //         } else {
-        //           return const RecentPlaceHolder(
-        //             header: "Batches",
-        //             text: "You are not yet assigned with any batches!",
-        //           );
-        //         }
-        //       } else {
-        //         return const Center(
-        //           child: Text("loading"),
-        //         );
-        //       }
-        //     }),
+                List<Map<String, dynamic>> recentBatches = [];
+                List<QueryDocumentSnapshot<Map<String, dynamic>>> liveBatches =
+                    [];
+
+                for (QueryDocumentSnapshot<Map<String, dynamic>> i in docs) {
+                  Map<String, dynamic> data = i.data();
+                  int count = List.from(data["students"]).length;
+                  List<DateTime> dates = List.from(data["dates"])
+                      .map((e) => DateFormat('dd-MM-yyyy').parse(e))
+                      .toList();
+                  dates.sort((a, b) => b.compareTo(a));
+                  bool isLive = DateTime.now()
+                          .compareTo(dates[0].add(const Duration(hours: 24))) !=
+                      1;
+                  if (isLive) {
+                    liveBatches.add(i);
+                  }
+
+                  recentBatches.add({
+                    "certificateID": data["certificateID"],
+                    "count": count,
+                    "id": i.id,
+                    "isLive": isLive,
+                  });
+                }
+
+                return Expanded(
+                  child: Column(
+                    children: [
+                      StaffBatches(batches: recentBatches),
+                      SizedBox(
+                        height: height * 0.03,
+                      ),
+                      liveBatches.isNotEmpty
+                          ? Expanded(
+                              child: BatchWorkSetter(
+                                liveBatches: liveBatches,
+                              ),
+                            )
+                          : const Center(
+                              child: CustomText(
+                                text: "No live Batches",
+                              ),
+                            ),
+                    ],
+                  ),
+                );
+              } else {
+                return const Expanded(
+                  child: Column(
+                    children: [
+                      RecentPlaceHolder(
+                        header: "Batches",
+                        text: "You are not yet assigned with any batches!",
+                      ),
+                      Spacer(),
+                    ],
+                  ),
+                );
+              }
+            }),
       ],
     );
   }

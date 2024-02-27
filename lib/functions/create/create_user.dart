@@ -29,23 +29,17 @@ Future createUser({
         "phoneNo": generatedData["phoneNo"],
         "occupation": generatedData["occupation"],
         "occDetail": generatedData["occDetail"],
-        "regID": [generatedData["regID"]],
+        "id": [generatedData["id"]],
+        "batches": {generatedData["batchName"]: generatedData["certificateID"]},
+        "currentBatch": {
+          generatedData["batchName"]: generatedData["certificateID"]
+        },
       };
-
       FirebaseFirestore.instance
           .collection('${role.name}s')
           .doc(email)
           .set(studentData);
 
-      FirebaseFirestore.instance
-          .collection('${role.name}s')
-          .doc(email)
-          .collection("certifications")
-          .doc(generatedData["batchName"])
-          .set({
-        "name": generatedData["batchName"],
-        "certificateName": generatedData["certificateName"],
-      });
       FirebaseFirestore.instance
           .collection("studentRequest")
           .doc(email)

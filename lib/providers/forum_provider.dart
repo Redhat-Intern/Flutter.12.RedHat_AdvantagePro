@@ -1,18 +1,16 @@
 // import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../utilities/static_data.dart';
+import '../model/forum.dart';
 
-class ForumCategoryNotifier extends StateNotifier<ForumCategory> {
-  ForumCategoryNotifier() : super(ForumCategory.all);
+class ForumDataNotifier extends StateNotifier<List<ChatForum>> {
+  ForumDataNotifier() : super([]);
 
-  void changeCategory(ForumCategory category) {
-    state = category;
+  void updateChatForum(List<ChatForum> data) {
+    state = data;
   }
 }
 
-final forumCategoryProvider =
-    StateNotifierProvider<ForumCategoryNotifier, ForumCategory>(
-        (ref) => ForumCategoryNotifier());
-
-
+final forumDataProvider =
+    StateNotifierProvider<ForumDataNotifier, List<ChatForum>>(
+        (ref) => ForumDataNotifier());

@@ -1,10 +1,13 @@
-
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 
 import '../../components/home/student/certifications.dart';
+import '../../components/home/student/certifications_place_holder.dart';
 import '../../components/home/student/course_content.dart';
 import '../../components/home/header.dart';
+import '../../providers/user_detail_provider.dart';
 import '../../utilities/theme/color_data.dart';
 import '../../utilities/theme/size_data.dart';
 
@@ -13,6 +16,7 @@ class StudentHome extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    Map<String, dynamic> userData = ref.watch(userDataProvider)!;
     CustomSizeData sizeData = CustomSizeData.from(context);
     CustomColorData colorData = CustomColorData.from(ref);
     double width = sizeData.width;
@@ -22,41 +26,56 @@ class StudentHome extends ConsumerWidget {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         const Header(),
-        const Certifications(),
-        // StreamBuilder(
-        //     stream:
-        //         FirebaseFirestore.instance.collection("batches").snapshots(),
-        //     builder: (context, snapshot) {
-        //       if (snapshot.hasData) {
-        //         if (snapshot.data!.docs.isNotEmpty) {
-        //           List<QueryDocumentSnapshot<Map<String, dynamic>>> docs =
-        //               snapshot.data!.docs;
-
-        //           List<Map<String, Map<String, dynamic>>> recentBatches = [];
-        //           for (QueryDocumentSnapshot<Map<String, dynamic>> i in docs) {
-        //             Map<String, dynamic> data = i.data();
-        //             int count = List.from(data["students"]).length;
-        //             recentBatches.add({
-        //               data["certificateImg"]: {
-        //                 "name": data["certificateName"],
-        //                 "count": count
-        //               }
-        //             });
-        //           }
-        //           return Recent(recentBatches: recentBatches);
-        //         } else {
-        //           return const RecentPlaceHolder();
-        //         }
-        //       } else {
-        //         return const Center(
-        //           child: Text("loading"),
-        //         );
-        //       }
-        //     }),
-        const CourseContent(),
         SizedBox(
-          height: height * .02,
+          height: height * 0.02,
         ),
+        StreamBuilder(
+            stream:
+                FirebaseFirestore.instance.collection("batches").snapshots(),
+            builder: (context, snapshot) {
+              if (snapshot.hasData && snapshot.data!.docs.isNotEmpty) {
+                List<Map<String, dynamic>> data = [];
+                List<QueryDocumentSnapshot<Map<String, dynamic>>> docs =
+                    snapshot.data!.docs;
+                Map<String, dynamic> allBatches = userData["batches"];
+                List<String> batchIDList = allBatches.keys.toList();
+                Map<String, dynamic> batchData = docs
+                    .firstWhere(
+                        (element) => element.data()["completed"] == null)
+                    .data();
+
+                for (QueryDocumentSnapshot<Map<String, dynamic>> doc
+                    in docs.where((element) =>
+                        batchIDList.contains(element.id.toUpperCase()))) {
+                  List<dynamic> dateStrings = doc.data()["dates"];
+                  List<DateTime> dates = dateStrings
+                      .map((e) => DateFormat('dd-MM-yyyy').parse(e))
+                      .toList();
+                  dates.sort((a, b) => a.compareTo(b));
+
+                  data.add(doc.data());
+                }
+                return Expanded(
+                  child: Column(
+                    children: [
+                      Certifications(batchList: data),
+                      SizedBox(
+                        height: height * 0.02,
+                      ),
+                      CourseContent(batchData: batchData),
+                    ],
+                  ),
+                );
+              } else {
+                return const Expanded(
+                    child: Column(
+                  children: [
+                    CertificationsPlaceHolder(),
+                    Spacer(),
+                  ],
+                ));
+              }
+            }),
       ],
     );
   }

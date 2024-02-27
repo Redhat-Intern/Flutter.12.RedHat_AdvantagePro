@@ -35,7 +35,7 @@ class CustomBackButton extends ConsumerWidget {
         child: CustomIcon(
           icon: Icons.arrow_back_ios_new_rounded,
           color: colorData.sideBarTextColor(.85),
-          size: aspectRatio * 47,
+          size: aspectRatio * 55,
         ),
       ),
     );

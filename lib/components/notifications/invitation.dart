@@ -21,7 +21,7 @@ class _InvitationMessageState extends ConsumerState<InvitationMessage> {
   bool isExpanded = false;
   @override
   Widget build(BuildContext context) {
-    Map<String, dynamic> userData = ref.read(userDataProvider);
+    Map<String, dynamic> userData = ref.read(userDataProvider)!;
     CustomSizeData sizeData = CustomSizeData.from(context);
     CustomColorData colorData = CustomColorData.from(ref);
 

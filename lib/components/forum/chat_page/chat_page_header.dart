@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shimmer/shimmer.dart';
 
 import '../../../utilities/static_data.dart';
 import '../../../utilities/theme/color_data.dart';
@@ -65,21 +66,62 @@ class ChatFieldHeader extends ConsumerWidget {
         ),
         Spacer(),
         Container(
+          margin: EdgeInsets.only(right: width * 0.02),
           padding: const EdgeInsets.all(3),
           decoration: BoxDecoration(
-            color: colorData.secondaryColor(1),
             borderRadius: BorderRadius.circular(8),
+            color: colorData.secondaryColor(1),
           ),
           child: ClipRRect(
-            borderRadius: BorderRadius.circular(8),
-            child: Image.asset(
-              "assets/images/staff1.png",
-              height: aspectRatio * 70,
-              width: aspectRatio * 70,
-              fit: BoxFit.cover,
-            ),
+            borderRadius: BorderRadius.circular(6),
+            child: imageURL.length == 1
+                ? Container(
+                    height: aspectRatio * 70,
+                    width: aspectRatio * 70,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          colorData.primaryColor(.4),
+                          colorData.primaryColor(.9),
+                        ],
+                      ),
+                    ),
+                    child: Center(
+                      child: CustomText(
+                        text: imageURL.toUpperCase(),
+                        size: aspectRatio * 50,
+                        weight: FontWeight.bold,
+                        color: colorData.secondaryColor(1),
+                      ),
+                    ),
+                  )
+                : Image.network(
+                    imageURL,
+                    height: aspectRatio * 70,
+                    width: aspectRatio * 70,
+                    fit: BoxFit.cover,
+                    loadingBuilder: (BuildContext context, Widget child,
+                        ImageChunkEvent? loadingProgress) {
+                      if (loadingProgress == null) {
+                        return child;
+                      } else {
+                        return Shimmer.fromColors(
+                          baseColor: colorData.backgroundColor(.1),
+                          highlightColor: colorData.secondaryColor(.1),
+                          child: Container(
+                            height: aspectRatio * 70,
+                            width: aspectRatio * 70,
+                            decoration: BoxDecoration(
+                              color: colorData.secondaryColor(.5),
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                          ),
+                        );
+                      }
+                    },
+                  ),
           ),
-        )
+        ),
       ],
     );
   }

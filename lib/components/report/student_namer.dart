@@ -29,14 +29,25 @@ class StudentReportTableNamer extends ConsumerWidget {
       padding: EdgeInsets.symmetric(vertical: height * 0.005),
       child: Row(children: [
         Container(
+          width: height * 0.055,
+          height: double.infinity,
           padding: const EdgeInsets.all(3),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
             color: colorData.secondaryColor(1),
           ),
-          child: ClipRRect(
-              borderRadius: BorderRadius.circular(8),
-              child: Image.asset(imageUrl)),
+          child: imageUrl.length == 1
+              ? Center(
+                  child: CustomText(
+                    text: imageUrl.toUpperCase(),
+                    color: colorData.fontColor(1),
+                    weight: FontWeight.bold,
+                    size: height * 0.05,
+                  ),
+                )
+              : ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: Image.asset(imageUrl)),
         ),
         SizedBox(
           width: width * 0.02,
