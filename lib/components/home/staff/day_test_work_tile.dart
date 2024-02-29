@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../pages/test_page/day_test.dart';
+import '../../../pages/test_page/test_creator.dart';
 import '../../../utilities/static_data.dart';
 import '../../../utilities/theme/color_data.dart';
 import '../../../utilities/theme/size_data.dart';
@@ -22,7 +22,12 @@ class DayTestWorkTile extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    Widget toGo = DayTestCreater();
+    Widget toGo = TestCreater(
+      batchData: batchData,
+      day: day,
+      dayIndex: dayIndex,
+      testType: TestType.daily,
+    );
 
     CustomColorData colorData = CustomColorData.from(ref);
     CustomSizeData sizeData = CustomSizeData.from(context);

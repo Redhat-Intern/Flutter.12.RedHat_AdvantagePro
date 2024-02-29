@@ -1,12 +1,9 @@
-import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
 
-import '../../../model/course_data.dart';
+import '../../../pages/test_page/live_test_waiting_page.dart';
 import '../../../providers/user_detail_provider.dart';
 import '../../../utilities/theme/color_data.dart';
 import '../../../utilities/theme/size_data.dart';
@@ -56,6 +53,23 @@ class _CourseContentState extends ConsumerState<CourseContent> {
     CustomColorData colorData = CustomColorData.from(ref);
     double width = sizeData.width;
     double height = sizeData.height;
+
+    void joinOrRemove(bool toadd) async {
+      await FirebaseFirestore.instance
+          .collection("liveTest")
+          .doc(widget.batchData["name"])
+          .set({
+        firstIndex.toString(): {
+          "students": (toadd
+              ? FieldValue.arrayUnion([
+                  userData["id"][widget.batchData["name"]],
+                ])
+              : FieldValue.arrayRemove([
+                  userData["id"][widget.batchData["name"]],
+                ]))
+        }
+      }, SetOptions(merge: true));
+    }
 
     return StreamBuilder(
       stream: FirebaseFirestore.instance
@@ -362,7 +376,21 @@ class _CourseContentState extends ConsumerState<CourseContent> {
                       ),
                       liveTestInitiated
                           ? GestureDetector(
-                              onTap: () {},
+                              onTap: () {
+                                joinOrRemove(true);
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => LiveTestWaitingRoom(
+                                      dayIndex: firstIndex,
+                                      batchData: widget.batchData,
+                                      day: widget.batchData["dates"]
+                                          [firstIndex],
+                                      todo: joinOrRemove,
+                                    ),
+                                  ),
+                                );
+                              },
                               child: Container(
                                 height: double.infinity,
                                 width: double.infinity,

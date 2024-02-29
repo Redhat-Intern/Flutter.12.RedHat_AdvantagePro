@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../pages/test_page/conduct_live_test.dart';
-import '../../../pages/test_page/live_test.dart';
+import '../../../pages/test_page/test_creator.dart';
 import '../../../pages/test_page/live_test_result.dart';
 import '../../../utilities/static_data.dart';
 import '../../../utilities/theme/color_data.dart';
@@ -24,10 +24,11 @@ class LiveTestWorkTile extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    Widget toGo = LiveTestCreater(
+    Widget toGo = TestCreater(
       batchData: batchData,
       dayIndex: dayIndex,
       day: day,
+      testType: TestType.live,
     );
 
     Widget conduct = ConductLiveTest(

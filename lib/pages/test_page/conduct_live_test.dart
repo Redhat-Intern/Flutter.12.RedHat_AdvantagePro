@@ -42,7 +42,7 @@ class _ConductLiveTestState extends ConsumerState<ConductLiveTest> {
 
     double height = sizeData.height;
     double width = sizeData.width;
-    double aspectRatio = sizeData.aspectRatio;
+    // double aspectRatio = sizeData.aspectRatio;
 
     Row headerList = Row(
       children: [

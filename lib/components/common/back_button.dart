@@ -7,8 +7,10 @@ import '../../utilities/theme/size_data.dart';
 
 class CustomBackButton extends ConsumerWidget {
   final Function? method;
+  final Function? otherMethod;
   final Widget? tomove;
-  const CustomBackButton({super.key, this.method, this.tomove});
+  const CustomBackButton(
+      {super.key, this.method, this.tomove, this.otherMethod});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -25,6 +27,7 @@ class CustomBackButton extends ConsumerWidget {
         //     : Navigator.pop(context);
         Navigator.pop(context);
         method != null ? method!(ref) : null;
+        otherMethod != null ? otherMethod!() : null;
       },
       child: Container(
         padding: EdgeInsets.all(aspectRatio * 10),
