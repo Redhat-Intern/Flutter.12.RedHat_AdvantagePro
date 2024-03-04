@@ -1,20 +1,17 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:redhat_v1/components/batch_creation/available_certification_placeholder.dart';
-import 'package:redhat_v1/components/home/student/certifications_place_holder.dart';
 
-import '../utilities/theme/color_data.dart';
+import '../components/common/page_header.dart';
+import '../components/home/student/certifications_place_holder.dart';
 import '../utilities/theme/size_data.dart';
 import '../providers/create_batch_provider.dart';
 
 import '../components/batch_creation/preview.dart';
-import '../components/common/text.dart';
 import '../components/batch_creation/add_students.dart';
 import '../components/batch_creation/assign_staff.dart';
 import '../components/batch_creation/avalilable_certifications.dart';
 import '../components/batch_creation/batch_button.dart';
-import '../components/common/back_button.dart';
 
 class CreateBatch extends ConsumerWidget {
   const CreateBatch({super.key});
@@ -26,7 +23,6 @@ class CreateBatch extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     CustomSizeData sizeData = CustomSizeData.from(context);
-    CustomColorData colorData = CustomColorData.from(ref);
 
     double height = sizeData.height;
     double width = sizeData.width;
@@ -44,20 +40,7 @@ class CreateBatch extends ConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
-                children: [
-                  CustomBackButton(method: clearData),
-                  SizedBox(
-                    width: width * 0.22,
-                  ),
-                  CustomText(
-                    text: "Batch Creation",
-                    size: sizeData.header,
-                    color: colorData.fontColor(1),
-                    weight: FontWeight.w600,
-                  ),
-                ],
-              ),
+              const PageHeader(tittle: "create batch"),
               SizedBox(
                 height: height * 0.04,
               ),
@@ -71,16 +54,13 @@ class CreateBatch extends ConsumerWidget {
                             .collection("certificates")
                             .snapshots(),
                         builder: (context, snapshot) {
-                          if (snapshot.hasData) {
+                          if (snapshot.hasData &&
+                              snapshot.data!.docs.isNotEmpty) {
                             List<QueryDocumentSnapshot<Map<String, dynamic>>>
                                 docs = snapshot.data!.docs;
-                            if(docs.isNotEmpty){
                             return AvailableCertifications(
                               docs: docs,
                             );
-                            }else{
-                              return const CertifcatesPlaceHolder();
-                            }
                           } else {
                             return const CertificationsPlaceHolder();
                           }

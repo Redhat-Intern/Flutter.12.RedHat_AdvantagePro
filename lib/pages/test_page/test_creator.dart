@@ -44,7 +44,7 @@ class _TestCreaterState extends ConsumerState<TestCreater> {
       String collectionName =
           widget.testType == TestType.live ? "live" : "daily";
       FirebaseFirestore.instance
-          .collection(collectionName)
+          .collection("${collectionName}Test")
           .doc(widget.batchData["name"])
           .set({
         widget.dayIndex.toString(): {

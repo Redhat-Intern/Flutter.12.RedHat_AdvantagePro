@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../components/common/page_header.dart';
 import '../components/notifications/invitation.dart';
 import '../model/notification.dart';
 import '../providers/notification_data_provider.dart';
@@ -11,7 +12,6 @@ import '../utilities/theme/color_data.dart';
 import '../utilities/theme/size_data.dart';
 
 import '../components/notifications/category_selector.dart';
-import '../components/common/back_button.dart';
 import '../components/common/text.dart';
 
 class Notifications extends ConsumerStatefulWidget {
@@ -40,7 +40,6 @@ class _NotificationsState extends ConsumerState<Notifications> {
 
     double height = sizeData.height;
     double width = sizeData.width;
-    double aspectRatio = sizeData.aspectRatio;
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -53,19 +52,7 @@ class _NotificationsState extends ConsumerState<Notifications> {
           ),
           child: Column(
             children: [
-              Row(
-                children: [
-                  const CustomBackButton(),
-                  const Spacer(),
-                  CustomText(
-                    text: "Notifications",
-                    size: sizeData.header,
-                    color: colorData.fontColor(1),
-                    weight: FontWeight.w600,
-                  ),
-                  const Spacer(),
-                ],
-              ),
+              const PageHeader(tittle: "notifications"),
               SizedBox(
                 height: height * 0.02,
               ),

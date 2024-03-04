@@ -2,6 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:redhat_v1/pages/test_page/live_test_result.dart';
+import 'package:redhat_v1/utilities/static_data.dart';
 
 import '../../../pages/test_page/live_test_waiting_page.dart';
 import '../../../providers/user_detail_provider.dart';
@@ -60,13 +62,19 @@ class _CourseContentState extends ConsumerState<CourseContent> {
           .doc(widget.batchData["name"])
           .set({
         firstIndex.toString(): {
-          "students": (toadd
-              ? FieldValue.arrayUnion([
-                  userData["id"][widget.batchData["name"]],
-                ])
-              : FieldValue.arrayRemove([
-                  userData["id"][widget.batchData["name"]],
-                ]))
+          "students": (
+            toadd
+                ? {
+                    userData["id"][widget.batchData["name"]]: {
+                      "name": userData["name"],
+                      "photo": userData["photo"] ?? userData["name"][0]
+                    }
+                  }
+                : {
+                    userData["id"][widget.batchData["name"]]:
+                        FieldValue.delete(),
+                  },
+          ),
         }
       }, SetOptions(merge: true));
     }
@@ -88,7 +96,7 @@ class _CourseContentState extends ConsumerState<CourseContent> {
             liveTest = widget.batchData["liveTest"][firstIndex.toString()];
           }
           bool liveTestResult = liveTest != null && liveTest == "completed";
-          bool liveTestInitiated = liveTest != null && liveTest == "started";
+          bool liveTestInitiated = liveTest != null && liveTest == "created";
 
           String? dayTest;
           if (widget.batchData["dayTest"] != null) {
@@ -241,42 +249,57 @@ class _CourseContentState extends ConsumerState<CourseContent> {
                             height: dayTest != null ? height * 0.01 : null,
                           ),
                           liveTestResult
-                              ? Row(
-                                  children: [
-                                    CustomText(
-                                      text: "LIVE TEST result:",
-                                      size: sizeData.regular,
-                                      color: colorData.fontColor(.6),
-                                      weight: FontWeight.w800,
-                                    ),
-                                    SizedBox(
-                                      width: width * 0.02,
-                                    ),
-                                    Expanded(
-                                      child: Container(
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: width * 0.015,
-                                            vertical: height * 0.01),
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(8),
-                                          gradient: LinearGradient(
-                                            colors: [
-                                              colorData.secondaryColor(.2),
-                                              colorData.secondaryColor(.4)
-                                            ],
+                              ? GestureDetector(
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => LiveTestResult(
+                                            dayIndex: firstIndex,
+                                            batchName: widget.batchData["name"],
+                                            day: List.from(
+                                                    widget.batchData["dates"])[
+                                                firstIndex]),
+                                      ),
+                                    );
+                                  },
+                                  child: Row(
+                                    children: [
+                                      CustomText(
+                                        text: "LIVE TEST result:",
+                                        size: sizeData.regular,
+                                        color: colorData.fontColor(.6),
+                                        weight: FontWeight.w800,
+                                      ),
+                                      SizedBox(
+                                        width: width * 0.02,
+                                      ),
+                                      Expanded(
+                                        child: Container(
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: width * 0.015,
+                                              vertical: height * 0.01),
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(8),
+                                            gradient: LinearGradient(
+                                              colors: [
+                                                colorData.secondaryColor(.2),
+                                                colorData.secondaryColor(.4)
+                                              ],
+                                            ),
+                                          ),
+                                          alignment: Alignment.center,
+                                          child: CustomText(
+                                            text: "VIEW RESULT",
+                                            size: sizeData.regular,
+                                            color: colorData.fontColor(.8),
+                                            weight: FontWeight.w800,
                                           ),
                                         ),
-                                        alignment: Alignment.center,
-                                        child: CustomText(
-                                          text: "TAKE TEST",
-                                          size: sizeData.regular,
-                                          color: colorData.fontColor(.8),
-                                          weight: FontWeight.w800,
-                                        ),
                                       ),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 )
                               : const SizedBox(),
                           SizedBox(
@@ -371,6 +394,7 @@ class _CourseContentState extends ConsumerState<CourseContent> {
                           CourseFiles(
                             courseFiles: courseContent[firstIndex.toString()]
                                 ["files"],
+                            from: CourseFileListFrom.courseConent,
                           ),
                         ],
                       ),

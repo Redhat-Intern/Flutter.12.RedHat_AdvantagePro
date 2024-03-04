@@ -18,6 +18,7 @@ List<ChatForum> fetchChatForums(
 
     String name = forumData["details"]["name"];
     String image;
+
     if (members.length > 2) {
       image = forumData["details"]["image"];
     } else {
@@ -34,7 +35,7 @@ List<ChatForum> fetchChatForums(
           value["text"] != null
               ? ChatMessage(
                   id: key,
-                  name: value["name"],
+                  name: value["name"] ?? "admin",
                   type: MessageType.text,
                   from: value["from"],
                   time: DateTime.parse(value["time"]),
@@ -44,7 +45,7 @@ List<ChatForum> fetchChatForums(
               : value["image"] != null
                   ? ChatMessage(
                       id: key,
-                      name: value["name"],
+                      name: value["name"] ?? "admin",
                       type: MessageType.image,
                       from: value["from"],
                       time: DateTime.parse(value["time"]),
@@ -53,7 +54,7 @@ List<ChatForum> fetchChatForums(
                     )
                   : ChatMessage(
                       id: key,
-                      name: value["name"],
+                      name: value["name"] ?? "admin",
                       type: MessageType.file,
                       from: value["from"],
                       time: DateTime.parse(value["time"]),

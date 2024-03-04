@@ -3,17 +3,17 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:redhat_v1/components/add_staff/send_email.dart';
+import 'package:redhat_v1/components/common/page_header.dart';
 
-import '../utilities/static_data.dart';
-import '../functions/create/add_staff.dart';
-import '../utilities/theme/color_data.dart';
-import '../utilities/theme/size_data.dart';
+import '../../utilities/static_data.dart';
+import '../../functions/create/add_staff.dart';
+import '../../utilities/theme/color_data.dart';
+import '../../utilities/theme/size_data.dart';
 
-import '../components/add_staff/add_staff_certificate.dart';
-import '../components/add_staff/custom_input_field.dart';
-import '../components/add_staff/photo_picker.dart';
-import '../components/common/back_button.dart';
-import '../components/common/text.dart';
+import '../../components/add_staff/add_staff_certificate.dart';
+import '../../components/add_staff/custom_input_field.dart';
+import '../../components/add_staff/photo_picker.dart';
+import '../../components/common/text.dart';
 
 class AddStaff extends ConsumerStatefulWidget {
   const AddStaff({super.key});
@@ -132,20 +132,7 @@ class _AddStaffState extends ConsumerState<AddStaff> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    children: [
-                      const CustomBackButton(),
-                      SizedBox(
-                        width: width * 0.28,
-                      ),
-                      CustomText(
-                        text: "Add Staff",
-                        size: sizeData.header,
-                        color: colorData.fontColor(1),
-                        weight: FontWeight.w600,
-                      ),
-                    ],
-                  ),
+                  const PageHeader(tittle: "add staff"),
                   SizedBox(
                     height: height * 0.04,
                   ),

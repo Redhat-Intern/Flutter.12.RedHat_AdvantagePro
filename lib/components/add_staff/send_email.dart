@@ -1,5 +1,5 @@
 import 'package:sendgrid_mailer/sendgrid_mailer.dart';
-// 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
+// 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
 
 Future<void> sendStaffEmail({
   required String imageURL,
@@ -8,7 +8,7 @@ Future<void> sendStaffEmail({
   required String registrationNo,
 }) async {
   final mailer = Mailer(
-      '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');
+      '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');
   final toAddress = Address(receiverEmail);
   const fromAddress = Address('advantage.redhat@gmail.com');
   const subject = 'Invitation from Vectra Pro (Redhat academy)';
@@ -38,7 +38,7 @@ Future<void> sendStudentEmail({
   required String registrationNo,
 }) async {
   final mailer = Mailer(
-      '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');
+      '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');
   final toAddress = Address(receiverEmail);
   const fromAddress = Address('advantage.redhat@gmail.com');
   const subject = 'Invitation from Vectra Pro (Redhat academy)';

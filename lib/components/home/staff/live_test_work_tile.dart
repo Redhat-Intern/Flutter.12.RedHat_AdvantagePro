@@ -38,9 +38,9 @@ class LiveTestWorkTile extends ConsumerWidget {
     );
 
     Widget result = LiveTestResult(
-      batchData: batchData,
       dayIndex: dayIndex,
       day: day,
+      batchName: batchData["name"],
     );
 
     CustomColorData colorData = CustomColorData.from(ref);

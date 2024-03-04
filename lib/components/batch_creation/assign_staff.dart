@@ -32,10 +32,12 @@ class _AssignStaffState extends ConsumerState<AssignStaff> {
   void initState() {
     super.initState();
     List<Map<String, dynamic>> availableStaffsList = [];
-    for (var element in widget.docs) {
-      Map<String, dynamic> value =
-          Map.fromEntries(element.data().entries.toSet());
-      availableStaffsList.add(value);
+    if (widget.docs.isNotEmpty) {
+      for (var element in widget.docs) {
+        Map<String, dynamic> value =
+            Map.fromEntries(element.data().entries.toSet());
+        availableStaffsList.add(value);
+      }
     }
     setState(() {
       availableStaffs = availableStaffsList;

@@ -6,16 +6,16 @@ import 'package:redhat_v1/components/common/icon.dart';
 import 'package:redhat_v1/functions/create/create_certficate.dart';
 import 'package:redhat_v1/providers/navigation_index_provider.dart';
 
-import '../utilities/theme/color_data.dart';
-import '../utilities/theme/size_data.dart';
-import '../model/course_data.dart';
+import '../../utilities/theme/color_data.dart';
+import '../../utilities/theme/size_data.dart';
+import '../../model/course_data.dart';
 
-import '../components/add_certificate/certificate_pdf_picker.dart';
-import '../components/add_certificate/course_content_textfield.dart';
-import '../components/add_certificate/details_inputfield.dart';
-import '../components/add_certificate/course_files.dart';
-import '../components/common/menu_button.dart';
-import '../components/common/text.dart';
+import '../../components/add_certificate/certificate_pdf_picker.dart';
+import '../../components/add_certificate/course_content_textfield.dart';
+import '../../components/add_certificate/details_inputfield.dart';
+import '../../components/add_certificate/course_files.dart';
+import '../../components/common/menu_button.dart';
+import '../../components/common/text.dart';
 
 class AddCertification extends ConsumerStatefulWidget {
   const AddCertification({super.key});

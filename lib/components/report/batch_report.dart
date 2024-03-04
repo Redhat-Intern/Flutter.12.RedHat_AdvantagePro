@@ -7,7 +7,7 @@ import '../../utilities/theme/size_data.dart';
 import '../common/icon.dart';
 import '../common/text.dart';
 import 'batch_report_result.dart';
-import '../../pages/detailed_batch_report.dart';
+import '../../pages/details/detailed_batch_report.dart';
 
 class BatchReport extends ConsumerStatefulWidget {
   const BatchReport({
@@ -20,10 +20,9 @@ class BatchReport extends ConsumerStatefulWidget {
 
 class _BatchReport extends ConsumerState<BatchReport> {
   TextEditingController controller = TextEditingController();
-  Map<String, dynamic> searchResult = {
-    "header": "RHCSA013",
-    "value": "Started At: 11.04.2004"
-  };
+  Map<String, dynamic> searchResult = {};
+  Map<String, dynamic> toShow = {};
+  Map<String, dynamic> searchData = {};
 
   void searchDataFun() async {
     var searchString = controller.text.toUpperCase();
@@ -39,10 +38,21 @@ class _BatchReport extends ConsumerState<BatchReport> {
           "header": data!["name"],
           "value": "Started At: ${data["time"]}"
         };
+        searchData = data;
+        toShow = {
+          "start": List.from(data["dates"]).first,
+          "end": List.from(data["dates"]).last,
+          "studentsLen": List.from(data["students"]).length,
+          "completed": data["completed"],
+          "certifiedStudents": null,
+          "centumCount": null,
+        };
       });
     } else {
       setState(() {
         searchResult = {"error": "Batch ID not matched"};
+        searchData.clear();
+        toShow.clear();
       });
     }
   }
@@ -134,7 +144,8 @@ class _BatchReport extends ConsumerState<BatchReport> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const DetailedBatchReport(),
+                          builder: (context) =>
+                              DetailedBatchReport(searchData: searchData),
                         ),
                       );
                     });
@@ -217,15 +228,36 @@ class _BatchReport extends ConsumerState<BatchReport> {
                 horizontal: width * 0.02,
                 vertical: height * 0.01,
               ),
-              child: const Column(
-                children: [
-                  BatchReportResult(header: "Start Date:", value: "19:06:2023"),
-                  BatchReportResult(header: "End Date:", value: "21:07:2023"),
-                  BatchReportResult(header: "Students Enrolled:", value: "15"),
-                  BatchReportResult(header: "Certified Students:", value: "11"),
-                  BatchReportResult(header: "Centum Count:", value: "9"),
-                ],
-              ),
+              alignment: Alignment.center,
+              child: toShow.isNotEmpty
+                  ? Column(
+                      children: [
+                        BatchReportResult(
+                            header: "Start Date:", value: toShow["start"]),
+                        BatchReportResult(
+                            header: "End Date:", value: toShow["end"]),
+                        BatchReportResult(
+                            header: "Students Enrolled:",
+                            value: toShow["studentsLen"].toString()),
+                        const BatchReportResult(
+                            header: "STATUS:", value: "LIVE"),
+                        // BatchReportResult(header: "Centum Count:", value: "9"),
+                      ],
+                    )
+                  : Column(
+                      children: [
+                        Image.asset(
+                          "assets/icons/DNF3.png",
+                          height: height * 0.225,
+                          fit: BoxFit.fitHeight,
+                        ),
+                        SizedBox(
+                          height: height * 0.02,
+                        ),
+                        const CustomText(
+                            text: "Search for the batch using Bath ID")
+                      ],
+                    ),
             ),
           ),
         ],

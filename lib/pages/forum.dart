@@ -65,6 +65,7 @@ class Forum extends ConsumerWidget {
                       snapshotData: snapshot.data!.docs,
                       userData: userData,
                       ref: ref);
+
                   return ListView.builder(
                     padding: EdgeInsets.symmetric(horizontal: width * 0.02),
                     itemCount: chatForums.length,

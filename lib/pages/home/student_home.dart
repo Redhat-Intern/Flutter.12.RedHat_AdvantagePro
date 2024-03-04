@@ -17,6 +17,10 @@ class StudentHome extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     Map<String, dynamic> userData = ref.watch(userDataProvider)!;
+    String batchName = Map.from(userData["currentBatch"]).keys.first.toString();
+    String studentID = Map.from(userData["id"])[batchName];
+    String email = userData["email"];
+
     CustomSizeData sizeData = CustomSizeData.from(context);
     CustomColorData colorData = CustomColorData.from(ref);
     double width = sizeData.width;
@@ -30,52 +34,54 @@ class StudentHome extends ConsumerWidget {
           height: height * 0.02,
         ),
         StreamBuilder(
-            stream:
-                FirebaseFirestore.instance.collection("batches").snapshots(),
-            builder: (context, snapshot) {
-              if (snapshot.hasData && snapshot.data!.docs.isNotEmpty) {
-                List<Map<String, dynamic>> data = [];
-                List<QueryDocumentSnapshot<Map<String, dynamic>>> docs =
-                    snapshot.data!.docs;
-                Map<String, dynamic> allBatches = userData["batches"];
-                List<String> batchIDList = allBatches.keys.toList();
-                Map<String, dynamic> batchData = docs
-                    .firstWhere(
-                        (element) => element.data()["completed"] == null)
-                    .data();
+          stream: FirebaseFirestore.instance
+              .collection("batches")
+              .where("students", arrayContains: {studentID: email}).snapshots(),
+          builder: (context, snapshot) {
+            if (snapshot.hasData && snapshot.data!.docs.isNotEmpty) {
+              List<Map<String, dynamic>> data = [];
+              List<QueryDocumentSnapshot<Map<String, dynamic>>> docs =
+                  snapshot.data!.docs;
+              Map<String, dynamic> allBatches = userData["batches"];
+              List<String> batchIDList = allBatches.keys.toList();
+              Map<String, dynamic> batchData = docs
+                  .firstWhere((element) => element.data()["completed"] == null)
+                  .data();
+              print(batchData);
+              for (QueryDocumentSnapshot<Map<String, dynamic>> doc
+                  in docs.where((element) =>
+                      batchIDList.contains(element.id.toUpperCase()))) {
+                List<dynamic> dateStrings = doc.data()["dates"];
+                List<DateTime> dates = dateStrings
+                    .map((e) => DateFormat('dd-MM-yyyy').parse(e))
+                    .toList();
+                dates.sort((a, b) => a.compareTo(b));
 
-                for (QueryDocumentSnapshot<Map<String, dynamic>> doc
-                    in docs.where((element) =>
-                        batchIDList.contains(element.id.toUpperCase()))) {
-                  List<dynamic> dateStrings = doc.data()["dates"];
-                  List<DateTime> dates = dateStrings
-                      .map((e) => DateFormat('dd-MM-yyyy').parse(e))
-                      .toList();
-                  dates.sort((a, b) => a.compareTo(b));
-
-                  data.add(doc.data());
-                }
-                return Expanded(
-                  child: Column(
-                    children: [
-                      Certifications(batchList: data),
-                      SizedBox(
-                        height: height * 0.02,
-                      ),
-                      CourseContent(batchData: batchData),
-                    ],
-                  ),
-                );
-              } else {
-                return const Expanded(
-                    child: Column(
+                data.add(doc.data());
+              }
+              return Expanded(
+                child: Column(
+                  children: [
+                    Certifications(batchList: data),
+                    SizedBox(
+                      height: height * 0.02,
+                    ),
+                    CourseContent(batchData: batchData),
+                  ],
+                ),
+              );
+            } else {
+              return const Expanded(
+                child: Column(
                   children: [
                     CertificationsPlaceHolder(),
                     Spacer(),
                   ],
-                ));
-              }
-            }),
+                ),
+              );
+            }
+          },
+        ),
       ],
     );
   }

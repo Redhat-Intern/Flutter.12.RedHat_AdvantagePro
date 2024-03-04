@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:redhat_v1/components/common/network_image.dart';
 import 'package:redhat_v1/providers/create_batch_provider.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -259,48 +260,16 @@ class _AvailableCertificationsState
                                 });
                                 await setBatchName();
                               },
-                              child: Container(
-                                margin: EdgeInsets.only(right: width * 0.02),
-                                padding: EdgeInsets.all(isFirst ? 3 : 5),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10),
-                                  border: Border.all(
-                                      color: isFirst
-                                          ? colorData.primaryColor(.6)
-                                          : Colors.transparent,
-                                      width: 2),
-                                ),
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(8),
-                                  child: Image.network(
-                                    certifications[index]["image"],
-                                    fit: BoxFit.fill,
-                                    width: width * 0.225,
-                                    loadingBuilder: (BuildContext context,
-                                        Widget child,
-                                        ImageChunkEvent? loadingProgress) {
-                                      if (loadingProgress == null) {
-                                        return child;
-                                      } else {
-                                        return Shimmer.fromColors(
-                                          baseColor:
-                                              colorData.backgroundColor(.1),
-                                          highlightColor:
-                                              colorData.secondaryColor(.1),
-                                          child: Container(
-                                            width: width * 0.225,
-                                            decoration: BoxDecoration(
-                                              color:
-                                                  colorData.secondaryColor(.5),
-                                              borderRadius:
-                                                  BorderRadius.circular(8.0),
-                                            ),
-                                          ),
-                                        );
-                                      }
-                                    },
-                                  ),
-                                ),
+                              child: CustomNetworkImage(
+                                url: certifications[index]["image"],
+                                radius: 8,
+                                size: height * .12,
+                                rightMargin: width * 0.02,
+                                border: isFirst
+                                    ? Border.all(
+                                        color: colorData.primaryColor(.6),
+                                        width: 2)
+                                    : null,
                               ),
                             );
                           },

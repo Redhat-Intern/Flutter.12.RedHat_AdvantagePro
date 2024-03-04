@@ -77,7 +77,7 @@ Future<Map<String, Map<String, dynamic>>> uploadCertificates(
     String url = await onCompleted.ref.getDownloadURL();
     // url
     downloadableURL.addAll({
-      url: {"name": fileName, "extnsion": fileName.split(".").last}
+      url: {"name": fileName, "extension": fileName.split(".").last}
     });
 
     fileUploadTask.snapshotEvents.listen((TaskSnapshot taskSnapshot) {

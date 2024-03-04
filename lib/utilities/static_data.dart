@@ -20,6 +20,8 @@ enum WorkStatus { completed, pending, not_Started }
 
 enum TestType { live, daily }
 
+enum CourseFileListFrom { staffDetail, courseConent }
+
 const List<String> searchData = ["batches", "staffs", "students"];
 
 const emojis = {

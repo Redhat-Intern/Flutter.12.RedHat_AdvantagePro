@@ -27,6 +27,7 @@ class _MainAuthPageState extends ConsumerState<MainAuthPage> {
 
     return Scaffold(
       backgroundColor: Colors.white,
+      resizeToAvoidBottomInset: false,
       body: SafeArea(
         child: Container(
           margin: EdgeInsets.only(

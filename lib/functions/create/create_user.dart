@@ -26,10 +26,11 @@ Future createUser({
       Map<String, dynamic> studentData = {
         "email": generatedData["email"],
         "name": generatedData["name"],
+        "password":password,
         "phoneNo": generatedData["phoneNo"],
         "occupation": generatedData["occupation"],
         "occDetail": generatedData["occDetail"],
-        "id": [generatedData["id"]],
+        "id": {generatedData["batchName"]: generatedData["id"]},
         "batches": {generatedData["batchName"]: generatedData["certificateID"]},
         "currentBatch": {
           generatedData["batchName"]: generatedData["certificateID"]

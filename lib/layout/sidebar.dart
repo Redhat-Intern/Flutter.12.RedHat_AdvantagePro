@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../providers/drawer_provider.dart';
 import '../providers/navigation_index_provider.dart';
 import '../utilities/theme/color_data.dart';
 import '../utilities/theme/size_data.dart';
@@ -24,6 +25,8 @@ class _SideBarState extends ConsumerState<SideBar> {
   @override
   Widget build(BuildContext context) {
     int index = ref.watch(navigationIndexProvider);
+    GlobalKey<ScaffoldState> scaffoldKey = ref.read(drawerKeyProvider);
+
     CustomSizeData sizeData = CustomSizeData.from(context);
     CustomColorData colorData = CustomColorData.from(ref);
 
@@ -80,10 +83,11 @@ class _SideBarState extends ConsumerState<SideBar> {
                         int currentListIndex = widget.iconNameList.indexOf(e);
                         return GestureDetector(
                           onTap: () {
-                           ref
+                            ref
                                 .read(navigationIndexProvider.notifier)
                                 .jumpTo(currentListIndex);
-                            Navigator.pop(context);
+                            scaffoldKey.currentState?.closeDrawer();
+                            // Navigator.pop(context);
                           },
                           child: Container(
                             // duration: const Duration(milliseconds: 100),

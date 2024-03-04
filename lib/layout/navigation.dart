@@ -1,13 +1,16 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../pages/add_certification.dart';
+import '../pages/add_pages/add_certification.dart';
 import '../pages/home/admin_home.dart';
 import '../pages/home/staff_home.dart';
 import '../pages/home/student_home.dart';
 import '../providers/user_detail_provider.dart';
 import '../providers/user_select_provider.dart';
 import '../utilities/static_data.dart';
+import '../utilities/theme/color_data.dart';
 import '../utilities/theme/size_data.dart';
 import '../pages/report.dart';
 import '../providers/navigation_index_provider.dart';
@@ -25,12 +28,11 @@ class Navigation extends ConsumerStatefulWidget {
 
 class _NavigationState extends ConsumerState<Navigation> {
   bool canPop = false;
-  late GlobalKey<ScaffoldState> scaffoldKey;
   int index = 0;
 
   popFunction(WidgetRef ref) async {
     if (ref.read(navigationIndexProvider) == 0) {
-      return true;
+      return exit(0);
     } else {
       ref.read(navigationIndexProvider.notifier).jumpTo(0);
     }
@@ -38,19 +40,23 @@ class _NavigationState extends ConsumerState<Navigation> {
 
   @override
   Widget build(BuildContext context) {
-    scaffoldKey = ref.watch(drawerKeyProvider);
+    // Navigation
+    GlobalKey<ScaffoldState> scaffoldKey = ref.watch(drawerKeyProvider);
     index = ref.watch(navigationIndexProvider);
+
     UserRole? role = ref.watch(userRoleProvider);
     Map<String, dynamic>? userData = ref.watch(userDataProvider);
-    CustomSizeData sizeData = CustomSizeData.from(context);
 
+    CustomSizeData sizeData = CustomSizeData.from(context);
+    CustomColorData colorData = CustomColorData.from(ref);
     double width = sizeData.width;
     double height = sizeData.height;
-    List<Widget> WidgetList = [];
+
+    List<Widget> widgetList = [];
     List<Map<IconData, String>> iconNameList = [];
 
     if (role == UserRole.admin) {
-      WidgetList = [
+      widgetList = [
         const AdminHome(),
         const Report(),
         const Forum(),
@@ -63,7 +69,7 @@ class _NavigationState extends ConsumerState<Navigation> {
         {Icons.add_moderator_rounded: "Certification"},
       ];
     } else if (role == UserRole.staff) {
-      WidgetList = [
+      widgetList = [
         const StaffHome(),
         const Forum(),
       ];
@@ -72,7 +78,7 @@ class _NavigationState extends ConsumerState<Navigation> {
         {Icons.forest_outlined: "Forum"},
       ];
     } else {
-      WidgetList = [
+      widgetList = [
         const StudentHome(),
         const Forum(),
       ];
@@ -98,18 +104,21 @@ class _NavigationState extends ConsumerState<Navigation> {
                   child: CircularProgressIndicator(),
                 )
               : WillPopScope(
-                  onWillPop: () => popFunction(ref), child: WidgetList[index]
+                  onWillPop: () {
+                    return popFunction(ref);
+                  },
+                  child: widgetList[index],
                   // IndexedStack(
                   //   index: index,
-                  //   children: WidgetList,
+                  //   children: widgetList,
                   // ),
-                  ),
+                ),
         ),
       ),
       drawer: SideBar(
         iconNameList: iconNameList,
       ),
-      drawerScrimColor: Colors.white.withOpacity(.3),
+      drawerScrimColor: colorData.secondaryColor(.4),
     );
   }
 }

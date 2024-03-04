@@ -21,7 +21,6 @@ Future main() async {
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
   runApp(
-    // Extending the Application State to ProviderScope of RiverPod
     ProviderScope(
       child: MyApp(),
     ),
@@ -34,7 +33,7 @@ class MyApp extends ConsumerWidget with CustomThemeDataMixin {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     ThemeMode themeMode = ref.watch(themeProvider).keys.first;
-    
+
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       themeMode: themeMode,
