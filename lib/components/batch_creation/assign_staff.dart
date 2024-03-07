@@ -299,10 +299,10 @@ class _AssignStaffState extends ConsumerState<AssignStaff> {
                       setState(() {
                         selectedStaffs.add(data);
                         ref.read(createBatchProvider.notifier).updateStaffs(
-                            newStaffs: selectedStaffs
-                                .map((e) =>
-                                    {e["id"].toString(): e["email"].toString()})
-                                .toList());
+                            newStaffs: Map.fromIterable(selectedStaffs.map(
+                                (e) => {
+                                      e["id"].toString(): e["email"].toString()
+                                    })));
                         movedOver = false;
                       });
                     },
@@ -337,12 +337,11 @@ class _AssignStaffState extends ConsumerState<AssignStaff> {
                               ref
                                   .read(createBatchProvider.notifier)
                                   .updateStaffs(
-                                      newStaffs: selectedStaffs
-                                          .map((e) => {
+                                      newStaffs: Map.fromIterable(
+                                          selectedStaffs.map((e) => {
                                                 e["id"].toString():
                                                     e["email"].toString()
-                                              })
-                                          .toList());
+                                              })));
                             });
                           },
                           onLongPress: () {

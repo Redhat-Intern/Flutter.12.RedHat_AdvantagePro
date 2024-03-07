@@ -53,6 +53,15 @@ class _TestCreaterState extends ConsumerState<TestCreater> {
           // testFields.map((e) => e.toMap()).toList(),
         }
       }, SetOptions(merge: true));
+
+      if (widget.testType == TestType.daily) {
+        FirebaseFirestore.instance
+            .collection("batches")
+            .doc(widget.batchData["name"])
+            .set({
+          "dailyTest": {widget.dayIndex.toString(): true}
+        }, SetOptions(merge: true));
+      }
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Center(
           child: CustomText(
@@ -62,6 +71,7 @@ class _TestCreaterState extends ConsumerState<TestCreater> {
           ),
         ),
       ));
+
       Navigator.pop(context);
     } else if (timeCtr.text == "") {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
@@ -141,27 +151,29 @@ class _TestCreaterState extends ConsumerState<TestCreater> {
               ),
               Row(
                 children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      CustomText(
-                        text: "Test Duration ",
-                        weight: FontWeight.w800,
-                        color: colorData.fontColor(.8),
-                        size: sizeData.medium,
-                      ),
-                      CustomText(
-                        text: isLive
-                            ? "(in seconds for each question):"
-                            : "(total time in minutes for all questions):",
-                        color: colorData.fontColor(.6),
-                        size: sizeData.small,
-                      ),
-                    ],
+                  Expanded(flex: 4,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        CustomText(
+                          text: "Test Duration ",
+                          weight: FontWeight.w800,
+                          color: colorData.fontColor(.8),
+                          size: sizeData.medium,
+                        ),
+                        CustomText(
+                          text: isLive
+                              ? "(in seconds for each question):"
+                              : "(total time in minutes for all questions):",
+                          color: colorData.fontColor(.6),
+                          size: sizeData.small,
+                        ),
+                      ],
+                    ),
                   ),
-                  const Spacer(),
                   Expanded(
                     child: Container(
+                      width: width * .2,
                       padding: EdgeInsets.only(
                         left: width * 0.02,
                         right: width * 0.02,

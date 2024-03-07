@@ -3,12 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
+import '../../components/common/waiting_widgets/certification_waiting.dart';
 import '../../components/home/student/certifications.dart';
-import '../../components/home/student/certifications_place_holder.dart';
 import '../../components/home/student/course_content.dart';
 import '../../components/home/header.dart';
+import '../../functions/read/certificate_data.dart';
 import '../../providers/user_detail_provider.dart';
-import '../../utilities/theme/color_data.dart';
 import '../../utilities/theme/size_data.dart';
 
 class StudentHome extends ConsumerWidget {
@@ -22,8 +22,6 @@ class StudentHome extends ConsumerWidget {
     String email = userData["email"];
 
     CustomSizeData sizeData = CustomSizeData.from(context);
-    CustomColorData colorData = CustomColorData.from(ref);
-    double width = sizeData.width;
     double height = sizeData.height;
 
     return Column(
@@ -47,7 +45,6 @@ class StudentHome extends ConsumerWidget {
               Map<String, dynamic> batchData = docs
                   .firstWhere((element) => element.data()["completed"] == null)
                   .data();
-              print(batchData);
               for (QueryDocumentSnapshot<Map<String, dynamic>> doc
                   in docs.where((element) =>
                       batchIDList.contains(element.id.toUpperCase()))) {
@@ -59,6 +56,13 @@ class StudentHome extends ConsumerWidget {
 
                 data.add(doc.data());
               }
+
+              readCertificateData(
+                batchName: batchData["name"],
+                certificateName: batchData["certificateID"],
+                ref: ref,
+              );
+
               return Expanded(
                 child: Column(
                   children: [
@@ -73,10 +77,7 @@ class StudentHome extends ConsumerWidget {
             } else {
               return const Expanded(
                 child: Column(
-                  children: [
-                    CertificationsPlaceHolder(),
-                    Spacer(),
-                  ],
+                  children: [CertificationWaitingWidget(), Spacer()],
                 ),
               );
             }

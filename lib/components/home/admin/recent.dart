@@ -1,9 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:redhat_v1/components/common/network_image.dart';
-import 'package:shimmer/shimmer.dart';
 
+import '../../../pages/details/batch_detail.dart';
 import '../../../utilities/theme/color_data.dart';
 import '../../../utilities/theme/size_data.dart';
 
@@ -22,6 +21,7 @@ class Recent extends ConsumerStatefulWidget {
 
 class _RecentState extends ConsumerState<Recent> {
   final ScrollController _controller = ScrollController();
+  List<Map<String, dynamic>> recentBatches = [];
 
   int firstIndex = 0;
 
@@ -43,22 +43,20 @@ class _RecentState extends ConsumerState<Recent> {
     return StreamBuilder(
         stream: FirebaseFirestore.instance.collection("batches").snapshots(),
         builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
+          if (snapshot.connectionState == ConnectionState.waiting &&
+              recentBatches.isEmpty) {
             return const RecentWaitingWidget();
           }
           if (snapshot.hasData && snapshot.data!.docs.isNotEmpty) {
             List<QueryDocumentSnapshot<Map<String, dynamic>>> docs =
                 snapshot.data!.docs;
 
-            List<Map<String, dynamic>> recentBatches = [];
+            recentBatches = [];
             for (QueryDocumentSnapshot<Map<String, dynamic>> i in docs) {
               Map<String, dynamic> data = i.data();
               int count = List.from(data["students"]).length;
-              recentBatches.add({
-                "certificateID": data["certificateID"],
-                "count": count,
-                "id": i.id,
-              });
+              data.addAll({"count": count});
+              recentBatches.add(data);
             }
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -141,7 +139,7 @@ class _RecentState extends ConsumerState<Recent> {
                               ),
                               CustomText(
                                 text:
-                                    recentBatches[firstIndex]["id"].toString(),
+                                    recentBatches[firstIndex]["name"].toString(),
                                 size: sizeData.regular,
                                 color: colorData.fontColor(.7),
                               ),
@@ -204,18 +202,28 @@ class _RecentState extends ConsumerState<Recent> {
                             physics: const BouncingScrollPhysics(),
                             itemBuilder: (BuildContext context, int index) {
                               bool isFirst = firstIndex == index;
-                              return NetworkImageRender(
-                                certificateID: recentBatches[index]
-                                    ["certificateID"],
-                                radius: 8,
-                                size: height * .14,
-                                rightMargin: width * 0.02,
-                                border: isFirst
-                                    ? Border.all(
-                                        color: colorData.primaryColor(.6),
-                                        width: 2,
-                                      )
-                                    : null,
+                              return GestureDetector(
+                                onTap: () => Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => BatchDetail(
+                                      batchData: recentBatches[index],
+                                    ),
+                                  ),
+                                ),
+                                child: NetworkImageRender(
+                                  certificateID: recentBatches[index]
+                                      ["certificateID"],
+                                  radius: 8,
+                                  size: height * .14,
+                                  rightMargin: width * 0.02,
+                                  border: isFirst
+                                      ? Border.all(
+                                          color: colorData.primaryColor(.6),
+                                          width: 2,
+                                        )
+                                      : null,
+                                ),
                               );
                             },
                           ),

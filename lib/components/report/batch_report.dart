@@ -87,6 +87,7 @@ class _BatchReport extends ConsumerState<BatchReport> {
               borderRadius: BorderRadius.circular(10),
               color: colorData.secondaryColor(.3),
             ),
+            alignment: Alignment.center,
             child: TextField(
               controller: controller,
               onSubmitted: (value) {
@@ -113,9 +114,6 @@ class _BatchReport extends ConsumerState<BatchReport> {
                   fontSize: sizeData.medium,
                   color: colorData.fontColor(.5),
                   height: 1,
-                ),
-                contentPadding: EdgeInsets.only(
-                  top: height * 0.008,
                 ),
                 border: InputBorder.none,
                 prefixIcon: GestureDetector(

@@ -23,9 +23,7 @@ class AdminHome extends StatelessWidget {
         const Recent(),
         const StaffsList(),
         const CreateBatchButton(),
-        SizedBox(
-          height: height * 0.02,
-        ),
+        SizedBox(height: height * 0.02),
       ],
     );
   }

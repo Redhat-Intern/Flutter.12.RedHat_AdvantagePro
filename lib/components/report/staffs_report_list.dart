@@ -15,7 +15,7 @@ class StaffsReportList extends ConsumerStatefulWidget {
     required this.adminStaffData,
   });
 
-  final List<Map<String, dynamic>> staffsListData;
+  final List<MapEntry> staffsListData;
   final Map<String, dynamic> adminStaffData;
 
   @override

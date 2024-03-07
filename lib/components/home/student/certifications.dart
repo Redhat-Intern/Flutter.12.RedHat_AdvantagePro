@@ -1,13 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:intl/intl.dart';
-import 'package:shimmer/shimmer.dart';
 
 import '../../../utilities/theme/color_data.dart';
 import '../../../utilities/theme/size_data.dart';
 
+import '../../common/network_image.dart';
 import '../../common/text.dart';
+import '../../common/waiting_widgets/certification_waiting.dart';
 
 class Certifications extends ConsumerStatefulWidget {
   const Certifications({
@@ -59,20 +59,17 @@ class _CertificationsState extends ConsumerState<Certifications> {
 
     double width = sizeData.width;
     double height = sizeData.height;
-    double aspectRatio = sizeData.aspectRatio;
 
     return certificationsList.isNotEmpty
         ? Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Header Text
               CustomText(
                 text: "Certifications",
                 size: sizeData.subHeader,
                 color: colorData.fontColor(.8),
                 weight: FontWeight.w800,
               ),
-
               SizedBox(
                 height: height * 0.0125,
               ),
@@ -115,39 +112,16 @@ class _CertificationsState extends ConsumerState<Certifications> {
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(8),
                               border: Border.all(
-                                  color: isFirst
-                                      ? colorData.primaryColor(.6)
-                                      : Colors.transparent,
-                                  width: 2),
-                            ),
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(8),
-                              child: Image.network(
-                                certificationsList[index]['image'],
-                                width: width * 0.25,
-                                fit: BoxFit.fill,
-                                loadingBuilder: (BuildContext context,
-                                    Widget child,
-                                    ImageChunkEvent? loadingProgress) {
-                                  if (loadingProgress == null) {
-                                    return child;
-                                  } else {
-                                    return Shimmer.fromColors(
-                                      baseColor: colorData.backgroundColor(.1),
-                                      highlightColor:
-                                          colorData.secondaryColor(.1),
-                                      child: Container(
-                                        width: width * 0.25,
-                                        decoration: BoxDecoration(
-                                          color: colorData.secondaryColor(.5),
-                                          borderRadius:
-                                              BorderRadius.circular(8.0),
-                                        ),
-                                      ),
-                                    );
-                                  }
-                                },
+                                color: isFirst
+                                    ? colorData.primaryColor(.6)
+                                    : Colors.transparent,
+                                width: 2,
                               ),
+                            ),
+                            child: CustomNetworkImage(
+                              size: height * .125,
+                              radius: 8,
+                              url: certificationsList[index]['image'],
                             ),
                           ),
                         ],
@@ -158,6 +132,6 @@ class _CertificationsState extends ConsumerState<Certifications> {
               )
             ],
           )
-        : const Center(child: Text("loading..."));
+        : const CertificationWaitingWidget();
   }
 }

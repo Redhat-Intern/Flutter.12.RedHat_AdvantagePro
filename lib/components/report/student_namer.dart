@@ -36,6 +36,7 @@ class StudentReportTableNamer extends ConsumerWidget {
             borderRadius: BorderRadius.circular(10),
             color: colorData.secondaryColor(1),
           ),
+          alignment: Alignment.center,
           child: imageUrl.length == 1
               ? Center(
                   child: CustomText(

@@ -61,10 +61,10 @@ class _DetailedBatchReportState extends ConsumerState<DetailedBatchReport> {
     double width = sizeData.width;
 
     Map<String, dynamic> adminStaff = widget.searchData["admin"];
-    List<Map<String, dynamic>> staffList =
-        List.from(widget.searchData["staffs"]);
+    List<MapEntry> staffList =
+        Map.from(widget.searchData["staffs"]).entries.toList();
     staffList.removeWhere(
-      (element) => element.keys.first == adminStaff.keys.first,
+      (element) => element.key == adminStaff.keys.first,
     );
 
     List<Map> studentsList = List.from(widget.searchData["students"])

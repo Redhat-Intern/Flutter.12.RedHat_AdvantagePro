@@ -21,8 +21,7 @@ class CreateBatchNotifier extends StateNotifier<Batch> {
     state = state.copyWith(name: newName);
   }
 
-  void updateCertificate(
-      {required Map<String,dynamic> newCertificateData}) {
+  void updateCertificate({required Map<String, dynamic> newCertificateData}) {
     state = state.copyWith(
       certificateData: newCertificateData,
     );
@@ -32,11 +31,11 @@ class CreateBatchNotifier extends StateNotifier<Batch> {
     state = state.copyWith(dates: newDates);
   }
 
-  void updateStaffs({required List<Map<String,dynamic>> newStaffs}) {
+  void updateStaffs({required Map<String, dynamic> newStaffs}) {
     state = state.copyWith(staffs: newStaffs);
   }
 
-  void updateAdminStaff({required Map<String,dynamic> adminStaff}) {
+  void updateAdminStaff({required Map<String, dynamic> adminStaff}) {
     state = state.copyWith(adminStaff: adminStaff);
   }
 

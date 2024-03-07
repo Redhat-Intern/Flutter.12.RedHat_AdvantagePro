@@ -11,10 +11,12 @@ class OptionsSelector extends ConsumerStatefulWidget {
     super.key,
     required this.currentTestField,
     required this.setOption,
+    this.answer,
   });
 
   final TestField currentTestField;
   final Function setOption;
+  final String? answer;
 
   @override
   ConsumerState<OptionsSelector> createState() => _OptionsSelectorState();
@@ -28,7 +30,7 @@ class _OptionsSelectorState extends ConsumerState<OptionsSelector> {
     super.didUpdateWidget(oldWidget);
     if (widget.currentTestField != oldWidget.currentTestField) {
       setState(() {
-        yourAnswer = "";
+        yourAnswer = widget.answer ?? "";
       });
     }
   }
@@ -37,7 +39,6 @@ class _OptionsSelectorState extends ConsumerState<OptionsSelector> {
   Widget build(BuildContext context) {
     CustomSizeData sizeData = CustomSizeData.from(context);
     CustomColorData colorData = CustomColorData.from(ref);
-
 
     double height = sizeData.height;
     double width = sizeData.width;

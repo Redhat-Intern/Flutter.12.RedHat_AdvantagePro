@@ -59,7 +59,24 @@ class _SearchState extends ConsumerState<Search> {
           searchResult = {"error": "Staff ID not found"};
         }
       });
-    } else {}
+    } else if (selectedItem == "students") {
+      var document =
+          await FirebaseFirestore.instance.collection(selectedItem).get();
+
+      var dataSnapShot = document.docs.where(
+          (value) => Map.from(value.data()["id"]).containsKey(searchString));
+      setState(() {
+        if (dataSnapShot.isNotEmpty) {
+          var data = dataSnapShot.first.data();
+          searchResult = {
+            "header": data["name"],
+            "value": "Currently learning in the batch ${data["currentBatch"].keys.first}"
+          };
+        } else {
+          searchResult = {"error": "Student ID not found"};
+        }
+      });
+    }
   }
 
   @override
@@ -147,6 +164,7 @@ class _SearchState extends ConsumerState<Search> {
               Expanded(
                 child: Container(
                   margin: EdgeInsets.only(left: width * 0.03),
+                  alignment: Alignment.center,
                   child: TextField(
                     controller: searchCtr,
                     onSubmitted: (value) {
@@ -173,9 +191,6 @@ class _SearchState extends ConsumerState<Search> {
                         fontSize: sizeData.medium,
                         color: colorData.fontColor(.5),
                         height: 1,
-                      ),
-                      contentPadding: EdgeInsets.only(
-                        bottom: height * 0.017,
                       ),
                       border: InputBorder.none,
                       suffixIcon: GestureDetector(

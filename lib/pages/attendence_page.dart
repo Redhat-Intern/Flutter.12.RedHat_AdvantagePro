@@ -29,7 +29,7 @@ class AttendencePage extends ConsumerStatefulWidget {
 }
 
 class _AttendencePageState extends ConsumerState<AttendencePage> {
-  List<Map<String, dynamic>> students = [];
+  List<Map<dynamic, dynamic>> students = [];
   Map<String, bool?> toggle = {};
 
   @override
@@ -40,17 +40,15 @@ class _AttendencePageState extends ConsumerState<AttendencePage> {
       setState(() {
         students = value.docs
             .where((element) {
-              bool toReturn = false;
-              for (Map<dynamic, dynamic> student in widget.students) {
-                if (student.values.first == element.id &&
-                    List.from(element.data()["id"])
-                        .contains(student.keys.first)) {
-                  toReturn = true;
+              bool isFound = false;
+              for (Map<dynamic, dynamic> i in widget.students) {
+                if (element.id == i.values.first) {
+                  isFound = true;
                 }
               }
-              return toReturn;
+              return isFound;
             })
-            .map((e) => e.data())
+            .map((e) => Map.from(e.data()))
             .toList();
       });
     });

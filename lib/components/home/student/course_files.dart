@@ -13,65 +13,12 @@ import '../../../utilities/theme/size_data.dart';
 import '../../common/text.dart';
 import 'file_tile.dart';
 
-class CourseFiles extends ConsumerStatefulWidget {
-  final Map<String, dynamic> courseFiles;
-  final CourseFileListFrom from;
-  final double? height;
-  const CourseFiles(
-      {super.key, required this.courseFiles, required this.from, this.height});
+class CourseFiles extends ConsumerWidget {
+  final Map<File, Map<String, dynamic>> courseFiles;
+  const CourseFiles({super.key, required this.courseFiles});
 
   @override
-  ConsumerState<CourseFiles> createState() => _CourseFilesState();
-}
-
-class _CourseFilesState extends ConsumerState<CourseFiles> {
-  Map<File, Map<String, dynamic>> dynamicCourseFiles = {};
-
-  Future<File?> downloadFile(String path, String name) async {
-    try {
-      final response = await Dio()
-          .get(path, options: Options(responseType: ResponseType.bytes));
-
-      final directory = await getExternalStorageDirectory();
-      final filePath = '${directory!.path}/$name';
-      final file = await File(filePath).writeAsBytes(response.data);
-      return file;
-    } catch (e) {
-      return null;
-    }
-  }
-
-  void updateCourseFiles() {
-    setState(() {
-      dynamicCourseFiles.clear();
-    });
-    widget.courseFiles.forEach((key, value) async {
-      File? file = await downloadFile(key, value["name"]);
-      if (file != null) {
-        setState(() {
-          dynamicCourseFiles.addAll({file: value});
-        });
-      }
-    });
-  }
-
-  @override
-  void didUpdateWidget(CourseFiles oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (widget.courseFiles.keys.first != oldWidget.courseFiles.keys.first) {
-      dynamicCourseFiles.clear();
-      updateCourseFiles();
-    }
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    updateCourseFiles();
-  }
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     CustomSizeData sizeData = CustomSizeData.from(context);
     CustomColorData colorData = CustomColorData.from(ref);
 
@@ -92,7 +39,7 @@ class _CourseFilesState extends ConsumerState<CourseFiles> {
           height: height * 0.015,
         ),
         SizedBox(
-          height: widget.height ?? height * .225,
+          height: height * .225,
           child: Stack(
             clipBehavior: Clip.none,
             children: [
@@ -104,7 +51,7 @@ class _CourseFilesState extends ConsumerState<CourseFiles> {
                 dashPattern: const [14, 4, 6, 4],
                 borderType: BorderType.RRect,
                 radius: const Radius.circular(8),
-                child: widget.courseFiles.isEmpty
+                child: courseFiles.isEmpty
                     ? Center(
                         child: CustomText(
                           text: "The course files have not been uploaded yet",
@@ -117,125 +64,40 @@ class _CourseFilesState extends ConsumerState<CourseFiles> {
                       )
                     : ListView.builder(
                         scrollDirection: Axis.vertical,
-                        itemCount: widget.courseFiles.length,
+                        itemCount: courseFiles.length,
                         physics: const BouncingScrollPhysics(),
                         padding: EdgeInsets.symmetric(
                           vertical: height * 0.01,
                           horizontal: width * 0.02,
                         ),
                         itemBuilder: (BuildContext context, int index) {
-                          bool canShow = index < dynamicCourseFiles.length;
-                          if (canShow) {
-                            MapEntry<File, Map<String, dynamic>> thisFileMap =
-                                dynamicCourseFiles.entries.toList()[index];
+                          MapEntry<File, Map<String, dynamic>> thisFileMap =
+                              courseFiles.entries.toList()[index];
+                          File fileData = thisFileMap.key;
+                          String extension = thisFileMap.value["extension"];
+                          bool isImage =
+                              extension == "png" || extension == "jpg";
+                          String name = thisFileMap.value["name"];
+                          int size =
+                              int.parse(thisFileMap.value["size"].toString());
+                          double kb = size / 1024;
+                          double mb = kb / 1024;
 
-                            print(thisFileMap);
-                            File fileData = thisFileMap.key;
-                            String extension = thisFileMap.value["extension"];
-                            bool isImage =
-                                extension == "png" || extension == "jpg";
-                            String name = thisFileMap.value["name"];
-                            String? fileSize;
+                          String fileSize = mb >= 1
+                              ? "${mb.toStringAsFixed(2)} MBs"
+                              : "${kb.toStringAsFixed(2)} KBs";
 
-                            if (widget.from ==
-                                CourseFileListFrom.courseConent) {
-                              int size = int.parse(
-                                  thisFileMap.value["size"].toString());
-                              double kb = size / 1024;
-                              double mb = kb / 1024;
-
-                              fileSize = mb >= 1
-                                  ? "${mb.toStringAsFixed(2)} MBs"
-                                  : "${kb.toStringAsFixed(2)} KBs";
-                            }
-
-                            return FileTile(
-                              fileData: fileData,
-                              isImage: isImage,
-                              extension: extension,
-                              name: name,
-                              fileSize: fileSize,
-                            );
-                          } else {
-                            return Container(
-                              margin: EdgeInsets.only(bottom: height * 0.01),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(8),
-                                gradient: LinearGradient(
-                                  begin: Alignment.topLeft,
-                                  end: Alignment.bottomRight,
-                                  colors: [
-                                    colorData.secondaryColor(.5),
-                                    colorData.secondaryColor(.1),
-                                  ],
-                                ),
-                              ),
-                              child: Row(
-                                children: [
-                                  Shimmer.fromColors(
-                                    baseColor: colorData.secondaryColor(.5),
-                                    highlightColor: colorData.primaryColor(.3),
-                                    child: Container(
-                                      height: aspectRatio * 100,
-                                      width: aspectRatio * 100,
-                                      margin: EdgeInsets.only(
-                                        top: height * 0.005,
-                                        bottom: height * 0.005,
-                                        left: width * 0.01,
-                                        right: width * 0.02,
-                                      ),
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(6),
-                                        color: colorData.secondaryColor(.5),
-                                      ),
-                                    ),
-                                  ),
-                                  Column(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Shimmer.fromColors(
-                                        baseColor: colorData.secondaryColor(.5),
-                                        highlightColor:
-                                            colorData.secondaryColor(.1),
-                                        child: Container(
-                                          margin: EdgeInsets.only(
-                                              bottom: height * 0.0125),
-                                          width: width * 0.5,
-                                          height: height * 0.02,
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(2),
-                                            color: colorData.secondaryColor(1),
-                                          ),
-                                        ),
-                                      ),
-                                      Shimmer.fromColors(
-                                        baseColor: colorData.secondaryColor(.5),
-                                        highlightColor:
-                                            colorData.secondaryColor(.1),
-                                        child: Container(
-                                          width: width * 0.2,
-                                          height: height * 0.02,
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(2),
-                                            color: colorData.secondaryColor(1),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            );
-                          }
+                          return FileTile(
+                            fileData: fileData,
+                            isImage: isImage,
+                            extension: extension,
+                            name: name,
+                            fileSize: fileSize,
+                          );
                         },
                       ),
               ),
-              dynamicCourseFiles.isNotEmpty
+              courseFiles.isNotEmpty
                   ? Positioned(
                       top: -15,
                       right: 0,
@@ -246,7 +108,7 @@ class _CourseFilesState extends ConsumerState<CourseFiles> {
                           color: colorData.primaryColor(1),
                         ),
                         child: CustomText(
-                          text: dynamicCourseFiles.length.toString(),
+                          text: courseFiles.length.toString(),
                           size: sizeData.regular,
                           color: colorData.sideBarTextColor(1),
                           weight: FontWeight.bold,

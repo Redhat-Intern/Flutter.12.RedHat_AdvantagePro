@@ -13,11 +13,18 @@ import '../../common/text.dart';
 import '../../common/waiting_widgets/staffs_list_waiting.dart';
 import 'staffs_list_place_holder.dart';
 
-class StaffsList extends ConsumerWidget {
+class StaffsList extends ConsumerStatefulWidget {
   const StaffsList({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<StaffsList> createState() => _staffsListState();
+
+}
+class _staffsListState extends ConsumerState<StaffsList> {
+  List<Map<String, dynamic>> staffsList = [];
+
+  @override
+  Widget build(BuildContext context) {
     CustomSizeData sizeData = CustomSizeData.from(context);
     CustomColorData colorData = CustomColorData.from(ref);
 
@@ -28,12 +35,11 @@ class StaffsList extends ConsumerWidget {
     return StreamBuilder(
         stream: FirebaseFirestore.instance.collection("staffs").snapshots(),
         builder: (context, snapshot) {
-          print(snapshot.connectionState.name);
-          if (snapshot.connectionState == ConnectionState.waiting) {
+          if (snapshot.connectionState == ConnectionState.waiting && staffsList.isEmpty) {
             return const StaffsListWaiting();
           }
           if (snapshot.hasData && snapshot.data!.docs.isNotEmpty) {
-            List<Map<String, dynamic>> staffsList = [];
+            staffsList = [];
             for (var element in snapshot.data!.docs) {
               Map<String, dynamic> staffList = {"email": element.id};
               element.data().entries.forEach((element) {

@@ -80,16 +80,6 @@ class RecentWaitingWidget extends ConsumerWidget {
                       width: height * .125,
                     ),
                   ),
-                  SizedBox(
-                    width: width * .04,
-                  ),
-                  Opacity(
-                    opacity: .2,
-                    child: ShimmerBox(
-                      height: height * 0.125,
-                      width: height * .125,
-                    ),
-                  ),
                 ],
               )
             ],

@@ -8,7 +8,9 @@ import '../../common/text.dart';
 class HoldPage extends ConsumerWidget {
   const HoldPage({
     super.key,
+    this.fromDaily,
   });
+  final String? fromDaily;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -17,7 +19,7 @@ class HoldPage extends ConsumerWidget {
 
     double height = sizeData.height;
     double width = sizeData.width;
-    
+
     return Column(
       children: [
         SizedBox(
@@ -26,7 +28,7 @@ class HoldPage extends ConsumerWidget {
         Align(
           alignment: Alignment.center,
           child: CustomText(
-            text: "Waiting for Others",
+            text: fromDaily ?? "Waiting for Others",
             size: sizeData.header,
             color: colorData.fontColor(.8),
             weight: FontWeight.w800,

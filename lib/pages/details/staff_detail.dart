@@ -124,10 +124,10 @@ class _StaffDetailState extends ConsumerState<StaffDetail> {
               SizedBox(
                 height: height * 0.01,
               ),
-              CourseFiles(
-                  courseFiles: widget.certificatesURL,
-                  from: CourseFileListFrom.staffDetail,
-                  height: height * .4),
+              // CourseFiles(
+              //     courseFiles: widget.certificatesURL,
+              //     from: CourseFileListFrom.staffDetail,
+              //     height: height * .4),
               const Spacer(),
             ],
           ),

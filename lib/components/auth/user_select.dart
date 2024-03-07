@@ -33,13 +33,13 @@ class UserSelect extends ConsumerWidget {
 
     return GestureDetector(
       onTap: () {
+        ref.read(userRoleProvider.notifier).setUserRole(role);
         Navigator.push(
           context,
           MaterialPageRoute(
             builder: (context) => togo,
           ),
         );
-        ref.read(userRoleProvider.notifier).setUserRole(role);
       },
       child: Container(
         color: Colors.transparent,

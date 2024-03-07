@@ -27,14 +27,12 @@ class BatchList extends ConsumerWidget {
         itemCount: data.length,
         itemBuilder: (context, index) => Container(
           margin: EdgeInsets.only(right: width * 0.02),
-          padding: EdgeInsets.symmetric(
-            horizontal: width * 0.025,
-            vertical: height * 0.005,
-          ),
+          padding: EdgeInsets.symmetric(horizontal: width * 0.025),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(4),
             color: colorData.secondaryColor(.4),
           ),
+          alignment: Alignment.center,
           child: CustomText(
             text: data[index],
             size: sizeData.small,

@@ -26,16 +26,39 @@ class _StudentReportTableState extends ConsumerState<StudentReportTable> {
   List<String> searchData = ["attendance", "tests", "exams"];
   int streamIndex = 0;
   LinkedScrollControllerGroup commonCtr = LinkedScrollControllerGroup();
-
   // Initialize controllers dynamically in initState
   List<ScrollController> controllers = [];
+
+  List<Map> studentsData = [];
+  late Stream<DocumentSnapshot<Map<String, dynamic>>> stream;
+
+  getStudentsData() async {
+    QuerySnapshot<Map<String, dynamic>> docsSnapShot =
+        await FirebaseFirestore.instance.collection("students").get();
+    setState(() {
+      studentsData = docsSnapShot.docs
+          .where((element) {
+            bool isFound = false;
+            for (Map<dynamic, dynamic> i in widget.studentsData) {
+              if (element.id == i.values.first) {
+                isFound = true;
+              }
+            }
+            return isFound;
+          })
+          .map((e) => Map.from(e.data()))
+          .toList();
+    });
+  }
 
   @override
   void initState() {
     super.initState();
+    stream = widget.streams[streamIndex];
     for (int i = 0; i <= widget.studentsData.length; i++) {
       controllers.add(commonCtr.addAndGet());
     }
+    getStudentsData();
   }
 
   @override
@@ -49,14 +72,11 @@ class _StudentReportTableState extends ConsumerState<StudentReportTable> {
 
   @override
   Widget build(BuildContext context) {
-    Stream<DocumentSnapshot<Map<String, dynamic>>> stream =
-        widget.streams[streamIndex];
     CustomSizeData sizeData = CustomSizeData.from(context);
     CustomColorData colorData = CustomColorData.from(ref);
 
     double width = sizeData.width;
     double height = sizeData.height;
-    double aspectRatio = sizeData.aspectRatio;
 
     return Expanded(
       child: Column(
@@ -131,11 +151,14 @@ class _StudentReportTableState extends ConsumerState<StudentReportTable> {
                     );
                   }
                   if (snapshot.hasData && snapshot.data!.exists) {
+                    Map<String, dynamic> attendenceData =
+                        snapshot.data!.data()!;
+
                     return ListView.builder(
                       padding: EdgeInsets.only(left: width * 0.01),
                       physics: const BouncingScrollPhysics(),
                       scrollDirection: Axis.vertical,
-                      itemCount: widget.studentsData.length + 1,
+                      itemCount: studentsData.length + 1,
                       itemBuilder: (context, index) {
                         // Header
                         if (index == 0) {
@@ -161,7 +184,7 @@ class _StudentReportTableState extends ConsumerState<StudentReportTable> {
                                 child: ListView.builder(
                                   controller: controllers[index],
                                   scrollDirection: Axis.horizontal,
-                                  itemCount: 10,
+                                  itemCount: attendenceData.length,
                                   itemBuilder: (context, index) => SizedBox(
                                     width: width * .2,
                                     child: Center(
@@ -178,17 +201,22 @@ class _StudentReportTableState extends ConsumerState<StudentReportTable> {
                             ]),
                           );
                         } else {
+                          String studentID =
+                              widget.studentsData[index - 1].keys.first;
+
                           return Container(
                             height: height * 0.065,
                             margin: EdgeInsets.only(bottom: height * 0.01),
                             child: Row(
                               children: [
-                                const Expanded(
+                                Expanded(
                                   flex: 5,
                                   child: StudentReportTableNamer(
-                                      name: "Student 1",
-                                      id: "Rhcsa001200",
-                                      imageUrl: "assets/images/staff1.png"),
+                                      name: studentsData[index - 1]["name"],
+                                      id: studentID,
+                                      imageUrl: studentsData[index - 1]
+                                              ["photo"] ??
+                                          studentsData[index - 1]["name"][0]),
                                 ),
                                 SizedBox(
                                   width: width * 0.02,
@@ -198,14 +226,23 @@ class _StudentReportTableState extends ConsumerState<StudentReportTable> {
                                   child: ListView.builder(
                                     controller: controllers[index],
                                     scrollDirection: Axis.horizontal,
-                                    itemCount: 10,
-                                    itemBuilder: (context, index) {
+                                    itemCount: attendenceData.length,
+                                    itemBuilder: (context, valueIndex) {
+                                      bool attendenceCheck =
+                                          attendenceData[valueIndex.toString()]
+                                              [studentID];
+                                      String attendance =
+                                          attendenceCheck == true
+                                              ? "Present"
+                                              : "Absent";
                                       return SizedBox(
                                         width: width * .2,
                                         child: Center(
                                           child: CustomText(
-                                            text: "text",
-                                            color: colorData.fontColor(.9),
+                                            text: attendance,
+                                            color: attendenceCheck
+                                                ? Colors.green.shade600
+                                                : Colors.red,
                                             weight: FontWeight.w800,
                                             size: sizeData.medium,
                                           ),

@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 
 import '../../../pages/test_page/conduct_live_test.dart';
 import '../../../pages/test_page/test_creator.dart';
@@ -47,7 +48,11 @@ class LiveTestWorkTile extends ConsumerWidget {
     CustomSizeData sizeData = CustomSizeData.from(context);
     double width = sizeData.width;
     double height = sizeData.height;
-    double aspectRatio = sizeData.aspectRatio;
+
+    int cmpDate = DateTime.now().compareTo(
+        DateFormat("dd-MM-yyyy").parse(day).add(const Duration(hours: 24)));
+
+    bool datePassed = cmpDate == 1;
 
     return StreamBuilder(
       stream: FirebaseFirestore.instance
@@ -64,6 +69,7 @@ class LiveTestWorkTile extends ConsumerWidget {
           bool isConducted = testData.containsKey("result");
 
           Widget toMove = isConducted ? result : conduct;
+          bool notDone = datePassed && testData.isEmpty;
 
           return Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -113,50 +119,66 @@ class LiveTestWorkTile extends ConsumerWidget {
                       bottomLeft: Radius.circular(10),
                     ),
                   ),
-                  child: isConducted
-                      ? ListView.builder(
-                          physics: const BouncingScrollPhysics(),
-                          scrollDirection: Axis.horizontal,
-                          itemCount: 10,
-                          itemBuilder: (context, currentIndex) {
-                            return Container(
-                              margin: EdgeInsets.only(right: width * 0.03),
-                              padding: EdgeInsets.symmetric(
-                                horizontal: width * 0.02,
-                                vertical: height * 0.005,
-                              ),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(6),
-                                color: colorData.secondaryColor(.4),
-                              ),
-                              child: Center(
-                                child: CustomText(
-                                  text: "absentStudents[currentIndex]",
-                                  size: sizeData.regular,
-                                  color: colorData.primaryColor(.6),
-                                  weight: FontWeight.w800,
-                                ),
-                              ),
-                            );
-                          },
-                        )
-                      : Center(
+                  child: notDone
+                      ? Center(
                           child: CustomText(
-                            text: "Test is created but not conducted!",
+                            text: "Test has not been initiated. (REPORTED)",
                             color: colorData.fontColor(.4),
                           ),
-                        ),
+                        )
+                      : isConducted
+                          ? ListView.builder(
+                              physics: const BouncingScrollPhysics(),
+                              scrollDirection: Axis.horizontal,
+                              itemCount: 10,
+                              itemBuilder: (context, currentIndex) {
+                                return Container(
+                                  margin: EdgeInsets.only(right: width * 0.03),
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: width * 0.02,
+                                    vertical: height * 0.005,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(6),
+                                    color: colorData.secondaryColor(.4),
+                                  ),
+                                  child: Center(
+                                    child: CustomText(
+                                      text: "absentStudents[currentIndex]",
+                                      size: sizeData.regular,
+                                      color: colorData.primaryColor(.6),
+                                      weight: FontWeight.w800,
+                                    ),
+                                  ),
+                                );
+                              },
+                            )
+                          : Center(
+                              child: CustomText(
+                                text: "Test is created but not conducted!",
+                                color: colorData.fontColor(.4),
+                              ),
+                            ),
                 ),
               )
             ],
           );
         } else {
-          return WorkTilePlaceHolder(
-            header: "live test",
-            toGO: toGo,
-            value: "NOT CREATED",
-            placeholder: "Tap to create a live test",
-          );
+          if (datePassed) {
+            return Center(
+              child: CustomText(
+                text: "Test has not been initiated. (REPORTED)",
+                color: colorData.fontColor(.4),
+              ),
+            );
+          } else {
+            return WorkTilePlaceHolder(
+              header: "live test",
+              toGO: toGo,
+              value: "NOT CREATED",
+              placeholder: "Tap to create a live test",
+            );
+          }
         }
       },
     );

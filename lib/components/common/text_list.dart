@@ -14,7 +14,9 @@ class CustomListText extends ConsumerWidget {
     required this.getChild,
     this.fromHeight,
     this.highlightColor,
+    this.fontSize,
     this.verticalPadding,
+    this.horizontalPadding,
     this.backGroundColor,
     this.placeholder,
   });
@@ -25,8 +27,10 @@ class CustomListText extends ConsumerWidget {
   final Function getChild;
   final Color? highlightColor;
   final Color? backGroundColor;
+  final double? fontSize;
   final double? fromHeight;
   final double? verticalPadding;
+  final double? horizontalPadding;
   final String? placeholder;
 
   @override
@@ -65,7 +69,7 @@ class CustomListText extends ConsumerWidget {
                   child: Container(
                     margin: EdgeInsets.only(right: width * 0.03),
                     padding: EdgeInsets.symmetric(
-                      horizontal: width * 0.02,
+                      horizontal: horizontalPadding ?? width * 0.02,
                       vertical: height * 0.005,
                     ),
                     decoration: BoxDecoration(
@@ -75,7 +79,7 @@ class CustomListText extends ConsumerWidget {
                     child: Center(
                       child: CustomText(
                         text: getChild(currentIndex),
-                        size: sizeData.regular,
+                        size: fontSize ?? sizeData.regular,
                         color: todo != null
                             ? index == currentIndex
                                 ? highlightColor ?? colorData.primaryColor(.8)

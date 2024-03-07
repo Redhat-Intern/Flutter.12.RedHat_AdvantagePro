@@ -12,6 +12,7 @@ import '../../pages/notification.dart';
 import '../common/icon.dart';
 import '../common/menu_button.dart';
 import '../common/text.dart';
+import '../common/waiting_widgets/notification_waiting.dart';
 
 class Header extends ConsumerStatefulWidget {
   const Header({super.key});
@@ -58,7 +59,8 @@ class _HeaderState extends ConsumerState<Header> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (BuildContext context) => const Notifications(),
+                            builder: (BuildContext context) =>
+                                const Notifications(),
                           ),
                         );
                       },
@@ -91,9 +93,7 @@ class _HeaderState extends ConsumerState<Header> {
                       ),
                     );
                   } else {
-                    return const Center(
-                      child: CircularProgressIndicator(),
-                    );
+                    return const NotificationWaitingWidget();
                   }
                 }),
             GestureDetector(

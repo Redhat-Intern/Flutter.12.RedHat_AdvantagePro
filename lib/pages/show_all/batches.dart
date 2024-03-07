@@ -11,7 +11,7 @@ import '../../components/show_all/batch/list_tile.dart';
 import '../../components/show_all/batch/text_tile.dart';
 import '../../utilities/theme/color_data.dart';
 import '../../utilities/theme/size_data.dart';
-import '../details/plain_batch_detail.dart';
+import '../details/batch_detail.dart';
 
 class Batches extends ConsumerWidget {
   const Batches({super.key});
@@ -83,7 +83,7 @@ class Batches extends ConsumerWidget {
                                 onTap: () => Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => PlainBatchDetail(
+                                    builder: (context) => BatchDetail(
                                       batchData: batchData,
                                     ),
                                   ),
@@ -106,28 +106,25 @@ class Batches extends ConsumerWidget {
                                       Expanded(
                                         flex: 2,
                                         child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
                                           children: [
                                             Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
                                               children: [
-                                                isLive
-                                                    ? Container(
-                                                        height:
-                                                            aspectRatio * 14,
-                                                        width: aspectRatio * 14,
-                                                        margin: EdgeInsets.only(
-                                                            right:
-                                                                width * 0.01),
-                                                        decoration:
-                                                            BoxDecoration(
-                                                          shape:
-                                                              BoxShape.circle,
-                                                          color: colorData
-                                                              .primaryColor(1),
-                                                        ),
-                                                      )
-                                                    : SizedBox(
-                                                        width: width * .02,
-                                                      ),
+                                                if (isLive)
+                                                  Container(
+                                                    height: aspectRatio * 14,
+                                                    width: aspectRatio * 14,
+                                                    margin: EdgeInsets.only(
+                                                        right: width * 0.01),
+                                                    decoration: BoxDecoration(
+                                                      shape: BoxShape.circle,
+                                                      color: colorData
+                                                          .primaryColor(1),
+                                                    ),
+                                                  ),
                                                 CustomText(
                                                   text: batchData["name"],
                                                   weight: FontWeight.w800,
@@ -144,6 +141,11 @@ class Batches extends ConsumerWidget {
                                                   batchData["certificateID"],
                                               size: aspectRatio * 180,
                                               radius: 8,
+                                              border: Border.all(
+                                                color:
+                                                    colorData.primaryColor(1),
+                                                width: 2,
+                                              ),
                                             ),
                                           ],
                                         ),

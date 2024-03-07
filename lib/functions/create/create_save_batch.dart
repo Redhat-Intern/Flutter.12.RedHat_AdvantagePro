@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:redhat_v1/providers/user_detail_provider.dart';
+// import 'package:redhat_v1/providers/user_detail_provider.dart';
 
 import '../../components/add_staff/send_email.dart';
 import '../../model/batch.dart';
@@ -10,7 +10,7 @@ Future<bool> createBatch({
   required WidgetRef ref,
 }) async {
   Map<String, dynamic> batchData = batch.toMap();
-  Map<String, dynamic> userData = ref.watch(userDataProvider)!;
+  // Map<String, dynamic> userData = ref.watch(userDataProvider)!;
 
   try {
     await FirebaseFirestore.instance
@@ -27,15 +27,15 @@ Future<bool> createBatch({
 
     List<String> members = ['admin'];
 
-    for (var element in batch.staffs) {
+    for (var element in batch.staffs.entries) {
       bool isAdmin = batch.adminStaff.keys.first.toString().toLowerCase() ==
-          element.keys.first.toString().toLowerCase();
+          element.key.toString().toLowerCase();
       String role = (isAdmin ? "admin" : "staff").toUpperCase();
       await FirebaseFirestore.instance
           .collection("notifications")
           .doc("invitations")
           .set({
-        element.values.first: {
+        element.value: {
           batch.name: {
             'message': 'You have been invited to join this batch as $role',
           }
@@ -44,16 +44,16 @@ Future<bool> createBatch({
 
       await FirebaseFirestore.instance
           .collection("staffs")
-          .doc(element.values.first.toString().trim())
+          .doc(element.value.toString().trim())
           .set({
         "batches": FieldValue.arrayUnion([batch.name])
       }, SetOptions(merge: true));
 
       await FirebaseFirestore.instance
           .collection("forum")
-          .doc("${element.values.first.toString().trim()}|admin")
+          .doc("${element.value.toString().trim()}|admin")
           .set({
-        "members": ["admin", element.values.first.toString().trim()],
+        "members": ["admin", element.value.toString().trim()],
         "details": {
           "name": 'admin',
         },
@@ -65,7 +65,7 @@ Future<bool> createBatch({
         }
       }, SetOptions(merge: true));
 
-      members.add(element.values.first);
+      members.add(element.value);
     }
 
     for (var element in batch.students) {

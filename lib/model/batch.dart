@@ -7,7 +7,7 @@ class Batch {
   String name;
   Map<String, dynamic> certificateData;
   List<String> dates;
-  List<Map<String, dynamic>> staffs;
+  Map<String, dynamic> staffs;
   Map<String, dynamic> adminStaff;
   List<Student> students;
 
@@ -28,7 +28,7 @@ class Batch {
       certificateData: {},
       adminStaff: {},
       dates: [],
-      staffs: [],
+      staffs: {},
       students: [],
     );
   }
@@ -38,7 +38,7 @@ class Batch {
     String? name,
     Map<String, dynamic>? certificateData,
     List<String>? dates,
-    List<Map<String, dynamic>>? staffs,
+    Map<String, dynamic>? staffs,
     Map<String, dynamic>? adminStaff,
     List<Student>? students,
   }) {
@@ -71,7 +71,7 @@ class Batch {
       'staffs': staffs,
       "admin": adminStaff,
       'students': students.map((student) => {
-            "${name}STU${(students.indexOf(student)+1).toString().padLeft(3, '0')}":
+            "${name}STU${(students.indexOf(student) + 1).toString().padLeft(3, '0')}":
                 student.email
           }),
     };

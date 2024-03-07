@@ -11,6 +11,7 @@ class CustomNetworkImage extends ConsumerWidget {
     required this.size,
     required this.radius,
     this.border,
+    this.padding,
     this.backgroundColor,
     this.rightMargin,
     this.bottomMargin,
@@ -20,6 +21,7 @@ class CustomNetworkImage extends ConsumerWidget {
   final double radius;
   final Color? backgroundColor;
   final Border? border;
+  final double? padding;
 
   final double? rightMargin;
   final double? bottomMargin;
@@ -35,7 +37,7 @@ class CustomNetworkImage extends ConsumerWidget {
         right: rightMargin != null ? rightMargin! : 0,
         bottom: bottomMargin != null ? bottomMargin! : 0,
       ),
-      padding: const EdgeInsets.all(2.5),
+      padding: EdgeInsets.all(padding ?? 2.5),
       decoration: BoxDecoration(
         color: backgroundColor ?? colorData.secondaryColor(1),
         borderRadius: BorderRadius.circular(8),

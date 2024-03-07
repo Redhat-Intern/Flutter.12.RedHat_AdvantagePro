@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
 import '../../components/common/text.dart';
+import '../../components/common/waiting_widgets/recent_waiting.dart';
 import '../../components/home/staff/batches.dart';
 import '../../components/home/staff/work_setter.dart';
 import '../../providers/user_detail_provider.dart';
@@ -30,10 +31,24 @@ class StaffHome extends ConsumerWidget {
           height: height * 0.02,
         ),
         StreamBuilder(
-            stream: FirebaseFirestore.instance.collection("batches").where(
-                "staffs",
-                arrayContains: {userData["id"]: userData["email"]}).snapshots(),
+            stream: FirebaseFirestore.instance
+                .collection("batches")
+                .where("staffs", whereIn: [
+              {userData["id"]: userData["email"]}
+            ]).snapshots(),
             builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Expanded(
+                  child: Column(
+                    children: [
+                      RecentWaitingWidget(),
+                      // need to do the loadin page
+                      Spacer(),
+                    ],
+                  ),
+                );
+              }
+
               if (snapshot.hasData && snapshot.data!.docs.isNotEmpty) {
                 List<QueryDocumentSnapshot<Map<String, dynamic>>> docs =
                     snapshot.data!.docs;
@@ -77,23 +92,34 @@ class StaffHome extends ConsumerWidget {
                                 liveBatches: liveBatches,
                               ),
                             )
-                          : const Center(
-                              child: CustomText(
-                                text: "No live Batches",
-                              ),
+                          : Column(
+                              children: [
+                                Image.asset("assets/images/report_feedback.png",
+                                    height: height * 0.35, fit: BoxFit.cover),
+                                SizedBox(height: height * 0.01),
+                                const CustomText(text: "NO LIVE BATCHES")
+                              ],
                             ),
                     ],
                   ),
                 );
               } else {
-                return const Expanded(
+                return Expanded(
                   child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                      RecentPlaceHolder(
+                      const RecentPlaceHolder(
                         header: "Batches",
                         text: "You are not yet assigned with any batches!",
                       ),
-                      Spacer(),
+                      Column(
+                        children: [
+                          Image.asset("assets/images/report_feedback.png",
+                              height: height * 0.35, fit: BoxFit.cover),
+                          SizedBox(height: height * 0.01),
+                          const CustomText(text: "NO LIVE BATCHES")
+                        ],
+                      ),
                     ],
                   ),
                 );

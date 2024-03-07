@@ -3,6 +3,13 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../components/common/shimmer_box.dart';
+import '../components/common/waiting_widgets/certification_waiting.dart';
+import '../components/common/waiting_widgets/course_waiting.dart';
+import '../components/common/waiting_widgets/header_waiting.dart';
+import '../components/common/waiting_widgets/recent_waiting.dart';
+import '../components/common/waiting_widgets/search_field_waiting.dart';
+import '../components/common/waiting_widgets/staffs_list_waiting.dart';
 import '../pages/add_pages/add_certification.dart';
 import '../pages/home/admin_home.dart';
 import '../pages/home/staff_home.dart';
@@ -53,6 +60,7 @@ class _NavigationState extends ConsumerState<Navigation> {
     double height = sizeData.height;
 
     List<Widget> widgetList = [];
+    List<Widget> loadingList = [const MainPageHeaderWaitingWidget()];
     List<Map<IconData, String>> iconNameList = [];
 
     if (role == UserRole.admin) {
@@ -62,6 +70,13 @@ class _NavigationState extends ConsumerState<Navigation> {
         const Forum(),
         const AddCertification(),
       ];
+      loadingList.addAll([
+        const SearchFieldWaitingWidget(),
+        const RecentWaitingWidget(),
+        const StaffsListWaiting(),
+        ShimmerBox(height: height * 0.1, width: width * 0.45),
+        const SizedBox(),
+      ]);
       iconNameList = [
         {Icons.home_outlined: "Home"},
         {Icons.report: "Report"},
@@ -73,15 +88,27 @@ class _NavigationState extends ConsumerState<Navigation> {
         const StaffHome(),
         const Forum(),
       ];
+      loadingList.addAll([
+        SizedBox(height: height * 0.03),
+        const CertificationWaitingWidget(),
+        // need to do
+        const Spacer(),
+      ]);
       iconNameList = [
         {Icons.home_outlined: "Home"},
         {Icons.forest_outlined: "Forum"},
       ];
-    } else {
+    } else if (role == UserRole.student) {
       widgetList = [
         const StudentHome(),
         const Forum(),
       ];
+      loadingList.addAll([
+        SizedBox(height: height * 0.03),
+        const CertificationWaitingWidget(),
+        SizedBox(height: height * 0.02),
+        const CourseContentWaitingWidget(count: 3),
+      ]);
       iconNameList = [
         {Icons.home_outlined: "Home"},
         {Icons.forest_outlined: "Forum"},
@@ -100,9 +127,9 @@ class _NavigationState extends ConsumerState<Navigation> {
             top: height * 0.02,
           ),
           child: userData == null
-              ? const Center(
-                  child: CircularProgressIndicator(),
-                )
+              ? Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: loadingList)
               : WillPopScope(
                   onWillPop: () {
                     return popFunction(ref);
