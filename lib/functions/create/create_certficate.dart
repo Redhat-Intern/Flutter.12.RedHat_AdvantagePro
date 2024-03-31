@@ -94,7 +94,6 @@ Future<Map<int, CourseDataUpload>> uploadCourseContent({
       files: value.files,
       path: "$path/$key",
       ref: ref,
-      commonPath: commonPath,
     );
 
     MapEntry<int, CourseDataUpload> currentContentMapData = MapEntry(
@@ -115,7 +114,6 @@ Future<Map<String, Map<String, dynamic>>> uploadFiles({
   required Map<File, Map<String, dynamic>> files,
   required String path,
   required Reference ref,
-  required String commonPath,
 }) async {
   Map<String, Map<String, dynamic>> filesMap = {};
 

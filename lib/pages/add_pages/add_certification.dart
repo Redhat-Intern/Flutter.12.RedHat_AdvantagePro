@@ -2,10 +2,10 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:redhat_v1/components/common/icon.dart';
-import 'package:redhat_v1/functions/create/create_certficate.dart';
-import 'package:redhat_v1/providers/navigation_index_provider.dart';
 
+import '../../components/common/icon.dart';
+import '../../functions/create/create_certficate.dart';
+import '../../providers/navigation_index_provider.dart';
 import '../../utilities/theme/color_data.dart';
 import '../../utilities/theme/size_data.dart';
 import '../../model/course_data.dart';
@@ -21,10 +21,10 @@ class AddCertification extends ConsumerStatefulWidget {
   const AddCertification({super.key});
 
   @override
-  ConsumerState<AddCertification> createState() => _addCertificateState();
+  ConsumerState<AddCertification> createState() => AddCertificateState();
 }
 
-class _addCertificateState extends ConsumerState<AddCertification> {
+class AddCertificateState extends ConsumerState<AddCertification> {
   TextEditingController name = TextEditingController();
   TextEditingController discription = TextEditingController();
 
@@ -457,7 +457,7 @@ class _addCertificateState extends ConsumerState<AddCertification> {
                               height: height * 0.01,
                             ),
                             CourseFilePicker(
-                              content: courseContent[firstIndex]!,
+                              content: courseContent[firstIndex]!.files,
                               handleFile: handleFile,
                             ),
                           ],

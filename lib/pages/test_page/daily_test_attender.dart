@@ -36,10 +36,11 @@ class _DailyTestAttenderState extends ConsumerState<DailyTestAttender> {
   List<TestField> testFields = [];
   int testIndex = 0;
   List<String?> answers = [];
+  int totalMark = 0;
   int count = 0;
   bool canPop = false;
 
-  DateTime onInitializeTime = DateTime.now();
+  late DateTime onInitializeTime;
 
   int duration = 0;
 
@@ -47,6 +48,7 @@ class _DailyTestAttenderState extends ConsumerState<DailyTestAttender> {
     setState(() {
       if (answers[testIndex] == null) count++;
       answers[testIndex] = option.key;
+      totalMark += testFields[testIndex].answer == option.key ? 100 : 0;
     });
   }
 
@@ -55,7 +57,12 @@ class _DailyTestAttenderState extends ConsumerState<DailyTestAttender> {
       widget.documentRef.set({
         widget.dayIndex: {
           "answers": {
-            widget.userID: answers,
+            widget.userID: {
+              "answer": answers,
+              "totalMark": totalMark,
+              "startTime": onInitializeTime.toIso8601String(),
+              "endTime": DateTime.now().toIso8601String(),
+            },
           }
         }
       }, SetOptions(merge: true));
@@ -107,11 +114,10 @@ class _DailyTestAttenderState extends ConsumerState<DailyTestAttender> {
           testData["answer"],
         );
       }).toList();
-      setState(() {
-        duration = int.parse(data["duration"]);
-        testFields = testDataList;
-        answers = List.generate(testDataList.length, (index) => null);
-      });
+      duration = int.parse(data["duration"]);
+      testFields = testDataList;
+      answers = List.generate(testDataList.length, (index) => null);
+      onInitializeTime = DateTime.now();
     });
   }
 
@@ -129,7 +135,7 @@ class _DailyTestAttenderState extends ConsumerState<DailyTestAttender> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               SizedBox(height: height * 0.02),
-              DailyTestProgressBar(minutes: duration,submitTest: submitTest),
+              DailyTestProgressBar(minutes: duration, submitTest: submitTest),
               SizedBox(height: height * 0.03),
               Row(
                 crossAxisAlignment: CrossAxisAlignment.end,

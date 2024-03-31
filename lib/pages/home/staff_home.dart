@@ -106,7 +106,7 @@ class StaffHome extends ConsumerWidget {
               } else {
                 return Expanded(
                   child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       const RecentPlaceHolder(
                         header: "Batches",
@@ -120,6 +120,7 @@ class StaffHome extends ConsumerWidget {
                           const CustomText(text: "NO LIVE BATCHES")
                         ],
                       ),
+                      SizedBox(height: height * 0.1),
                     ],
                   ),
                 );

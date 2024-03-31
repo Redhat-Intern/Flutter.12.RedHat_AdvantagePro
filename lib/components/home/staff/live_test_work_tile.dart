@@ -10,6 +10,7 @@ import '../../../utilities/static_data.dart';
 import '../../../utilities/theme/color_data.dart';
 import '../../../utilities/theme/size_data.dart';
 import '../../common/text.dart';
+import 'work_tile_container.dart';
 import 'work_tile_placeholder.dart';
 
 class LiveTestWorkTile extends ConsumerWidget {
@@ -96,80 +97,47 @@ class LiveTestWorkTile extends ConsumerWidget {
               SizedBox(
                 height: height * 0.008,
               ),
-              GestureDetector(
-                onTap: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => toMove,
-                  ),
-                ),
-                child: Container(
-                  width: width,
-                  height: height * 0.0525,
-                  padding: EdgeInsets.only(
-                    left: width * 0.03,
-                    right: width * 0.03,
-                    top: height * 0.006,
-                    bottom: height * 0.006,
-                  ),
-                  decoration: BoxDecoration(
-                    color: colorData.backgroundColor(1),
-                    borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(10),
-                      bottomLeft: Radius.circular(10),
-                    ),
-                  ),
-                  child: notDone
-                      ? Center(
-                          child: CustomText(
-                            text: "Test has not been initiated. (REPORTED)",
-                            color: colorData.fontColor(.4),
+              notDone
+                  ? const WorkTileContainer(
+                      text: "Test has not been initiated. (REPORTED)")
+                  : isConducted
+                      ? GestureDetector(
+                          onTap: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => toMove,
+                            ),
+                          ),
+                          child: WorkTileContainer(
+                            textWidget: CustomText(
+                                text: "Live Test Conducted Successfully 🥳",
+                                color: Colors.green,
+                                size: sizeData.medium,
+                                weight: FontWeight.w800),
                           ),
                         )
-                      : isConducted
-                          ? ListView.builder(
-                              physics: const BouncingScrollPhysics(),
-                              scrollDirection: Axis.horizontal,
-                              itemCount: 10,
-                              itemBuilder: (context, currentIndex) {
-                                return Container(
-                                  margin: EdgeInsets.only(right: width * 0.03),
-                                  padding: EdgeInsets.symmetric(
-                                    horizontal: width * 0.02,
-                                    vertical: height * 0.005,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(6),
-                                    color: colorData.secondaryColor(.4),
-                                  ),
-                                  child: Center(
-                                    child: CustomText(
-                                      text: "absentStudents[currentIndex]",
-                                      size: sizeData.regular,
-                                      color: colorData.primaryColor(.6),
-                                      weight: FontWeight.w800,
-                                    ),
-                                  ),
-                                );
-                              },
-                            )
-                          : Center(
-                              child: CustomText(
-                                text: "Test is created but not conducted!",
-                                color: colorData.fontColor(.4),
-                              ),
-                            ),
-                ),
-              )
+                      : const WorkTileContainer(
+                          text:
+                              "Test is created but not conducted! (REPORTED)"),
             ],
           );
         } else {
           if (datePassed) {
-            return Center(
-              child: CustomText(
-                text: "Test has not been initiated. (REPORTED)",
-                color: colorData.fontColor(.4),
-              ),
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                CustomText(
+                  text: "LIVE TEST:",
+                  color: colorData.fontColor(.5),
+                  weight: FontWeight.w800,
+                  size: sizeData.small,
+                ),
+                SizedBox(
+                  height: height * 0.01,
+                ),
+                const WorkTileContainer(
+                    text: "Test has not been initiated. (REPORTED)"),
+              ],
             );
           } else {
             return WorkTilePlaceHolder(

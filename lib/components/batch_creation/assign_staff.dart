@@ -298,11 +298,15 @@ class _AssignStaffState extends ConsumerState<AssignStaff> {
                     onAccept: (Map<String, dynamic> data) {
                       setState(() {
                         selectedStaffs.add(data);
-                        ref.read(createBatchProvider.notifier).updateStaffs(
-                            newStaffs: Map.fromIterable(selectedStaffs.map(
-                                (e) => {
-                                      e["id"].toString(): e["email"].toString()
-                                    })));
+                        Map<String, dynamic> result = selectedStaffs.fold({},
+                            (Map<String, dynamic> previousValue, element) {
+                          previousValue[element["id"].toString()] =
+                              element["email"];
+                          return previousValue;
+                        });
+                        ref
+                            .read(createBatchProvider.notifier)
+                            .updateStaffs(newStaffs: result);
                         movedOver = false;
                       });
                     },

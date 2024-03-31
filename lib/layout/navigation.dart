@@ -134,11 +134,12 @@ class _NavigationState extends ConsumerState<Navigation> {
                   onWillPop: () {
                     return popFunction(ref);
                   },
-                  child: widgetList[index],
-                  // IndexedStack(
-                  //   index: index,
-                  //   children: widgetList,
-                  // ),
+                  child:
+                      //  widgetList[index],
+                      IndexedStack(
+                    index: index,
+                    children: widgetList,
+                  ),
                 ),
         ),
       ),

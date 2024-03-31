@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
+import '../../../pages/test_page/daily_test_result_page.dart';
 import '../../../pages/test_page/test_creator.dart';
 import '../../../utilities/static_data.dart';
 import '../../../utilities/theme/color_data.dart';
@@ -28,6 +29,12 @@ class DayTestWorkTile extends ConsumerWidget {
       day: day,
       dayIndex: dayIndex,
       testType: TestType.daily,
+    );
+
+    Widget resultPage = DailyTestResult(
+      batchData: batchData,
+      day: day,
+      dayIndex: dayIndex,
     );
 
     CustomColorData colorData = CustomColorData.from(ref);
@@ -59,6 +66,15 @@ class DayTestWorkTile extends ConsumerWidget {
               ? answerData.length == List.from(batchData["students"]).length
               : false;
 
+          List<String> attendedStudents =
+              answerData != null ? answerData.keys.toList() : [];
+
+          List<String> notAttendedStudents = List.from(batchData["students"])
+              .map((e) => Map<String, dynamic>.from(e).keys.first.toString())
+              .toList();
+          notAttendedStudents
+              .removeWhere((element) => attendedStudents.contains(element));
+
           bool notDone = datePassed && testData.isEmpty;
 
           return Column(
@@ -86,82 +102,106 @@ class DayTestWorkTile extends ConsumerWidget {
               SizedBox(
                 height: height * 0.008,
               ),
-              GestureDetector(
-                onTap: answerData != null && answerData.isNotEmpty
-                    ? () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => toGo,
+              notDone
+                  ? Center(
+                      child: CustomText(
+                        text: "Test has not been initiated. (REPORTED)",
+                        color: colorData.fontColor(.4),
+                      ),
+                    )
+                  : GestureDetector(
+                      onTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => resultPage,
+                        ),
+                      ),
+                      child: Container(
+                        width: width,
+                        height: height * 0.0525,
+                        padding: EdgeInsets.only(
+                          left: width * 0.03,
+                          right: width * 0.03,
+                          top: height * 0.006,
+                          bottom: height * 0.006,
+                        ),
+                        decoration: BoxDecoration(
+                          color: colorData.backgroundColor(1),
+                          borderRadius: const BorderRadius.only(
+                            topLeft: Radius.circular(10),
+                            bottomLeft: Radius.circular(10),
                           ),
-                        )
-                    : () {},
-                child: Container(
-                  width: width,
-                  height: height * 0.0525,
-                  padding: EdgeInsets.only(
-                    left: width * 0.03,
-                    right: width * 0.03,
-                    top: height * 0.006,
-                    bottom: height * 0.006,
-                  ),
-                  decoration: BoxDecoration(
-                    color: colorData.backgroundColor(1),
-                    borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(10),
-                      bottomLeft: Radius.circular(10),
-                    ),
-                  ),
-                  child: notDone
-                      ? Center(
-                          child: CustomText(
-                            text: "Test has not been initiated. (REPORTED)",
-                            color: colorData.fontColor(.4),
-                          ),
-                        )
-                      : answerData != null && answerData.isNotEmpty
-                          ? ListView.builder(
-                              physics: const BouncingScrollPhysics(),
-                              scrollDirection: Axis.horizontal,
-                              itemCount: 10,
-                              itemBuilder: (context, currentIndex) {
-                                return Container(
-                                  margin: EdgeInsets.only(right: width * 0.03),
-                                  padding: EdgeInsets.symmetric(
-                                    horizontal: width * 0.02,
-                                    vertical: height * 0.005,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(6),
-                                    color: colorData.secondaryColor(.4),
-                                  ),
-                                  child: Center(
+                        ),
+                        child: notAttendedStudents.isEmpty
+                            ? const Center(
+                                child: CustomText(
+                                  text: "All attended the test successfully 🥳",
+                                  color: Colors.green,
+                                  weight: FontWeight.w800,
+                                ),
+                              )
+                            : answerData != null && answerData.isNotEmpty
+                                ? ListView.builder(
+                                    physics: const BouncingScrollPhysics(),
+                                    scrollDirection: Axis.horizontal,
+                                    itemCount: notAttendedStudents.length,
+                                    itemBuilder: (context, currentIndex) {
+                                      return Container(
+                                        margin: EdgeInsets.only(
+                                            right: width * 0.03),
+                                        padding: EdgeInsets.symmetric(
+                                          horizontal: width * 0.03,
+                                          vertical: height * 0.005,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(6),
+                                          color: colorData.secondaryColor(.4),
+                                        ),
+                                        child: Center(
+                                          child: CustomText(
+                                            text: notAttendedStudents[
+                                                currentIndex],
+                                            size: sizeData.regular,
+                                            color: Colors.red,
+                                            weight: FontWeight.w800,
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  )
+                                : Center(
                                     child: CustomText(
-                                      text: "absentStudents[currentIndex]",
-                                      size: sizeData.regular,
-                                      color: colorData.primaryColor(.6),
-                                      weight: FontWeight.w800,
+                                      text:
+                                          "Test is created but no one attended!",
+                                      color: colorData.fontColor(.4),
                                     ),
                                   ),
-                                );
-                              },
-                            )
-                          : Center(
-                              child: CustomText(
-                                text: "Test is created but no one attended!",
-                                color: colorData.fontColor(.4),
-                              ),
-                            ),
-                ),
-              )
+                      ),
+                    )
             ],
           );
         } else {
           if (datePassed) {
-            return Center(
-              child: CustomText(
-                text: "Test has not been initiated. (REPORTED)",
-                color: colorData.fontColor(.4),
-              ),
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                CustomText(
+                  text: "DAILY TEST:",
+                  color: colorData.fontColor(.5),
+                  weight: FontWeight.w800,
+                  size: sizeData.small,
+                ),
+                SizedBox(
+                  height: height * 0.015,
+                ),
+                Center(
+                  child: CustomText(
+                    text: "Test has not been initiated. (REPORTED)",
+                    color: colorData.fontColor(.4),
+                  ),
+                ),
+              ],
             );
           } else {
             return WorkTilePlaceHolder(

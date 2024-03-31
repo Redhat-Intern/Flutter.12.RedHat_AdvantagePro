@@ -69,7 +69,7 @@ class _CourseContentInputFieldState
               cursorColor: colorData.primaryColor(1),
               cursorWidth: 2,
               decoration: InputDecoration(
-                contentPadding: EdgeInsets.only(bottom: height*0.02),
+                contentPadding: EdgeInsets.only(bottom: height * 0.02),
                 hintText: widget.hintText,
                 hintStyle: TextStyle(
                   fontWeight: FontWeight.w600,

@@ -9,8 +9,8 @@ import '../../common/text.dart';
 import '../../../pages/attendence_page.dart';
 import 'work_tile_placeholder.dart';
 
-class AttendenceWorkTile extends ConsumerWidget {
-  const AttendenceWorkTile(
+class AttendanceWorkTile extends ConsumerWidget {
+  const AttendanceWorkTile(
       {super.key,
       required this.dayIndex,
       required this.batchData,

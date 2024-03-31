@@ -10,8 +10,10 @@ class PageHeader extends ConsumerWidget {
   const PageHeader({
     super.key,
     required this.tittle,
+    this.secondaryWidget,
   });
   final String tittle;
+  final Widget? secondaryWidget;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -35,7 +37,10 @@ class PageHeader extends ConsumerWidget {
           top: 0,
           left: 0,
           child: CustomBackButton(),
-        )
+        ),
+        secondaryWidget != null
+            ? Positioned(right: 0, child: secondaryWidget!)
+            : const SizedBox()
       ],
     );
   }

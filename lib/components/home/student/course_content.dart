@@ -86,6 +86,7 @@ class _CourseContentState extends ConsumerState<CourseContent> {
 
     if (!certificateData.isEmpty() &&
         certificateData.courseDataList.isNotEmpty) {
+      List<String> batchDates = List.from(widget.batchData["dates"]);
       String? liveTest;
       if (widget.batchData["liveTest"] != null) {
         liveTest = widget.batchData["liveTest"][firstIndex.toString()];
@@ -139,7 +140,7 @@ class _CourseContentState extends ConsumerState<CourseContent> {
                   vertical: height * 0.005,
                 ),
                 scrollDirection: Axis.horizontal,
-                itemCount: certificateData.courseDataLength,
+                itemCount: batchDates.length,
                 itemBuilder: (context, index) {
                   bool toShow = index < certificateData.courseDataList.length;
                   return GestureDetector(

@@ -45,6 +45,7 @@ class StudentHome extends ConsumerWidget {
               Map<String, dynamic> batchData = docs
                   .firstWhere((element) => element.data()["completed"] == null)
                   .data();
+                  
               for (QueryDocumentSnapshot<Map<String, dynamic>> doc
                   in docs.where((element) =>
                       batchIDList.contains(element.id.toUpperCase()))) {
@@ -53,7 +54,6 @@ class StudentHome extends ConsumerWidget {
                     .map((e) => DateFormat('dd-MM-yyyy').parse(e))
                     .toList();
                 dates.sort((a, b) => a.compareTo(b));
-
                 data.add(doc.data());
               }
 

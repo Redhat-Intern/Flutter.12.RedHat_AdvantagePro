@@ -16,9 +16,13 @@ import '../common/text.dart';
 
 class CourseFilePicker extends ConsumerStatefulWidget {
   final Function handleFile;
-  final CourseData content;
+  final Map<File, Map<String, dynamic>> content;
+  final double? containerHeight;
   const CourseFilePicker(
-      {super.key, required this.handleFile, required this.content});
+      {super.key,
+      required this.handleFile,
+      required this.content,
+      this.containerHeight});
 
   @override
   ConsumerState<CourseFilePicker> createState() => _CourseFilePickerState();
@@ -40,7 +44,7 @@ class _CourseFilePickerState extends ConsumerState<CourseFilePicker> {
 
   @override
   Widget build(BuildContext context) {
-    courseFiles = widget.content.files;
+    courseFiles = widget.content;
 
     CustomSizeData sizeData = CustomSizeData.from(context);
     CustomColorData colorData = CustomColorData.from(ref);
@@ -65,7 +69,7 @@ class _CourseFilePickerState extends ConsumerState<CourseFilePicker> {
               onTap: () async {
                 var files = await FilePicker.platform.pickFiles(
                     allowMultiple: true,
-                    allowedExtensions: ["pdf", "png", "jpg"],
+                    allowedExtensions: ["pdf"],
                     type: FileType.custom,
                     allowCompression: true);
                 setState(() {
@@ -119,7 +123,7 @@ class _CourseFilePickerState extends ConsumerState<CourseFilePicker> {
               borderType: BorderType.RRect,
               radius: const Radius.circular(8),
               child: Container(
-                height: height * 0.225,
+                height: widget.containerHeight ?? height * 0.225,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(8),
                 ),
@@ -127,7 +131,7 @@ class _CourseFilePickerState extends ConsumerState<CourseFilePicker> {
                     ? Center(
                         child: CustomText(
                           text:
-                              "Upload courseFiles as PDF or Image\nby clicking add courseFile\n\nChoose file of size below 10 MB",
+                              "Upload courseFiles as PDF \nby clicking add courseFile\n\nChoose file of size below 10 MB",
                           align: TextAlign.center,
                           size: sizeData.medium,
                           color: colorData.secondaryColor(.4),
@@ -148,18 +152,16 @@ class _CourseFilePickerState extends ConsumerState<CourseFilePicker> {
                               courseFiles.entries.toList()[index];
                           File fileData = thisFileMap.key;
                           String extension = thisFileMap.value["extension"];
-                          bool isImage =
-                              extension == "png" || extension == "jpg";
                           String name = thisFileMap.value["name"];
                           int size =
                               int.parse(thisFileMap.value["size"].toString());
                           double kb = size / 1024;
                           double mb = kb / 1024;
-        
+
                           String fileSize = mb >= 1
                               ? "${mb.toStringAsFixed(2)} MBs"
                               : "${kb.toStringAsFixed(2)} KBs";
-        
+
                           return Stack(
                             children: [
                               GestureDetector(
@@ -191,37 +193,26 @@ class _CourseFilePickerState extends ConsumerState<CourseFilePicker> {
                                           left: width * 0.01,
                                           right: width * 0.02,
                                         ),
-                                        decoration: isImage
-                                            ? BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(6),
-                                                image: DecorationImage(
-                                                    image: FileImage(fileData),
-                                                    fit: BoxFit.cover),
-                                              )
-                                            : BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(6),
-                                                gradient: LinearGradient(
-                                                  begin: Alignment.topLeft,
-                                                  end: Alignment.bottomRight,
-                                                  colors: [
-                                                    colorData.primaryColor(.3),
-                                                    colorData.primaryColor(.1),
-                                                  ],
-                                                ),
-                                              ),
-                                        child: isImage
-                                            ? const SizedBox()
-                                            : Center(
-                                                child: CustomText(
-                                                  text: extension.toUpperCase(),
-                                                  size: sizeData.regular,
-                                                  color:
-                                                      colorData.fontColor(.8),
-                                                  weight: FontWeight.w800,
-                                                ),
-                                              ),
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(6),
+                                          gradient: LinearGradient(
+                                            begin: Alignment.topLeft,
+                                            end: Alignment.bottomRight,
+                                            colors: [
+                                              colorData.primaryColor(.3),
+                                              colorData.primaryColor(.1),
+                                            ],
+                                          ),
+                                        ),
+                                        child: Center(
+                                          child: CustomText(
+                                            text: extension.toUpperCase(),
+                                            size: sizeData.regular,
+                                            color: colorData.fontColor(.8),
+                                            weight: FontWeight.w800,
+                                          ),
+                                        ),
                                       ),
                                       Column(
                                         crossAxisAlignment:
