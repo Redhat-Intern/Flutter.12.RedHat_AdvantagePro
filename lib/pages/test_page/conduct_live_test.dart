@@ -1,4 +1,3 @@
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -40,7 +39,9 @@ class _ConductLiveTestState extends ConsumerState<ConductLiveTest> {
     await FirebaseFirestore.instance
         .collection("liveTest")
         .doc(widget.batchData["name"])
-        .set({"status": true}, SetOptions(merge: true));
+        .set({
+      widget.dayIndex.toString(): {"status": true}
+    }, SetOptions(merge: true));
   }
 
   @override
@@ -149,11 +150,13 @@ class _ConductLiveTestState extends ConsumerState<ConductLiveTest> {
                           height: height * 0.01,
                         ),
                         CustomListText(
-                          data: students.entries.map((e) => e.key).toList(),
+                          data: students.values.map((e) => e["name"]).toList(),
                           todo: null,
                           placeholder:
                               "No students have joined the test till NOW!",
-                          getChild: (index) => students[index],
+                          getChild: (index) => students.values
+                              .map((e) => e["name"])
+                              .toList()[index],
                         ),
                         SizedBox(
                           height: height * 0.02,
