@@ -36,6 +36,8 @@ class StudentHome extends ConsumerWidget {
               .collection("batches")
               .where("students", arrayContains: {studentID: email}).snapshots(),
           builder: (context, snapshot) {
+
+            
             if (snapshot.hasData && snapshot.data!.docs.isNotEmpty) {
               List<Map<String, dynamic>> data = [];
               List<QueryDocumentSnapshot<Map<String, dynamic>>> docs =

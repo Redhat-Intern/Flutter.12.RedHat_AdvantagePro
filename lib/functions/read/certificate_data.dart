@@ -35,6 +35,8 @@ readCertificateData(
       File? file = await downloadFile(e.key, e.value["name"]);
       if (file != null) {
         fileMap.addAll({file: Map<String, dynamic>.from(e.value)});
+      }else{
+        print("******* DATA NOT FOUND ******");
       }
     }
 
@@ -82,6 +84,7 @@ readCertificateData(
 
       for (MapEntry courseData
           in Map.from(certificateData["courseContent"]).entries) {
+
         Map<File, Map<String, dynamic>> courseFiles =
             await getFileMap(fileData: courseData.value["files"]);
 

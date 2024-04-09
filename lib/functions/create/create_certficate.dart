@@ -34,7 +34,7 @@ Stream<Map<int, String>> createCertificate({
 
   Map<String, dynamic> certificateData = {
     "name": name,
-    "discription": disciption,
+    "description": disciption,
     "image": imageURL,
     "coursePDF": coursePDFURL,
     "courseContent": {

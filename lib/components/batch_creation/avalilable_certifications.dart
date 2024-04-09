@@ -174,7 +174,7 @@ class _AvailableCertificationsState
         selectedCertificate.isEmpty
             ? Container(
                 padding: EdgeInsets.only(
-                  top: height * 0.015,
+                  top: height * 0.01,
                   bottom: height * 0.01,
                   left: width * 0.02,
                 ),
@@ -185,82 +185,75 @@ class _AvailableCertificationsState
                     bottomLeft: Radius.circular(8),
                   ),
                 ),
-                child: Column(
-                  children: [
-                    Row(
-                      children: [
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            SizedBox(
-                              width: width * 0.04,
-                            ),
-                            Container(
-                              height: aspectRatio * 15,
-                              width: aspectRatio * 15,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: colorData.primaryColor(1),
-                              ),
-                            ),
-                            SizedBox(
-                              width: width * 0.01,
-                            ),
-                            CustomText(
-                              text:
-                                  certifications[firstIndex]["name"].toString(),
-                              size: sizeData.regular,
-                              color: colorData.fontColor(.7),
-                            ),
-                          ],
-                        )
-                      ],
-                    ),
-                    SizedBox(
-                      height: height * 0.002,
-                    ),
-                    SizedBox(
-                      height: height * 0.14,
-                      child: NotificationListener<ScrollNotification>(
-                        onNotification: (ScrollNotification scrollInfo) {
-                          if (scrollInfo is ScrollUpdateNotification) {
-                            // Check the first visible item index
-                            int firstVisibleItemIndex =
-                                (_controller.position.maxScrollExtent > 0
-                                    ? ((_controller.position.pixels /
-                                                _controller
-                                                    .position.maxScrollExtent) *
-                                            (certifications.length - 1))
-                                        .floor()
-                                    : 0);
-                            firstVisibleItemIndex = firstVisibleItemIndex >= 0
-                                ? firstVisibleItemIndex
-                                : 0;
+                child: SizedBox(
+                  height: height * 0.155,
+                  child: NotificationListener<ScrollNotification>(
+                    onNotification: (ScrollNotification scrollInfo) {
+                      if (scrollInfo is ScrollUpdateNotification) {
+                        // Check the first visible item index
+                        int firstVisibleItemIndex =
+                            (_controller.position.maxScrollExtent > 0
+                                ? ((_controller.position.pixels /
+                                            _controller
+                                                .position.maxScrollExtent) *
+                                        (certifications.length - 1))
+                                    .floor()
+                                : 0);
+                        firstVisibleItemIndex = firstVisibleItemIndex >= 0
+                            ? firstVisibleItemIndex
+                            : 0;
+                        setState(() {
+                          firstIndex = firstVisibleItemIndex;
+                        });
+                      }
+                      return false;
+                    },
+                    child: ListView.builder(
+                      controller: _controller,
+                      padding: EdgeInsets.symmetric(
+                        horizontal: width * 0.03,
+                      ),
+                      itemCount: certifications.length,
+                      scrollDirection: Axis.horizontal,
+                      physics: const BouncingScrollPhysics(),
+                      itemBuilder: (BuildContext context, int index) {
+                        bool isFirst = firstIndex == index;
+                        return GestureDetector(
+                          onTap: () async {
                             setState(() {
-                              firstIndex = firstVisibleItemIndex;
+                              selectedCertificate = certifications[index];
                             });
-                          }
-                          return false;
-                        },
-                        child: ListView.builder(
-                          controller: _controller,
-                          padding: EdgeInsets.symmetric(
-                            horizontal: width * 0.03,
-                            vertical: height * 0.01,
-                          ),
-                          itemCount: certifications.length,
-                          scrollDirection: Axis.horizontal,
-                          physics: const BouncingScrollPhysics(),
-                          itemBuilder: (BuildContext context, int index) {
-                            bool isFirst = firstIndex == index;
-                            return GestureDetector(
-                              onTap: () async {
-                                setState(() {
-                                  selectedCertificate = certifications[index];
-                                });
-                                await setBatchName();
-                              },
-                              child: CustomNetworkImage(
+                            await setBatchName();
+                          },
+                          child: Column(
+                            children: [
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Container(
+                                    height: aspectRatio * 15,
+                                    width: aspectRatio * 15,
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: colorData.primaryColor(1),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: width * 0.01,
+                                  ),
+                                  CustomText(
+                                    text: certifications[firstIndex]["name"]
+                                        .toString(),
+                                    size: sizeData.regular,
+                                    color: colorData.fontColor(.7),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(
+                                height: height * 0.01,
+                              ),
+                              CustomNetworkImage(
                                 url: certifications[index]["image"],
                                 radius: 8,
                                 size: height * .12,
@@ -271,12 +264,12 @@ class _AvailableCertificationsState
                                         width: 2)
                                     : null,
                               ),
-                            );
-                          },
-                        ),
-                      ),
+                            ],
+                          ),
+                        );
+                      },
                     ),
-                  ],
+                  ),
                 ),
               )
             : Stack(
@@ -298,7 +291,7 @@ class _AvailableCertificationsState
                           child: Image.network(
                             selectedCertificate["image"],
                             height: height * 0.125,
-                            width: width * 0.225,
+                            width: height * 0.125,
                             fit: BoxFit.cover,
                           ),
                         ),

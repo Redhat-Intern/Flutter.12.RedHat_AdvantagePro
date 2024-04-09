@@ -1,3 +1,4 @@
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -26,13 +27,15 @@ class ConductLiveTest extends ConsumerStatefulWidget {
 class _ConductLiveTestState extends ConsumerState<ConductLiveTest> {
   bool initiated = false;
 
-  void initiateTest(String todo) async {
+  void initiateTest({required String todo, bool? toremove}) async {
+    Map<String, dynamic> data = toremove != null && toremove
+        ? {widget.dayIndex.toString(): FieldValue.delete()}
+        : {widget.dayIndex.toString(): todo};
+
     await FirebaseFirestore.instance
         .collection("batches")
         .doc(widget.batchData["name"])
-        .set({
-      "liveTest": {widget.dayIndex.toString(): todo}
-    }, SetOptions(merge: true));
+        .set({"liveTest": data}, SetOptions(merge: true));
 
     await FirebaseFirestore.instance
         .collection("liveTest")
@@ -43,6 +46,7 @@ class _ConductLiveTestState extends ConsumerState<ConductLiveTest> {
   @override
   Widget build(BuildContext context) {
     CustomSizeData sizeData = CustomSizeData.from(context);
+
     CustomColorData colorData = CustomColorData.from(ref);
 
     double height = sizeData.height;
@@ -51,7 +55,8 @@ class _ConductLiveTestState extends ConsumerState<ConductLiveTest> {
 
     Row headerList = Row(
       children: [
-        const CustomBackButton(),
+        CustomBackButton(
+            otherMethod: () => initiateTest(todo: "", toremove: true)),
         const Spacer(
           flex: 2,
         ),
@@ -158,7 +163,7 @@ class _ConductLiveTestState extends ConsumerState<ConductLiveTest> {
                           child: GestureDetector(
                             onTap: () {
                               if (students.isNotEmpty) {
-                                initiateTest("start");
+                                initiateTest(todo: "start");
                               } else {
                                 ScaffoldMessenger.of(context)
                                     .showSnackBar(const SnackBar(
@@ -201,7 +206,7 @@ class _ConductLiveTestState extends ConsumerState<ConductLiveTest> {
                           alignment: Alignment.center,
                           child: GestureDetector(
                             onTap: () {
-                              initiateTest("created");
+                              initiateTest(todo: "created");
                               setState(() {
                                 initiated = true;
                               });

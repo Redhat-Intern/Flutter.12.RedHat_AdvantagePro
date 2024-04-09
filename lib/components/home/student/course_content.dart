@@ -17,7 +17,7 @@ import '../../common/waiting_widgets/course_waiting.dart';
 import 'course_files.dart';
 
 class CourseContent extends ConsumerStatefulWidget {
-  const CourseContent({
+  CourseContent({
     super.key,
     required this.batchData,
   });
@@ -62,26 +62,30 @@ class _CourseContentState extends ConsumerState<CourseContent> {
     double height = sizeData.height;
 
     void joinOrRemove(bool toadd) async {
-      await FirebaseFirestore.instance
-          .collection("liveTest")
-          .doc(widget.batchData["name"])
-          .set({
-        firstIndex.toString(): {
-          "students": (
-            toadd
-                ? {
-                    userData["id"][widget.batchData["name"]]: {
-                      "name": userData["name"],
-                      "photo": userData["photo"] ?? userData["name"][0]
-                    }
-                  }
-                : {
-                    userData["id"][widget.batchData["name"]]:
-                        FieldValue.delete(),
-                  },
-          ),
-        }
-      }, SetOptions(merge: true));
+      print("Called");
+
+      Map<String, dynamic> data = toadd
+          ? {
+              userData["id"][widget.batchData["name"]]: {
+                "name": userData["name"],
+                "photo": userData["photo"] ?? userData["name"][0]
+              }
+            }
+          : {
+              userData["id"][widget.batchData["name"]]: FieldValue.delete(),
+            };
+      try {
+        await FirebaseFirestore.instance
+            .collection("liveTest")
+            .doc(widget.batchData["name"])
+            .set({
+          firstIndex.toString(): {
+            "students": data,
+          }
+        }, SetOptions(merge: true));
+      } catch (error) {
+        print(error);
+      }
     }
 
     if (!certificateData.isEmpty() &&
@@ -99,9 +103,11 @@ class _CourseContentState extends ConsumerState<CourseContent> {
         dailyTest = widget.batchData["dailyTest"][firstIndex.toString()];
       }
       int dateCmp = DateTime.now().compareTo(
-        DateFormat('dd-MM-yyyy').parse(
-          widget.batchData["dates"][firstIndex],
-        ),
+        DateFormat('dd-MM-yyyy')
+            .parse(
+              widget.batchData["dates"][firstIndex],
+            )
+            .add(const Duration(hours: 24)),
       );
       bool dailyTestResult = dailyTest != null && dateCmp == 1;
 
@@ -200,85 +206,21 @@ class _CourseContentState extends ConsumerState<CourseContent> {
                   ListView(
                     children: [
                       dailyTest != null
-                          ? Row(
-                              children: [
-                                CustomText(
-                                  text: dailyTestResult
-                                      ? "Daily test result: "
-                                      : "Todays test",
-                                  size: sizeData.regular,
-                                  color: colorData.fontColor(.6),
-                                  weight: FontWeight.w800,
-                                ),
-                                SizedBox(
-                                  width: !dailyTestResult ? width * 0.01 : null,
-                                ),
-                                !dailyTestResult
-                                    ? CustomText(
-                                        text: remainingTime(),
-                                        size: sizeData.verySmall,
-                                        color: colorData.fontColor(.6),
-                                        weight: FontWeight.w800,
-                                      )
-                                    : const SizedBox(),
-                                SizedBox(
-                                  width: width * 0.02,
-                                ),
-                                Expanded(
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      if (dailyTestResult) {
-                                      } else {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) =>
-                                                DailyTestAttender(
-                                                    batchName: widget
-                                                        .batchData["name"],
-                                                    dayIndex:
-                                                        firstIndex.toString(),
-                                                    documentRef:
-                                                        FirebaseFirestore
-                                                            .instance
-                                                            .collection(
-                                                                "dailyTest")
-                                                            .doc(widget
-                                                                    .batchData[
-                                                                "name"]),
-                                                    userID: userData["id"][
-                                                        widget.batchData[
-                                                            "name"]]),
-                                          ),
-                                        );
-                                      }
-                                    },
-                                    child: Container(
-                                      padding: EdgeInsets.symmetric(
-                                          horizontal: width * 0.025,
-                                          vertical: height * 0.01),
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(8),
-                                        gradient: LinearGradient(
-                                          colors: [
-                                            colorData.primaryColor(.4),
-                                            colorData.primaryColor(.7)
-                                          ],
-                                        ),
-                                      ),
-                                      alignment: Alignment.center,
-                                      child: CustomText(
-                                        text: dailyTestResult
-                                            ? "VIEW RESULT"
-                                            : "TAKE TEST",
-                                        size: sizeData.regular,
-                                        color: colorData.sideBarTextColor(1),
-                                        weight: FontWeight.w800,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
+                          ? DailyTestTile(
+                              userId: userData["id"][widget.batchData["name"]],
+                              dayIndex: firstIndex.toString(),
+                              batchName: widget.batchData["name"],
+                              timeEnd: dailyTestResult,
+                              remainingTime: remainingTime(),
+                              toGo: DailyTestAttender(
+                                batchName: widget.batchData["name"],
+                                dayIndex: firstIndex.toString(),
+                                documentRef: FirebaseFirestore.instance
+                                    .collection("dailyTest")
+                                    .doc(widget.batchData["name"]),
+                                userID: userData["id"]
+                                    [widget.batchData["name"]],
+                              ),
                             )
                           : const SizedBox(),
                       SizedBox(
@@ -477,5 +419,120 @@ class _CourseContentState extends ConsumerState<CourseContent> {
       return CourseContentWaitingWidget(
           count: certificateData.courseDataLength);
     }
+  }
+}
+
+class DailyTestTile extends ConsumerWidget {
+  const DailyTestTile(
+      {super.key,
+      required this.timeEnd,
+      required this.batchName,
+      required this.remainingTime,
+      required this.toGo,
+      required this.dayIndex,
+      required this.userId});
+
+  final bool timeEnd;
+  final String batchName;
+  final String remainingTime;
+  final Widget toGo;
+  final String dayIndex;
+  final String userId;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    CustomSizeData sizeData = CustomSizeData.from(context);
+    CustomColorData colorData = CustomColorData.from(ref);
+    double width = sizeData.width;
+    double height = sizeData.height;
+
+    return StreamBuilder(
+        stream: FirebaseFirestore.instance
+            .collection("dailyTest")
+            .doc(batchName)
+            .snapshots(),
+        builder: (context, snapshot) {
+          if (snapshot.hasData && snapshot.data!.exists) {
+            bool dailyTestResult = timeEnd;
+            Map<String, dynamic> data = snapshot.data!.data()!;
+            bool isAnswered = data[dayIndex]["answers"] != null &&
+                data[dayIndex]["answers"][userId] != null;
+
+            return Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                CustomText(
+                  text: dailyTestResult
+                      ? "Daily test result: "
+                      : isAnswered
+                          ? "Daily test has been already attended"
+                          : "Todays test",
+                  size: sizeData.regular,
+                  color: colorData.fontColor(.6),
+                  weight: FontWeight.w800,
+                ),
+                SizedBox(
+                  width: !dailyTestResult && !isAnswered ? width * 0.01 : null,
+                ),
+                !dailyTestResult && !isAnswered
+                    ? CustomText(
+                        text: remainingTime,
+                        size: sizeData.verySmall,
+                        color: colorData.fontColor(.6),
+                        weight: FontWeight.w800,
+                      )
+                    : const SizedBox(),
+                SizedBox(
+                  width: width * 0.02,
+                ),
+                isAnswered
+                    ? const SizedBox()
+                    : Expanded(
+                        child: GestureDetector(
+                          onTap: () {
+                            if (dailyTestResult) {
+                            } else {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => toGo),
+                              );
+                            }
+                          },
+                          child: Container(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: width * 0.025,
+                                vertical: height * 0.01),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(8),
+                              gradient: LinearGradient(
+                                colors: [
+                                  colorData.primaryColor(.4),
+                                  colorData.primaryColor(.7)
+                                ],
+                              ),
+                            ),
+                            alignment: Alignment.center,
+                            child: CustomText(
+                              text:
+                                  dailyTestResult ? "VIEW RESULT" : "TAKE TEST",
+                              size: sizeData.regular,
+                              color: colorData.sideBarTextColor(1),
+                              weight: FontWeight.w800,
+                            ),
+                          ),
+                        ),
+                      ),
+              ],
+            );
+          } else {
+            return Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                ShimmerBox(height: sizeData.header, width: width * .5),
+                ShimmerBox(height: sizeData.superLarge, width: width * 0.3)
+              ],
+            );
+          }
+        });
   }
 }

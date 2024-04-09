@@ -20,7 +20,7 @@ class StaffHome extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     Map<String, dynamic> userData = ref.watch(userDataProvider)!;
     CustomSizeData sizeData = CustomSizeData.from(context);
-    double width = sizeData.width;
+    // double width = sizeData.width;
     double height = sizeData.height;
 
     return Column(

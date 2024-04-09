@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../auth_shifter.dart';
+
 class Splash extends StatefulWidget {
   const Splash({super.key});
 
@@ -10,10 +11,10 @@ class Splash extends StatefulWidget {
 
 class _SplashState extends State<Splash> {
   void navigationMethod() {
-
     Navigator.of(context).push(PageRouteBuilder(
-      transitionDuration: const Duration(milliseconds: 200),
-      pageBuilder: (context, animation, secondaryAnimation) => const AuthShifter(),
+      transitionDuration: const Duration(milliseconds: 100),
+      pageBuilder: (context, animation, secondaryAnimation) =>
+          const AuthShifter(),
       // const Navigation(),
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
         const begin = Offset(1.0, 0.0);
@@ -37,19 +38,25 @@ class _SplashState extends State<Splash> {
 
   @override
   void initState() {
-    Future.delayed(const Duration(milliseconds: 600), navigationMethod);
+    Future.delayed(const Duration(seconds: 4), navigationMethod);
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    double height = MediaQuery.of(context).size.height;
+    double width = MediaQuery.of(context).size.width;
+
     return Scaffold(
+      backgroundColor: Colors.black,
       body: SafeArea(
-          child: Container(
-        child: const Column(
-          children: [Text("This is the Splah screen"), Icon(Icons.splitscreen)],
+        child: Image.asset(
+          "assets/gif/splash_screen2.gif",
+          height: height,
+          width: width,
+          fit: BoxFit.cover,
         ),
-      )),
+      ),
     );
   }
 }

@@ -114,10 +114,12 @@ class _DailyTestAttenderState extends ConsumerState<DailyTestAttender> {
           testData["answer"],
         );
       }).toList();
-      duration = int.parse(data["duration"]);
-      testFields = testDataList;
-      answers = List.generate(testDataList.length, (index) => null);
-      onInitializeTime = DateTime.now();
+      setState(() {
+        duration = int.parse(data["duration"]);
+        testFields = testDataList;
+        answers = List.generate(testDataList.length, (index) => null);
+        onInitializeTime = DateTime.now();
+      });
     });
   }
 

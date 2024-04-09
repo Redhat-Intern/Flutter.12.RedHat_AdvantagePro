@@ -100,25 +100,24 @@ class LiveTestWorkTile extends ConsumerWidget {
               notDone
                   ? const WorkTileContainer(
                       text: "Test has not been initiated. (REPORTED)")
-                  : isConducted
-                      ? GestureDetector(
-                          onTap: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => toMove,
-                            ),
-                          ),
-                          child: WorkTileContainer(
-                            textWidget: CustomText(
-                                text: "Live Test Conducted Successfully 🥳",
-                                color: Colors.green,
-                                size: sizeData.medium,
-                                weight: FontWeight.w800),
-                          ),
-                        )
-                      : const WorkTileContainer(
-                          text:
-                              "Test is created but not conducted! (REPORTED)"),
+                  : GestureDetector(
+                      onTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => toMove,
+                        ),
+                      ),
+                      child: isConducted
+                          ? WorkTileContainer(
+                              textWidget: CustomText(
+                                  text: "Live Test Conducted Successfully 🥳",
+                                  color: Colors.green,
+                                  size: sizeData.medium,
+                                  weight: FontWeight.w800),
+                            )
+                          : const WorkTileContainer(
+                              text: "Tap to Conduct the live test!"),
+                    ),
             ],
           );
         } else {
