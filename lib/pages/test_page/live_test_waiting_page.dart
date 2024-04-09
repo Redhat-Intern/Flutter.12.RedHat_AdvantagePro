@@ -47,98 +47,97 @@ class _LiveTestWaitingRoomState extends ConsumerState<LiveTestWaitingRoom> {
             .doc(widget.batchData['name'])
             .snapshots(),
         builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          }
+          if (snapshot.hasData && snapshot.data!.exists) {
+            Map<String, dynamic> data = snapshot.data!.data()!;
+            Map<String, dynamic> testData =
+                Map.from(data[widget.dayIndex.toString()]);
+            bool? toStart = testData["status"];
 
-          Map<String, dynamic> data = snapshot.data!.data()!;
-          Map<String, dynamic> testData =
-              Map.from(data[widget.dayIndex.toString()]);
-          bool? toStart = testData["status"];
+            Future(() {
+              ref.read(liveTestProvider.notifier).updateTestData(testData);
+            });
 
-          Future(() {
-            ref.read(liveTestProvider.notifier).updateTestData(testData);
-          });
+            DocumentReference<Map<String, dynamic>> documentRef =
+                FirebaseFirestore.instance
+                    .collection("liveTest")
+                    .doc(widget.batchData['name']);
+            print(testData["status"]);
 
-          DocumentReference<Map<String, dynamic>> documentRef =
-              FirebaseFirestore.instance
-                  .collection("liveTest")
-                  .doc(widget.batchData['name']);
-
-          if (toStart == null || toStart == false) {
-            return Scaffold(
-              resizeToAvoidBottomInset: false,
-              body: SafeArea(
-                child: Container(
-                  margin: EdgeInsets.only(
-                    left: width * 0.04,
-                    right: width * 0.04,
-                    top: height * 0.02,
-                  ),
-                  child: Column(
-                    children: [
-                      Row(
-                        children: [
-                          CustomBackButton(
-                            otherMethod: () => widget.todo(false),
-                          ),
-                          const Spacer(
-                            flex: 2,
-                          ),
-                          CustomText(
-                            text: "LIVE TEST",
-                            size: sizeData.header,
-                            color: colorData.fontColor(1),
-                            weight: FontWeight.w600,
-                          ),
-                          const Spacer(),
-                          CustomText(
-                            text: widget.day,
-                            size: sizeData.medium,
-                            color: colorData.fontColor(.6),
-                            weight: FontWeight.w800,
-                          ),
-                          SizedBox(
-                            width: width * 0.02,
-                          ),
-                        ],
-                      ),
-                      const Spacer(),
-                      Image.asset(
-                        "assets/images/prepare.png",
-                        height: height * .4,
-                        fit: BoxFit.fitHeight,
-                      ),
-                      SizedBox(
-                        height: height * 0.02,
-                      ),
-                      CustomText(
-                        text: "Prepare till the test starts",
-                        size: sizeData.subHeader,
-                        color: colorData.fontColor(.6),
-                        weight: FontWeight.w800,
-                      ),
-                      SizedBox(
-                        height: height * 0.03,
-                      ),
-                      const Spacer(
-                        flex: 3,
-                      ),
-                    ],
+            if (toStart == null || toStart == false) {
+              return Scaffold(
+                resizeToAvoidBottomInset: false,
+                body: SafeArea(
+                  child: Container(
+                    margin: EdgeInsets.only(
+                      left: width * 0.04,
+                      right: width * 0.04,
+                      top: height * 0.02,
+                    ),
+                    child: Column(
+                      children: [
+                        Row(
+                          children: [
+                            CustomBackButton(
+                              otherMethod: () => widget.todo(false),
+                            ),
+                            const Spacer(
+                              flex: 2,
+                            ),
+                            CustomText(
+                              text: "LIVE TEST",
+                              size: sizeData.header,
+                              color: colorData.fontColor(1),
+                              weight: FontWeight.w600,
+                            ),
+                            const Spacer(),
+                            CustomText(
+                              text: widget.day,
+                              size: sizeData.medium,
+                              color: colorData.fontColor(.6),
+                              weight: FontWeight.w800,
+                            ),
+                            SizedBox(
+                              width: width * 0.02,
+                            ),
+                          ],
+                        ),
+                        const Spacer(),
+                        Image.asset(
+                          "assets/images/prepare.png",
+                          height: height * .4,
+                          fit: BoxFit.fitHeight,
+                        ),
+                        SizedBox(
+                          height: height * 0.02,
+                        ),
+                        CustomText(
+                          text: "Prepare till the test starts",
+                          size: sizeData.subHeader,
+                          color: colorData.fontColor(.6),
+                          weight: FontWeight.w800,
+                        ),
+                        SizedBox(
+                          height: height * 0.03,
+                        ),
+                        const Spacer(
+                          flex: 3,
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            );
+              );
+            } else {
+              return LiveTestAttender(
+                testData: testData,
+                documentRef: documentRef,
+                dayIndex: widget.dayIndex.toString(),
+                userID: userData["id"][widget.batchData["name"]],
+                batchName: widget.batchData["name"],
+              );
+            }
           } else {
-            return LiveTestAttender(
-              testData: testData,
-              documentRef: documentRef,
-              dayIndex: widget.dayIndex.toString(),
-              userID: userData["id"][widget.batchData["name"]],
-              batchName: widget.batchData["name"],
-            );
+            return Center(child: CircularProgressIndicator());
           }
         });
   }
