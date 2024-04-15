@@ -7,9 +7,9 @@ import '../../providers/forum_provider.dart';
 import '../../utilities/static_data.dart';
 import '../../utilities/theme/color_data.dart';
 import '../../utilities/theme/size_data.dart';
-import 'chat_page/chat_message.dart';
 import 'chat_page/chat_page_header.dart';
 import 'chat_page/chat_textfield.dart';
+import 'chat_page/chat_tile.dart';
 
 class ChattingPage extends ConsumerStatefulWidget {
   const ChattingPage({super.key, required this.index});

@@ -9,21 +9,24 @@ class ChatMessage {
   String? text;
   String? imageURL;
   String? fileURL;
+  String? videoURL;
+  String? link;
   DateTime time;
   List<String> viewedBy;
 
-  ChatMessage({
-    required this.id,
-    required this.from,
-    required this.time,
-    required this.viewedBy,
-    required this.type,
-    required this.name,
-    this.to,
-    this.text,
-    this.imageURL,
-    this.fileURL,
-  });
+  ChatMessage(
+      {required this.id,
+      required this.from,
+      required this.time,
+      required this.viewedBy,
+      required this.type,
+      required this.name,
+      this.to,
+      this.text,
+      this.imageURL,
+      this.fileURL,
+      this.videoURL,
+      this.link});
 }
 
 class ChatForum {

@@ -51,6 +51,8 @@ dependencies:
   flutter_riverpod: ^2.4.8
   # Animation
   shimmer: ^3.0.0
+  audio_waveforms: ^1.0.5
+  video_thumbnail: ^0.5.3
   # Helpers
   # Functional Dependencies [image picker, file creating and sharing, path provider]
   excel: ^4.0.2
@@ -71,7 +73,6 @@ dependencies:
   rxdart: ^0.27.7
   flutter_switch: ^0.3.2
   flutter_rating_stars: ^1.0.3+4
-  audio_waveforms: ^1.0.5
 
 dev_dependencies:
   flutter_test:
@@ -99,7 +100,6 @@ flutter:
     - assets/images/
     - assets/icons/
     - assets/gif/
-
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

@@ -14,7 +14,7 @@ enum NotificationsCategory { invitations, admin, batches, students, staffs }
 
 enum Status { online, offline }
 
-enum MessageType { text, image, file }
+enum MessageType { text, image, file, video, link, audio }
 
 enum WorkStatus { completed, pending, not_Started }
 
