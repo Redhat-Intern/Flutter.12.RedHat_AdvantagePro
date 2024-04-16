@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
-import '../../../pages/test_page/conduct_live_test.dart';
+import '../../../pages/test_page/initialize_live_test.dart';
 import '../../../pages/test_page/test_creator.dart';
 import '../../../pages/test_page/live_test_result.dart';
 import '../../../utilities/static_data.dart';

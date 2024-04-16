@@ -1,5 +1,9 @@
+import 'dart:math';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:redhat_v1/components/common/network_image.dart';
 
@@ -9,7 +13,7 @@ import '../../components/common/text.dart';
 import '../../utilities/theme/color_data.dart';
 import '../../utilities/theme/size_data.dart';
 
-class LiveTestResult extends ConsumerWidget {
+class LiveTestResult extends ConsumerStatefulWidget {
   const LiveTestResult({
     super.key,
     required this.dayIndex,
@@ -21,7 +25,51 @@ class LiveTestResult extends ConsumerWidget {
   final String? day;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<LiveTestResult> createState() => _LiveTestResultState();
+}
+
+class _LiveTestResultState extends ConsumerState<LiveTestResult> {
+  late ConfettiController _controllerTopCenter;
+  @override
+  void initState() {
+    super.initState();
+    _controllerTopCenter =
+        ConfettiController(duration: const Duration(seconds: 10));
+    _controllerTopCenter.play();
+  }
+
+  @override
+  void dispose() {
+    _controllerTopCenter.dispose();
+    super.dispose();
+  }
+
+  Path drawStar(Size size) {
+    // Method to convert degree to radians
+    double degToRad(double deg) => deg * (pi / 180.0);
+
+    const numberOfPoints = 5;
+    final halfWidth = size.width / 2;
+    final externalRadius = halfWidth;
+    final internalRadius = halfWidth / 2.5;
+    final degreesPerStep = degToRad(360 / numberOfPoints);
+    final halfDegreesPerStep = degreesPerStep / 2;
+    final path = Path();
+    final fullAngle = degToRad(360);
+    path.moveTo(size.width, halfWidth);
+
+    for (double step = 0; step < fullAngle; step += degreesPerStep) {
+      path.lineTo(halfWidth + externalRadius * cos(step),
+          halfWidth + externalRadius * sin(step));
+      path.lineTo(halfWidth + internalRadius * cos(step + halfDegreesPerStep),
+          halfWidth + internalRadius * sin(step + halfDegreesPerStep));
+    }
+    path.close();
+    return path;
+  }
+
+  @override
+  Widget build(BuildContext context) {
     CustomSizeData sizeData = CustomSizeData.from(context);
     CustomColorData colorData = CustomColorData.from(ref);
 
@@ -41,7 +89,7 @@ class LiveTestResult extends ConsumerWidget {
           child: StreamBuilder(
             stream: FirebaseFirestore.instance
                 .collection("liveTest")
-                .doc(batchName)
+                .doc(widget.batchName)
                 .snapshots(),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
@@ -53,10 +101,10 @@ class LiveTestResult extends ConsumerWidget {
               Map<String, dynamic> data = snapshot.data!.data()!;
 
               Map<String, dynamic> answers =
-                  Map<String, dynamic>.from(data[dayIndex]["answers"]);
+                  Map<String, dynamic>.from(data[widget.dayIndex]["answers"]);
 
-              Map<String, dynamic> totoalScores =
-                  Map<String, dynamic>.from(data[dayIndex]["totalScores"]);
+              Map<String, dynamic> totoalScores = Map<String, dynamic>.from(
+                  data[widget.dayIndex]["totalScores"]);
 
               List<MapEntry<String, dynamic>> totalScoresList =
                   totoalScores.entries.toList();
@@ -65,11 +113,12 @@ class LiveTestResult extends ConsumerWidget {
                   .sort((a, b) => (b.value as int).compareTo(a.value));
 
               Map<String, dynamic> studentsData =
-                  Map<String, dynamic>.from(data[dayIndex]["students"]);
+                  Map<String, dynamic>.from(data[widget.dayIndex]["students"]);
 
               print(studentsData);
 
               return Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Row(
                     children: [
@@ -84,9 +133,9 @@ class LiveTestResult extends ConsumerWidget {
                         weight: FontWeight.w600,
                       ),
                       const Spacer(),
-                      day != null
+                      widget.day != null
                           ? CustomText(
-                              text: day!,
+                              text: widget.day!,
                               size: sizeData.medium,
                               color: colorData.fontColor(.6),
                               weight: FontWeight.w800,
@@ -97,8 +146,54 @@ class LiveTestResult extends ConsumerWidget {
                       ),
                     ],
                   ),
-                  SizedBox(
-                    height: height * 0.03,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      ConfettiWidget(
+                        createParticlePath: drawStar,
+                        canvas: Size(width, height),
+                        shouldLoop: false,
+                        confettiController: _controllerTopCenter,
+                        blastDirectionality: BlastDirectionality.explosive,
+                        maxBlastForce: 2,
+                        minBlastForce: 1,
+                        emissionFrequency: 0.04,
+                        numberOfParticles: 1, // a lot of particles at once
+                        gravity: 0.3,
+                        child: SizedBox(
+                          height: height * 0.03,
+                        ),
+                      ),
+                      ConfettiWidget(
+                        canvas: Size(width, height),
+                        shouldLoop: false,
+                        confettiController: _controllerTopCenter,
+                        blastDirectionality: BlastDirectionality.explosive,
+                        maxBlastForce: 2,
+                        minBlastForce: 1,
+                        emissionFrequency: 0.04,
+                        numberOfParticles: 1, // a lot of particles at once
+                        gravity: 0.3,
+                        child: SizedBox(
+                          height: height * 0.03,
+                        ),
+                      ),
+                      ConfettiWidget(
+                        maximumSize: Size(20, 15),
+                        createParticlePath: drawStar,
+                        shouldLoop: false,
+                        confettiController: _controllerTopCenter,
+                        blastDirectionality: BlastDirectionality.explosive,
+                        maxBlastForce: 2,
+                        minBlastForce: 1,
+                        emissionFrequency: 0.03,
+                        numberOfParticles: 2, // a lot of particles at once
+                        gravity: 0.8,
+                        child: SizedBox(
+                          height: height * 0.03,
+                        ),
+                      ),
+                    ],
                   ),
                   Expanded(
                     flex: 3,

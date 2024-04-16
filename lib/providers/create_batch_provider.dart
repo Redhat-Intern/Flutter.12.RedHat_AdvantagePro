@@ -1,7 +1,9 @@
 import 'dart:io';
 
 import 'package:excel/excel.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:redhat_v1/components/common/text.dart';
 
 import '../model/batch.dart';
 import '../model/student.dart';
@@ -73,38 +75,44 @@ class CreateBatchNotifier extends StateNotifier<Batch> {
     return uniqueStudents;
   }
 
-  void readExcelFile(File file, String name) async {
+  void readExcelFile(
+    File file,
+    String name,
+  ) async {
     var bytes = file.readAsBytesSync();
     var excel = Excel.decodeBytes(bytes);
 
-    String fileName =  name.split('.')[0];
+    String fileName = name.split('.')[0];
 
     List<List<Data?>> sheet = excel[fileName].rows;
     List<List<String>> excelData = [];
 
     print(sheet);
-
-    for (var row in sheet) {
-      List<String> rowStrings = [];
-      for (var index = 0; index < 5; index++) {
-        rowStrings.add(row[index]?.value?.toString() ?? '');
+    if (sheet.isNotEmpty) {
+      for (var row in sheet) {
+        List<String> rowStrings = [];
+        for (var index = 0; index < 5; index++) {
+          rowStrings.add(row[index]?.value?.toString() ?? '');
+        }
+        excelData.add(rowStrings);
       }
-      excelData.add(rowStrings);
+
+      List<List<String>> existingData = state.students.map((student) {
+        return [
+          student.name,
+          student.email,
+          student.phoneNo.toString(),
+          student.occupation.name.toString(),
+          student.occDetail,
+        ];
+      }).toList();
+
+      excelData.addAll(existingData);
+
+      addDataToSheet(excelData);
+    } else {
+      print("Error while uploading data");
     }
-
-    List<List<String>> existingData = state.students.map((student) {
-      return [
-        student.name,
-        student.email,
-        student.phoneNo.toString(),
-        student.occupation.name.toString(),
-        student.occDetail,
-      ];
-    }).toList();
-
-    excelData.addAll(existingData);
-
-    addDataToSheet(excelData);
   }
 
   void addStudent({required Student student}) {
