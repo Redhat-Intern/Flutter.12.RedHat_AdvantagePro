@@ -1,7 +1,7 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:redhat_v1/harish/forget_password.dart';
 
 import '../../components/auth/loginsingup_shifter.dart';
 import '../../components/common/back_button.dart';
@@ -39,9 +39,30 @@ class _LoginState extends ConsumerState<Login> {
     required double textSize,
     required Color textColor,
     required Color backgroundColor,
+    required UserRole? role,
   }) async {
     try {
       await AuthFB().sendPasswordResetEmail(email: emailController.text.trim());
+      // try {
+      //    await FirebaseFirestore.instance.collection("${role!.name}s").doc(AuthFB().currentUser!.email!).set({
+      //     "password":AuthFB().!
+      //    });
+      // } catch (e) {
+      //     ScaffoldMessenger.of(context).showSnackBar(
+      //   SnackBar(
+      //     backgroundColor: backgroundColor,
+      //     content: CustomText(
+      //       text: e.toString(),
+      //       maxLine: 3,
+      //       align: TextAlign.center,
+      //       color: textColor,
+      //       size: textSize,
+      //       weight: FontWeight.w600,
+      //     ),
+      //   ),
+      // );
+      // }
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           backgroundColor: backgroundColor,
@@ -214,6 +235,7 @@ class _LoginState extends ConsumerState<Login> {
                       if (forgetPassword) {
                         // TODO: forget password functionality
                         resetPassword(
+                          role: role!,
                           textColor: fontColor(.8),
                           textSize: sizeData.regular,
                           backgroundColor: secondaryColor(1),
