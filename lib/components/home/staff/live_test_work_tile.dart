@@ -40,7 +40,7 @@ class LiveTestWorkTile extends ConsumerWidget {
     );
 
     Widget result = LiveTestResult(
-      dayIndex: dayIndex,
+      dayIndex: dayIndex.toString(),
       day: day,
       batchName: batchData["name"],
     );
@@ -67,7 +67,7 @@ class LiveTestWorkTile extends ConsumerWidget {
             snapshot.data!.data()!.containsKey(dayIndex.toString())) {
           Map<String, dynamic> testData =
               Map.from(snapshot.data!.data()![dayIndex.toString()]);
-          bool isConducted = testData.containsKey("result");
+          bool isConducted = testData.containsKey("answers");
 
           Widget toMove = isConducted ? result : conduct;
           bool notDone = datePassed && testData.isEmpty;

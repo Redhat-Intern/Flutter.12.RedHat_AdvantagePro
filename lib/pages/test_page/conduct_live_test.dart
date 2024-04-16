@@ -36,12 +36,14 @@ class _ConductLiveTestState extends ConsumerState<ConductLiveTest> {
         .doc(widget.batchData["name"])
         .set({"liveTest": data}, SetOptions(merge: true));
 
-    await FirebaseFirestore.instance
-        .collection("liveTest")
-        .doc(widget.batchData["name"])
-        .set({
-      widget.dayIndex.toString(): {"status": true}
-    }, SetOptions(merge: true));
+    todo == "start"
+        ? await FirebaseFirestore.instance
+            .collection("liveTest")
+            .doc(widget.batchData["name"])
+            .set({
+            widget.dayIndex.toString(): {"status": true}
+          }, SetOptions(merge: true))
+        : null;
   }
 
   @override

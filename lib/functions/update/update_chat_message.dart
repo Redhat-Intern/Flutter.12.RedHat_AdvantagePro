@@ -9,6 +9,7 @@ import '../../providers/user_detail_provider.dart';
 
 void uploadChat(
     {String? text,
+    
     File? image,
     File? file,
     required WidgetRef ref,

@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:redhat_v1/components/add_staff/send_email.dart';
+import 'package:redhat_v1/functions/create/send_email.dart';
 import 'package:redhat_v1/components/common/page_header.dart';
 
 import '../../utilities/static_data.dart';

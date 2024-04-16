@@ -233,7 +233,7 @@ class _CourseContentState extends ConsumerState<CourseContent> {
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) => LiveTestResult(
-                                        dayIndex: firstIndex,
+                                        dayIndex: firstIndex.toString(),
                                         batchName: widget.batchData["name"],
                                         day: List.from(widget
                                             .batchData["dates"])[firstIndex]),

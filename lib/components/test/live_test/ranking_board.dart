@@ -38,11 +38,12 @@ class RankingBoard extends ConsumerWidget {
 
       studentsTotalScore.entries.toList().sort((MapEntry a, MapEntry b) {
         return int.parse(a.value.toString()).compareTo(
-          int.parse(
-            b.value.toString(),
-          ),
+          int.parse(b.value.toString()),
         );
       });
+
+      Map<String, dynamic> studentData =
+          Map<String, dynamic>.from(testData["students"]);
 
       return Column(
         children: [
@@ -96,6 +97,7 @@ class RankingBoard extends ConsumerWidget {
               itemCount: studentsTotalScore.length,
               itemBuilder: (context, index) {
                 String studentID = studentsTotalScore.keys.toList()[index];
+                String name = studentData[studentID]["name"].toString();
                 Map? answerData = asnweredStudents[studentID] != null
                     ? Map.from(asnweredStudents[studentID])
                     : null;
@@ -152,7 +154,7 @@ class RankingBoard extends ConsumerWidget {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 CustomText(
-                                  text: studentID,
+                                  text: name,
                                   size: index < 2 ? sizeData.medium : null,
                                   weight: FontWeight.w700,
                                 ),

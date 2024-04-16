@@ -32,6 +32,7 @@ class WorkTileContainer extends ConsumerWidget {
         bottom: height * 0.006,
       ),
       alignment: Alignment.center,
+      color: Colors.transparent,
       child: textWidget ??
           CustomText(
             text: text!,

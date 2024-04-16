@@ -38,7 +38,7 @@ class _DailyTestAttenderState extends ConsumerState<DailyTestAttender> {
   List<String?> answers = [];
   int totalMark = 0;
   int count = 0;
-  bool canPop = false;
+  bool canPop = true;
 
   late DateTime onInitializeTime;
 

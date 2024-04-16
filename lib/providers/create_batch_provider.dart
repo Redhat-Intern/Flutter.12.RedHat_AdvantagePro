@@ -73,12 +73,16 @@ class CreateBatchNotifier extends StateNotifier<Batch> {
     return uniqueStudents;
   }
 
-  void readExcelFile(File file) async {
+  void readExcelFile(File file, String name) async {
     var bytes = file.readAsBytesSync();
     var excel = Excel.decodeBytes(bytes);
 
-    List<List<Data?>> sheet = excel['Sheet1'].rows;
+    String fileName =  name.split('.')[0];
+
+    List<List<Data?>> sheet = excel[fileName].rows;
     List<List<String>> excelData = [];
+
+    print(sheet);
 
     for (var row in sheet) {
       List<String> rowStrings = [];
