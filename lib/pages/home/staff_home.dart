@@ -58,7 +58,7 @@ class StaffHome extends ConsumerWidget {
                     [];
 
                 for (QueryDocumentSnapshot<Map<String, dynamic>> i in docs) {
-                  Map<String, dynamic> data = i.data();
+                  Map<String, dynamic> data = Map.from(i.data());
                   int count = List.from(data["students"]).length;
                   List<DateTime> dates = List.from(data["dates"])
                       .map((e) => DateFormat('dd-MM-yyyy').parse(e))

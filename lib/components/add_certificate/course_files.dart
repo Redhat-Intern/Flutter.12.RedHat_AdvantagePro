@@ -66,27 +66,41 @@ class _CourseFilePickerState extends ConsumerState<CourseFilePicker> {
             ),
             GestureDetector(
               onTap: () async {
-                var files = await FilePicker.platform.pickFiles(
-                    allowMultiple: true,
-                    allowedExtensions: ["pdf"],
-                    type: FileType.custom,
-                    allowCompression: true);
-                setState(() {
-                  for (var e in files!.files) {
-                    File fileData = File(e.path.toString());
-                    String name = e.name.toString();
-                    String extension = e.extension.toString();
-                    int size = e.size;
-                    MapEntry<File, Map<String, dynamic>> file = MapEntry(
-                        fileData,
-                        {"name": name, "extension": extension, "size": size});
+                try {
+                  var files = await FilePicker.platform.pickFiles(
+                      allowMultiple: true,
+                      allowedExtensions: ["pdf"],
+                      type: FileType.custom,
+                      allowCompression: true);
 
-                    if (hasDuplicate(courseFile: file)) {
-                      courseFiles[file.key] = file.value;
-                      widget.handleFile(file: file, set: true);
+                  setState(() {
+                    for (var e in files!.files) {
+                      File fileData = File(e.path.toString());
+                      String name = e.name.toString();
+                      String extension = e.extension.toString();
+                      int size = e.size;
+                      MapEntry<File, Map<String, dynamic>> file = MapEntry(
+                          fileData,
+                          {"name": name, "extension": extension, "size": size});
+
+                      if (hasDuplicate(courseFile: file)) {
+                        courseFiles[file.key] = file.value;
+                        widget.handleFile(file: file, set: true);
+                      }
                     }
-                  }
-                });
+                  });
+                } catch (e) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                        content: Center(
+                      child: CustomText(
+                        text: "File not found",
+                        color: Colors.white,
+                        weight: FontWeight.w700,
+                      ),
+                    )),
+                  );
+                }
               },
               child: Container(
                 padding: EdgeInsets.symmetric(

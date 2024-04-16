@@ -323,7 +323,7 @@ class CourseUpdateState extends ConsumerState<CourseUpdate> {
                             ),
                           ),
                           child: CustomText(
-                              text: "SAVE CHNAGES",
+                              text: "SAVE CHANGES",
                               size: sizeData.subHeader,
                               weight: FontWeight.w800,
                               color: colorData.sideBarTextColor(1)),
