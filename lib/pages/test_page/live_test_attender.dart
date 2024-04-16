@@ -108,17 +108,6 @@ class _LiveTestAttenderState extends ConsumerState<LiveTestAttender> {
       });
 
       await Future.delayed(const Duration(seconds: 5));
-
-      if (count == testFields.length - 1) {
-        FirebaseFirestore.instance
-            .collection("batches")
-            .doc(widget.batchName)
-            .set({
-          "liveTest": {
-            widget.dayIndex: "completed",
-          }
-        }, SetOptions(merge: true));
-      }
     }
   }
 
