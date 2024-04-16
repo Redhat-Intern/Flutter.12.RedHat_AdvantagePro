@@ -5,7 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 class ChatScrollNotifier extends StateNotifier<ScrollController> {
   ChatScrollNotifier() : super(ScrollController());
 
-  void jumpTo() {
+  void jump() {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       if (state.hasClients) {
         state.jumpTo(state.position.maxScrollExtent);

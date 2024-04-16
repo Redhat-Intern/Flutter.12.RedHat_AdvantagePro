@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 
 import '../../providers/forum_category_provider.dart';
 import '../../providers/user_select_provider.dart';
@@ -25,18 +26,29 @@ class _ForumHeaderState extends ConsumerState<ForumHeader> {
   bool showCategorySelection = false;
   bool showSearch = false;
   TextEditingController controller = TextEditingController();
-
+  double opacity = 0.0;
+  double begin = 0.0;
+  double end = 1.0;
   searchDataFun() {}
 
   void toggleShowCategorySelection() {
     setState(() {
       showCategorySelection = !showCategorySelection;
+      showSearch = false;
     });
   }
 
   void toggleShowSearch() {
     setState(() {
+      showCategorySelection = false;
       showSearch = !showSearch;
+      if (showSearch) {
+        begin = 0.0;
+        end = 1.0;
+      } else if (showSearch == false) {
+        begin = 1.0;
+        end = 0.0;
+      }
     });
   }
 
@@ -123,7 +135,9 @@ class _ForumHeaderState extends ConsumerState<ForumHeader> {
                 ),
               ),
               GestureDetector(
-                onTap: () => toggleShowSearch(),
+                onTap: () {
+                  toggleShowSearch();
+                },
                 child: Container(
                   padding: EdgeInsets.all(aspectRatio * 16),
                   margin: EdgeInsets.only(left: width * 0.04),
@@ -196,9 +210,14 @@ class _ForumHeaderState extends ConsumerState<ForumHeader> {
                     )
                   ],
                 )
-              : showSearch
-                  ? Container(
-                      height: height * 0.05,
+              : SizedBox(),
+          showSearch
+              ? TweenAnimationBuilder(
+                  tween: Tween<double>(begin: begin, end: end),
+                  duration: const Duration(milliseconds: 600),
+                  builder: (context, value, child) {
+                    return Container(
+                      height: height * 0.05 * value,
                       width: width,
                       margin: EdgeInsets.only(
                           top: height * 0.02,
@@ -236,7 +255,7 @@ class _ForumHeaderState extends ConsumerState<ForumHeader> {
                           hintText: "Search using Name or ID",
                           hintStyle: TextStyle(
                             fontWeight: FontWeight.w600,
-                            fontSize: sizeData.medium,
+                            fontSize: sizeData.medium * value,
                             color: colorData.fontColor(.5),
                             height: 1,
                           ),
@@ -251,13 +270,15 @@ class _ForumHeaderState extends ConsumerState<ForumHeader> {
                             child: CustomIcon(
                               icon: Icons.search_rounded,
                               color: colorData.fontColor(.8),
-                              size: aspectRatio * 50,
+                              size: aspectRatio * 50 * (value),
                             ),
                           ),
                         ),
                       ),
-                    )
-                  : const SizedBox(),
+                    );
+                  },
+                )
+              : const SizedBox()
         ],
       ),
     );

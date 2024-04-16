@@ -8,7 +8,6 @@ import 'package:open_file/open_file.dart';
 
 import '../../utilities/theme/color_data.dart';
 import '../../utilities/theme/size_data.dart';
-import '../../model/course_data.dart';
 
 import 'course_file_tile.dart';
 import '../common/icon.dart';

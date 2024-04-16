@@ -33,6 +33,7 @@ class _BatchReport extends ConsumerState<BatchReport> {
 
     if (document.exists) {
       var data = document.data();
+      print(data);
       setState(() {
         searchResult = {
           "header": data!["name"],
@@ -134,19 +135,21 @@ class _BatchReport extends ConsumerState<BatchReport> {
           searchResult.isNotEmpty
               ? GestureDetector(
                   onTap: () {
-                    setState(() {
-                      if (searchResult.length == 1) {
-                        searchResult.clear();
-                        controller.clear();
-                      }
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) =>
-                              DetailedBatchReport(searchData: searchData),
-                        ),
-                      );
-                    });
+                    if (!(searchResult.keys.contains('error'))) {
+                      setState(() {
+                        if (searchResult.length == 1) {
+                          searchResult.clear();
+                          controller.clear();
+                        }
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                DetailedBatchReport(searchData: searchData),
+                          ),
+                        );
+                      });
+                    }
                   },
                   child: Container(
                     margin: EdgeInsets.only(
