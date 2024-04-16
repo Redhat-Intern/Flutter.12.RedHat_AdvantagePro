@@ -67,6 +67,8 @@ class LiveTestResult extends ConsumerWidget {
               Map<String, dynamic> studentsData =
                   Map<String, dynamic>.from(data[dayIndex]["students"]);
 
+              print(studentsData);
+
               return Column(
                 children: [
                   Row(
@@ -103,87 +105,83 @@ class LiveTestResult extends ConsumerWidget {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Visibility(
-                          visible: totoalScores.length >= 3,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Container(
-                                margin: EdgeInsets.only(bottom: height * 0.005),
-                                padding: const EdgeInsets.all(2),
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: colorData.secondaryColor(1),
-                                ),
-                                child: CustomNetworkImage(
-                                  size: aspectRatio * 125,
-                                  radius: 50,
-                                  url: studentsData[totalScoresList[2].key]
-                                      ["photo"],
-                                ),
-                              ),
-                              SizedBox(
-                                width: width * .175,
-                                child: CustomText(
-                                  text: studentsData[totalScoresList[2].key]
-                                      ["name"],
-                                  size: sizeData.verySmall,
-                                  maxLine: 2,
-                                  align: TextAlign.center,
-                                ),
-                              ),
-                              Container(
-                                width: width * .175,
-                                height: height * .1,
-                                margin: EdgeInsets.only(top: height * 0.01),
-                                decoration: BoxDecoration(
-                                  borderRadius: const BorderRadius.only(
-                                    topLeft: Radius.circular(12),
-                                    topRight: Radius.circular(12),
+                        totoalScores.length >= 3
+                            ? Column(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Container(
+                                    margin:
+                                        EdgeInsets.only(bottom: height * 0.005),
+                                    child: CustomNetworkImage(
+                                      size: aspectRatio * 125,
+                                      radius: 50,
+                                      url: studentsData[totalScoresList[2].key]
+                                          ["photo"],
+                                      textSize: sizeData.superLarge,
+                                    ),
                                   ),
-                                  color: colorData.primaryColor(.4),
-                                ),
-                                alignment: Alignment.center,
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    CustomText(
-                                      text: "3",
-                                      size: aspectRatio * 65,
-                                      color: Colors.white,
-                                      weight: FontWeight.w900,
+                                  SizedBox(
+                                    width: width * .175,
+                                    child: CustomText(
+                                      text: studentsData[totalScoresList[2].key]
+                                          ["name"],
+                                      size: sizeData.verySmall,
+                                      maxLine: 2,
+                                      align: TextAlign.center,
                                     ),
-                                    SizedBox(height: height * 0.01),
-                                    CustomText(
-                                      text: totalScoresList[2].value.toString(),
-                                      color: Colors.white.withOpacity(.8),
-                                      weight: FontWeight.w900,
+                                  ),
+                                  Container(
+                                    width: width * .175,
+                                    height: height * .1,
+                                    margin: EdgeInsets.only(top: height * 0.01),
+                                    decoration: BoxDecoration(
+                                      borderRadius: const BorderRadius.only(
+                                        topLeft: Radius.circular(12),
+                                        topRight: Radius.circular(12),
+                                      ),
+                                      color: colorData.primaryColor(.4),
                                     ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
+                                    alignment: Alignment.center,
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        CustomText(
+                                          text: "3",
+                                          size: aspectRatio * 65,
+                                          color: Colors.white,
+                                          weight: FontWeight.w900,
+                                        ),
+                                        SizedBox(height: height * 0.01),
+                                        CustomText(
+                                          text: totalScoresList[2]
+                                              .value
+                                              .toString(),
+                                          color: Colors.white.withOpacity(.8),
+                                          weight: FontWeight.w900,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              )
+                            : const SizedBox(),
                         SizedBox(width: width * 0.015),
                         Column(
                           mainAxisAlignment: MainAxisAlignment.end,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             Container(
-                                margin: EdgeInsets.only(bottom: height * 0.005),
-                                padding: const EdgeInsets.all(3),
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: colorData.secondaryColor(1),
-                                ),
-                                child: CustomNetworkImage(
-                                  size: aspectRatio * 125,
-                                  radius: 50,
-                                  url: studentsData[totalScoresList[0].key]
-                                      ["photo"],
-                                )),
+                              margin: EdgeInsets.only(bottom: height * 0.005),
+                              child: CustomNetworkImage(
+                                size: aspectRatio * 125,
+                                radius: 50,
+                                url: studentsData[totalScoresList[0].key]
+                                    ["photo"],
+                                textSize: sizeData.superLarge,
+                              ),
+                            ),
                             SizedBox(
                               width: width * .175,
                               child: CustomText(
@@ -227,73 +225,71 @@ class LiveTestResult extends ConsumerWidget {
                           ],
                         ),
                         SizedBox(width: width * 0.015),
-                        Visibility(
-                          visible: totoalScores.length >= 2,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Container(
-                                margin: EdgeInsets.only(bottom: height * 0.005),
-                                padding: const EdgeInsets.all(3),
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: colorData.secondaryColor(1),
-                                ),
-                                child: CustomNetworkImage(
-                                  size: aspectRatio * 125,
-                                  radius: 50,
-                                  url: studentsData[totalScoresList[1].key]
-                                      ["photo"],
-                                ),
-                              ),
-                              SizedBox(
-                                width: width * .175,
-                                child: CustomText(
-                                  text: studentsData[totalScoresList[1].key]
-                                      ["name"],
-                                  size: sizeData.verySmall,
-                                  align: TextAlign.center,
-                                  maxLine: 2,
-                                ),
-                              ),
-                              Container(
-                                width: width * .175,
-                                height: height * .15,
-                                margin: EdgeInsets.only(top: height * 0.01),
-                                decoration: BoxDecoration(
-                                  borderRadius: const BorderRadius.only(
-                                    topLeft: Radius.circular(12),
-                                    topRight: Radius.circular(12),
+                        totoalScores.length >= 2
+                            ? Column(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Container(
+                                    margin:
+                                        EdgeInsets.only(bottom: height * 0.005),
+                                    child: CustomNetworkImage(
+                                      size: aspectRatio * 125,
+                                      radius: 50,
+                                      url: studentsData[totalScoresList[1].key]
+                                          ["photo"],
+                                      textSize: sizeData.superLarge,
+                                    ),
                                   ),
-                                  color: colorData.primaryColor(.7),
-                                ),
-                                alignment: Alignment.center,
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    CustomText(
-                                      text: "2",
-                                      size: aspectRatio * 70,
-                                      color: Colors.white,
-                                      weight: FontWeight.w900,
+                                  SizedBox(
+                                    width: width * .175,
+                                    child: CustomText(
+                                      text: studentsData[totalScoresList[1].key]
+                                          ["name"],
+                                      size: sizeData.verySmall,
+                                      align: TextAlign.center,
+                                      maxLine: 2,
                                     ),
-                                    SizedBox(height: height * 0.02),
-                                    CustomText(
-                                      text: totalScoresList[1].value.toString(),
-                                      color: Colors.white.withOpacity(.8),
-                                      weight: FontWeight.w900,
+                                  ),
+                                  Container(
+                                    width: width * .175,
+                                    height: height * .15,
+                                    margin: EdgeInsets.only(top: height * 0.01),
+                                    decoration: BoxDecoration(
+                                      borderRadius: const BorderRadius.only(
+                                        topLeft: Radius.circular(12),
+                                        topRight: Radius.circular(12),
+                                      ),
+                                      color: colorData.primaryColor(.7),
                                     ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
+                                    alignment: Alignment.center,
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        CustomText(
+                                          text: "2",
+                                          size: aspectRatio * 70,
+                                          color: Colors.white,
+                                          weight: FontWeight.w900,
+                                        ),
+                                        SizedBox(height: height * 0.02),
+                                        CustomText(
+                                          text: totalScoresList[1]
+                                              .value
+                                              .toString(),
+                                          color: Colors.white.withOpacity(.8),
+                                          weight: FontWeight.w900,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              )
+                            : const SizedBox(),
                       ],
                     ),
                   ),
-
                   SizedBox(height: height * 0.01),
                   Expanded(
                     flex: 5,
@@ -307,7 +303,7 @@ class LiveTestResult extends ConsumerWidget {
                               ["name"],
                           imageURL: studentsData[totalScoresList[index].key]
                               ["photo"],
-                          points: totalScoresList[index].value,
+                          points: totalScoresList[index].value.toString(),
                         );
                       },
                     ),
