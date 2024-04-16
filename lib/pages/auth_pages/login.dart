@@ -1,7 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:redhat_v1/harish/forget_password.dart';
 
 import '../../components/auth/loginsingup_shifter.dart';
 import '../../components/common/back_button.dart';
