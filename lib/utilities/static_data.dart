@@ -35,7 +35,7 @@ const emojis = {
 };
 
 const List<Color> primaryColors = [
-  Color(0XFF5D44F8),
+  Color.fromARGB(255, 209, 82, 73),
   Color(0XFFFA61D7),
   Color(0XFFFFAA57),
   Color(0XFF2ADDC7),
