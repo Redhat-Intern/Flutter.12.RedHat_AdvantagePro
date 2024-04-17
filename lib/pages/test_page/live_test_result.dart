@@ -3,15 +3,15 @@ import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:redhat_v1/components/common/network_image.dart';
-import 'package:redhat_v1/providers/user_select_provider.dart';
+import 'package:redhat_v1/components/common/page_header.dart';
+import 'package:redhat_v1/pages/home/staff_home.dart';
 
 import '../../components/common/back_button.dart';
+import '../../components/common/network_image.dart';
 import '../../components/common/text.dart';
 
-import '../../utilities/static_data.dart';
+import '../../layout/navigation.dart';
 import '../../utilities/theme/color_data.dart';
 import '../../utilities/theme/size_data.dart';
 
@@ -21,19 +21,21 @@ class LiveTestResult extends ConsumerStatefulWidget {
     required this.dayIndex,
     required this.batchName,
     this.day,
+    this.popMethod,
   });
+
   final String dayIndex;
   final String batchName;
   final String? day;
+  final Function? popMethod;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    // UserRole role = ref.watch(userRoleProvider)!;
   ConsumerState<LiveTestResult> createState() => _LiveTestResultState();
 }
 
 class _LiveTestResultState extends ConsumerState<LiveTestResult> {
   late ConfettiController _controllerTopCenter;
+
   @override
   void initState() {
     super.initState();
@@ -81,19 +83,7 @@ class _LiveTestResultState extends ConsumerState<LiveTestResult> {
     double width = sizeData.width;
     double aspectRatio = sizeData.aspectRatio;
 
-    return StreamBuilder(
-      stream: FirebaseFirestore.instance
-          .collection("liveTest")
-          .doc(batchName)
-          .snapshots(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
-        }
     return Scaffold(
-      resizeToAvoidBottomInset: false,
       body: SafeArea(
         child: Container(
           margin: EdgeInsets.only(
@@ -113,296 +103,40 @@ class _LiveTestResultState extends ConsumerState<LiveTestResult> {
                 );
               }
 
-        Map<String, dynamic> data = snapshot.data!.data()!;
+              Map<String, dynamic> data = snapshot.data!.data()!;
 
-        Map<String, dynamic> answers =
-            Map<String, dynamic>.from(data[dayIndex]["answers"]);
-              Map<String, dynamic> answers =
-                  Map<String, dynamic>.from(data[widget.dayIndex]["answers"]);
+              // Map<String, dynamic> answers =
+              //     Map<String, dynamic>.from(data[widget.dayIndex]["answers"]);
 
-        Map<String, dynamic> totoalScores =
-            Map<String, dynamic>.from(data[dayIndex]["totalScores"]);
               Map<String, dynamic> totoalScores = Map<String, dynamic>.from(
                   data[widget.dayIndex]["totalScores"]);
 
-        List<MapEntry<String, dynamic>> totalScoresList =
-            totoalScores.entries.toList();
+              List<MapEntry<String, dynamic>> totalScoresList =
+                  totoalScores.entries.toList();
 
-        totalScoresList.sort((a, b) => (b.value as int).compareTo(a.value));
+              totalScoresList
+                  .sort((a, b) => (b.value as int).compareTo(a.value));
 
-        Map<String, dynamic> studentsData =
-            Map<String, dynamic>.from(data[dayIndex]["students"]);
               Map<String, dynamic> studentsData =
                   Map<String, dynamic>.from(data[widget.dayIndex]["students"]);
 
-        print(studentsData);
-
-        return Column(
-          children: [
-            Row(
-              children: [
-                const CustomBackButton(),
-                const Spacer(
-                  flex: 2,
-                ),
-                CustomText(
-                  text: "LIVE TEST RESULT",
-                  size: sizeData.header,
-                  color: colorData.fontColor(1),
-                  weight: FontWeight.w600,
-                ),
-                const Spacer(),
-                day != null
-                    ? CustomText(
-                        text: day!,
-                        size: sizeData.medium,
-                        color: colorData.fontColor(.6),
-                        weight: FontWeight.w800,
-                      )
-                    : const SizedBox(),
-                SizedBox(
-                  width: width * 0.02,
-                ),
-              ],
-            ),
-            SizedBox(
-              height: height * 0.03,
-            ),
-            Expanded(
-              flex: 3,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  totoalScores.length >= 3
-                      ? Column(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Container(
-                              margin: EdgeInsets.only(bottom: height * 0.005),
-                              child: CustomNetworkImage(
-                                size: aspectRatio * 125,
-                                radius: 50,
-                                url: studentsData[totalScoresList[2].key]
-                                    ["photo"],
-                                textSize: sizeData.superLarge,
-                              ),
-                            ),
-                            SizedBox(
-                              width: width * .175,
-                              child: CustomText(
-                                text: studentsData[totalScoresList[2].key]
-                                    ["name"],
-                                size: sizeData.verySmall,
-                                maxLine: 2,
-                                align: TextAlign.center,
-                              ),
-                            ),
-                            Container(
-                              width: width * .175,
-                              height: height * .1,
-                              margin: EdgeInsets.only(top: height * 0.01),
-                              decoration: BoxDecoration(
-                                borderRadius: const BorderRadius.only(
-                                  topLeft: Radius.circular(12),
-                                  topRight: Radius.circular(12),
-                                ),
-                                color: colorData.primaryColor(.4),
-                              ),
-                              alignment: Alignment.center,
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  CustomText(
-                                    text: "3",
-                                    size: aspectRatio * 65,
-                                    color: Colors.white,
-                                    weight: FontWeight.w900,
-                                  ),
-                                  SizedBox(height: height * 0.01),
-                                  CustomText(
-                                    text: totalScoresList[2].value.toString(),
-                                    color: Colors.white.withOpacity(.8),
-                                    weight: FontWeight.w900,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        )
-                      : const SizedBox(),
-                  SizedBox(width: width * 0.015),
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Container(
-                        margin: EdgeInsets.only(bottom: height * 0.005),
-                        child: CustomNetworkImage(
-                          size: aspectRatio * 125,
-                          radius: 50,
-                          url: studentsData[totalScoresList[0].key]["photo"],
-                          textSize: sizeData.superLarge,
-                        ),
-                      ),
-                      SizedBox(
-                        width: width * .175,
-                        child: CustomText(
-                          text: studentsData[totalScoresList[0].key]["name"],
-                          size: sizeData.verySmall,
-                          align: TextAlign.center,
-                          maxLine: 2,
-                        ),
-                      ),
-                      Container(
-                        width: width * .175,
-                        height: height * .2,
-                        margin: EdgeInsets.only(top: height * 0.01),
-                        decoration: BoxDecoration(
-                          borderRadius: const BorderRadius.only(
-                            topLeft: Radius.circular(12),
-                            topRight: Radius.circular(12),
-                          ),
-                          color: colorData.primaryColor(1),
-                        ),
-                        alignment: Alignment.center,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            CustomText(
-                              text: "1",
-                              size: aspectRatio * 80,
-                              color: Colors.white,
-                              weight: FontWeight.w900,
-                            ),
-                            SizedBox(height: height * 0.02),
-                            CustomText(
-                              text: totalScoresList[0].value.toString(),
-                              color: Colors.white.withOpacity(.8),
-                              weight: FontWeight.w900,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(width: width * 0.015),
-                  totoalScores.length >= 2
-                      ? Column(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Container(
-                              margin: EdgeInsets.only(bottom: height * 0.005),
-                              child: CustomNetworkImage(
-                                size: aspectRatio * 125,
-                                radius: 50,
-                                url: studentsData[totalScoresList[1].key]
-                                    ["photo"],
-                                textSize: sizeData.superLarge,
-                              ),
-                            ),
-                            SizedBox(
-                              width: width * .175,
-                              child: CustomText(
-                                text: studentsData[totalScoresList[1].key]
-                                    ["name"],
-                                size: sizeData.verySmall,
-                                align: TextAlign.center,
-                                maxLine: 2,
-                              ),
-                            ),
-                            Container(
-                              width: width * .175,
-                              height: height * .15,
-                              margin: EdgeInsets.only(top: height * 0.01),
-                              decoration: BoxDecoration(
-                                borderRadius: const BorderRadius.only(
-                                  topLeft: Radius.circular(12),
-                                  topRight: Radius.circular(12),
-                                ),
-                                color: colorData.primaryColor(.7),
-                              ),
-                              alignment: Alignment.center,
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  CustomText(
-                                    text: "2",
-                                    size: aspectRatio * 70,
-                                    color: Colors.white,
-                                    weight: FontWeight.w900,
-                                  ),
-                                  SizedBox(height: height * 0.02),
-                                  CustomText(
-                                    text: totalScoresList[1].value.toString(),
-                                    color: Colors.white.withOpacity(.8),
-                                    weight: FontWeight.w900,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        )
-                      : const SizedBox(),
-                ],
-              ),
-            ),
-            SizedBox(height: height * 0.01),
-            Expanded(
-              flex: 5,
-              child: ListView.builder(
-                scrollDirection: Axis.vertical,
-                itemCount: totalScoresList.length,
-                itemBuilder: (context, index) {
-                  return ResultTile(
-                    index: (index + 1).toString(),
-                    name: studentsData[totalScoresList[index].key]["name"],
-                    imageURL: studentsData[totalScoresList[index].key]["photo"],
-                    points: totalScoresList[index].value.toString(),
-                  );
-                },
-              ),
-            ),
-            // role == UserRole.student
-            //     ? ResultTile(
-            //         index: "2",
-            //         name: "Bharathraj",
-            //         imageURL: "B",
-            //         points: "1221")
-            //     : const SizedBox(),
-          ],
-        );
-      },
               return Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Row(
-                    children: [
-                      const CustomBackButton(),
-                      const Spacer(
-                        flex: 2,
-                      ),
-                      CustomText(
-                        text: "LIVE TEST RESULT",
-                        size: sizeData.header,
-                        color: colorData.fontColor(1),
-                        weight: FontWeight.w600,
-                      ),
-                      const Spacer(),
-                      widget.day != null
-                          ? CustomText(
-                              text: widget.day!,
-                              size: sizeData.medium,
-                              color: colorData.fontColor(.6),
-                              weight: FontWeight.w800,
-                            )
-                          : const SizedBox(),
-                      SizedBox(
-                        width: width * 0.02,
-                      ),
-                    ],
+                  PageHeader(
+                    tittle: "LIVE TEST RESULT",
+                    secondaryWidget: widget.day != null
+                        ? CustomText(
+                            text: widget.day!,
+                            size: sizeData.medium,
+                            color: colorData.fontColor(.6),
+                            weight: FontWeight.w800,
+                            height: 2,
+                          )
+                        : null,
+                    otherMethod: widget.popMethod,
                   ),
+
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
@@ -415,7 +149,8 @@ class _LiveTestResultState extends ConsumerState<LiveTestResult> {
                         maxBlastForce: 2,
                         minBlastForce: 1,
                         emissionFrequency: 0.04,
-                        numberOfParticles: 1, // a lot of particles at once
+                        numberOfParticles: 1,
+                        // a lot of particles at once
                         gravity: 0.3,
                         child: SizedBox(
                           height: height * 0.03,
@@ -429,7 +164,8 @@ class _LiveTestResultState extends ConsumerState<LiveTestResult> {
                         maxBlastForce: 2,
                         minBlastForce: 1,
                         emissionFrequency: 0.04,
-                        numberOfParticles: 1, // a lot of particles at once
+                        numberOfParticles: 1,
+                        // a lot of particles at once
                         gravity: 0.3,
                         child: SizedBox(
                           height: height * 0.03,
@@ -444,7 +180,8 @@ class _LiveTestResultState extends ConsumerState<LiveTestResult> {
                         maxBlastForce: 2,
                         minBlastForce: 1,
                         emissionFrequency: 0.03,
-                        numberOfParticles: 2, // a lot of particles at once
+                        numberOfParticles: 2,
+                        // a lot of particles at once
                         gravity: 0.8,
                         child: SizedBox(
                           height: height * 0.03,

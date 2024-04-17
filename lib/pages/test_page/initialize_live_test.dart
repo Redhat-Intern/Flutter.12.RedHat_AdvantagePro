@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:redhat_v1/providers/livetest_provider.dart';
 
-import '../../providers/livetest_provider.dart';
 import '../../utilities/theme/color_data.dart';
 import '../../utilities/theme/size_data.dart';
 
@@ -17,6 +17,7 @@ class ConductLiveTest extends ConsumerStatefulWidget {
       required this.batchData,
       required this.dayIndex,
       required this.day});
+
   final int dayIndex;
   final String day;
   final Map<String, dynamic> batchData;
@@ -45,7 +46,16 @@ class _ConductLiveTestState extends ConsumerState<ConductLiveTest> {
           .set({
         widget.dayIndex.toString(): {"status": true}
       }, SetOptions(merge: true));
-      Map<String, dynamic> testData = ref.watch(liveTestProvider)!;
+      DocumentSnapshot<Map<String, dynamic>> snapshot = await FirebaseFirestore
+          .instance
+          .collection('liveTest')
+          .doc(widget.batchData['name'])
+          .get();
+
+      Map<String, dynamic> data = snapshot.data()!;
+      Map<String, dynamic> testData =
+          Map<String, dynamic>.from(data[widget.dayIndex.toString()]);
+
       Navigator.push(
         context,
         MaterialPageRoute(
@@ -124,6 +134,12 @@ class _ConductLiveTestState extends ConsumerState<ConductLiveTest> {
               int studentsToJoin =
                   List.from(widget.batchData["students"]).length -
                       students.length;
+
+              Future(() {
+                ref
+                    .read(liveTestProvider.notifier)
+                    .updateTestData(snapshotData[widget.dayIndex.toString()]);
+              });
 
               return Column(
                 children: initiated

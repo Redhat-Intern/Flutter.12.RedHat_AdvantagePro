@@ -3,15 +3,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:redhat_v1/pages/test_page/live_test_result.dart';
-import 'package:redhat_v1/providers/livetest_provider.dart';
 
 import '../../components/common/text.dart';
-import '../../components/test/live_test/custom_progress_bar.dart';
-import '../../components/test/live_test/hold_page.dart';
-import '../../components/test/live_test/options_selector.dart';
 import '../../components/test/live_test/ranking_board.dart';
 import '../../model/test.dart';
-import '../../utilities/static_data.dart';
 import '../../utilities/theme/color_data.dart';
 import '../../utilities/theme/size_data.dart';
 
@@ -22,6 +17,7 @@ class LiveTestConductPage extends ConsumerStatefulWidget {
     required this.dayIndex,
     required this.batchName,
   });
+
   final Map<String, dynamic> testData;
   final String dayIndex;
   final String batchName;
@@ -105,9 +101,20 @@ class _LiveTestConductPageState extends ConsumerState<LiveTestConductPage> {
     double height = sizeData.height;
     double width = sizeData.width;
 
-
     Widget pageWidget = questionIndex == testFields.length - 1 && toShowResult
-        ? LiveTestResult(dayIndex: widget.dayIndex, batchName: widget.batchName)
+        ? LiveTestResult(
+            dayIndex: widget.dayIndex,
+            batchName: widget.batchName,
+            popMethod: () {
+              FirebaseFirestore.instance
+                  .collection("batches")
+                  .doc(widget.batchName)
+                  .set({
+                "liveTest": {widget.dayIndex: "completed"}
+              }, SetOptions(merge: true));
+              Navigator.pop(context);
+            },
+          )
         : toShowResult
             ? RankingBoard(currentTestField: currentTestField)
             : Column(
@@ -216,13 +223,16 @@ class _LiveTestConductPageState extends ConsumerState<LiveTestConductPage> {
                                       Map<String, dynamic>.from(studentsData[
                                           currentAnsList[index].key]);
                                   return ResultTile(
-                                    time: currentAnsList[index].value["time"],
+                                    time: double.parse(currentAnsList[index]
+                                        .value["time"]
+                                        .toString()),
                                     name: studentData["name"],
                                     imageURL: studentData["photo"],
                                     option:
                                         currentAnsList[index].value["option"],
-                                    points:
-                                        currentAnsList[index].value["score"],
+                                    points: currentAnsList[index]
+                                        .value["score"]
+                                        .toString(),
                                   );
                                 });
                           } else {
@@ -299,7 +309,7 @@ class ResultTile extends ConsumerWidget {
             size: sizeData.small,
             color: colorData.primaryColor(.8),
           ),
-          SizedBox(width: width * 0.03),
+          SizedBox(width: width * 0.02),
           Container(
             height: aspectRatio * 95,
             width: aspectRatio * 95,
@@ -324,6 +334,7 @@ class ResultTile extends ConsumerWidget {
                   ),
           ),
           Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               CustomText(
                 text: name,
@@ -331,10 +342,22 @@ class ResultTile extends ConsumerWidget {
                 weight: FontWeight.w700,
               ),
               SizedBox(height: height * 0.005),
-              CustomText(
-                text: "OPTION: $option",
-                size: sizeData.medium,
-                weight: FontWeight.w700,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  CustomText(
+                    text: "OPTION:",
+                    size: sizeData.small,
+                    weight: FontWeight.w700,
+                    color: colorData.fontColor(.6),
+                  ),
+                  SizedBox(width: width * 0.01),
+                  CustomText(
+                    text: option,
+                    size: sizeData.medium,
+                    weight: FontWeight.w800,
+                  ),
+                ],
               ),
             ],
           ),
