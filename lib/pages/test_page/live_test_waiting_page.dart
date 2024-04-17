@@ -137,7 +137,7 @@ class _LiveTestWaitingRoomState extends ConsumerState<LiveTestWaitingRoom> {
               );
             }
           } else {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           }
         });
   }
