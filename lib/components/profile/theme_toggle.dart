@@ -25,6 +25,7 @@ class ThemeToggle extends ConsumerWidget {
     double aspectRatio = sizeData.aspectRatio;
     return GestureDetector(
       onTap: () {
+        
         notifier.toggleThemeMode(!isDark);
       },
       child: Align(

@@ -30,7 +30,7 @@ class _AddStudentsState extends ConsumerState<AddStudents> {
       this.excelData = excelData;
       ref
           .read(createBatchProvider.notifier)
-          .readExcelFile(excelData.keys.first);
+          .readExcelFile(excelData.keys.first, excelData.values.first);
     });
   }
 

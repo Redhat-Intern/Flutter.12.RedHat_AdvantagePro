@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:redhat_v1/providers/livetest_provider.dart';
 
 import '../../utilities/theme/color_data.dart';
 import '../../utilities/theme/size_data.dart';
@@ -8,6 +9,7 @@ import '../../utilities/theme/size_data.dart';
 import '../../components/common/back_button.dart';
 import '../../components/common/text.dart';
 import '../../components/common/text_list.dart';
+import 'live_test_conducting_page.dart';
 
 class ConductLiveTest extends ConsumerStatefulWidget {
   const ConductLiveTest(
@@ -15,6 +17,7 @@ class ConductLiveTest extends ConsumerStatefulWidget {
       required this.batchData,
       required this.dayIndex,
       required this.day});
+
   final int dayIndex;
   final String day;
   final Map<String, dynamic> batchData;
@@ -36,12 +39,34 @@ class _ConductLiveTestState extends ConsumerState<ConductLiveTest> {
         .doc(widget.batchData["name"])
         .set({"liveTest": data}, SetOptions(merge: true));
 
-    await FirebaseFirestore.instance
-        .collection("liveTest")
-        .doc(widget.batchData["name"])
-        .set({
-      widget.dayIndex.toString(): {"status": true}
-    }, SetOptions(merge: true));
+    if (todo == "start") {
+      await FirebaseFirestore.instance
+          .collection("liveTest")
+          .doc(widget.batchData["name"])
+          .set({
+        widget.dayIndex.toString(): {"status": true}
+      }, SetOptions(merge: true));
+      DocumentSnapshot<Map<String, dynamic>> snapshot = await FirebaseFirestore
+          .instance
+          .collection('liveTest')
+          .doc(widget.batchData['name'])
+          .get();
+
+      Map<String, dynamic> data = snapshot.data()!;
+      Map<String, dynamic> testData =
+          Map<String, dynamic>.from(data[widget.dayIndex.toString()]);
+
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => LiveTestConductPage(
+            batchName: widget.batchData["name"],
+            dayIndex: widget.dayIndex.toString(),
+            testData: testData,
+          ),
+        ),
+      );
+    }
   }
 
   @override
@@ -109,6 +134,12 @@ class _ConductLiveTestState extends ConsumerState<ConductLiveTest> {
               int studentsToJoin =
                   List.from(widget.batchData["students"]).length -
                       students.length;
+
+              Future(() {
+                ref
+                    .read(liveTestProvider.notifier)
+                    .updateTestData(snapshotData[widget.dayIndex.toString()]);
+              });
 
               return Column(
                 children: initiated

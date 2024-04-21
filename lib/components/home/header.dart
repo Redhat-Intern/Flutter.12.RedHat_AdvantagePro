@@ -21,7 +21,8 @@ class Header extends ConsumerStatefulWidget {
   ConsumerState<Header> createState() => _HeaderState();
 }
 
-class _HeaderState extends ConsumerState<Header> {
+class _HeaderState extends ConsumerState<Header>
+    with SingleTickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     CustomSizeData sizeData = CustomSizeData.from(context);
@@ -72,21 +73,17 @@ class _HeaderState extends ConsumerState<Header> {
                             icon: Icons.notifications_outlined,
                             color: colorData.fontColor(.8),
                           ),
-                          Positioned(
-                            top: -6,
-                            left: -1,
-                            child: Container(
-                              padding: EdgeInsets.all(aspectRatio * 10),
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: colorData.primaryColor(1),
-                              ),
-                              child: CustomText(
-                                text: messageCount.toString(),
-                                size: aspectRatio * 22,
-                                color: colorData.sideBarTextColor(1),
-                                weight: FontWeight.bold,
-                              ),
+                          Container(
+                            padding: EdgeInsets.all(aspectRatio * 10),
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: colorData.primaryColor(1),
+                            ),
+                            child: CustomText(
+                              text: messageCount.toString(),
+                              size: aspectRatio * 22,
+                              color: colorData.sideBarTextColor(1),
+                              weight: FontWeight.bold,
                             ),
                           )
                         ],

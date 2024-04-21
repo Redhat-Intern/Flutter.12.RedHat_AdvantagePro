@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../components/common/text.dart';
@@ -16,11 +17,16 @@ import '../utilities/theme/size_data.dart';
 
 import '../components/common/menu_button.dart';
 
-class Forum extends ConsumerWidget {
+class Forum extends ConsumerStatefulWidget {
   const Forum({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<Forum> createState() => ForumState();
+}
+
+class ForumState extends ConsumerState<Forum> {
+  @override
+  Widget build(BuildContext context) {
     ForumCategory category = ref.watch(forumCategoryProvider);
     UserRole userRole = ref.watch(userRoleProvider)!;
     Map<String, dynamic> userData = ref.watch(userDataProvider)!;

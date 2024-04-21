@@ -2,7 +2,6 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:redhat_v1/providers/livetest_provider.dart';
 
 import '../../components/common/text.dart';
 import '../../components/test/live_test/custom_progress_bar.dart';
@@ -10,9 +9,11 @@ import '../../components/test/live_test/hold_page.dart';
 import '../../components/test/live_test/options_selector.dart';
 import '../../components/test/live_test/ranking_board.dart';
 import '../../model/test.dart';
+import '../../providers/livetest_provider.dart';
 import '../../utilities/static_data.dart';
 import '../../utilities/theme/color_data.dart';
 import '../../utilities/theme/size_data.dart';
+import 'live_test_result.dart';
 
 class LiveTestAttender extends ConsumerStatefulWidget {
   const LiveTestAttender({
@@ -23,6 +24,7 @@ class LiveTestAttender extends ConsumerStatefulWidget {
     required this.userID,
     required this.batchName,
   });
+
   final Map<String, dynamic> testData;
   final DocumentReference<Map<String, dynamic>> documentRef;
   final String dayIndex;
@@ -107,17 +109,6 @@ class _LiveTestAttenderState extends ConsumerState<LiveTestAttender> {
       });
 
       await Future.delayed(const Duration(seconds: 5));
-
-      if (count == testFields.length - 1) {
-        FirebaseFirestore.instance
-            .collection("batches")
-            .doc(widget.batchName)
-            .set({
-          "liveTest": {
-            widget.dayIndex: "completed",
-          }
-        }, SetOptions(merge: true));
-      }
     }
   }
 
@@ -146,6 +137,8 @@ class _LiveTestAttenderState extends ConsumerState<LiveTestAttender> {
     CustomSizeData sizeData = CustomSizeData.from(context);
     CustomColorData colorData = CustomColorData.from(ref);
 
+    int questionIndex = testFields.indexOf(currentTestField);
+
     double height = sizeData.height;
     double width = sizeData.width;
 
@@ -156,101 +149,106 @@ class _LiveTestAttenderState extends ConsumerState<LiveTestAttender> {
 
     Widget pageWidget = waitingRoom
         ? const HoldPage()
-        : toShowResult
-            ? RankingBoard(currentTestField: currentTestField)
-            : Column(
-                children: [
-                  SizedBox(
-                    height: height * 0.02,
-                  ),
-                  CustomProgressBar(
-                      seconds: seconds, testData: currentTestField),
-                  SizedBox(
-                    height: height * 0.03,
-                  ),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.end,
+        : questionIndex == testFields.length - 1 && toShowResult
+            ? LiveTestResult(
+                dayIndex: widget.dayIndex, batchName: widget.batchName)
+            : toShowResult
+                ? RankingBoard(currentTestField: currentTestField)
+                : Column(
                     children: [
-                      CustomText(
-                        text:
-                            "Question ${testFields.indexOf(currentTestField) + 1}",
-                        size: sizeData.header,
-                        weight: FontWeight.w700,
-                        color: colorData.fontColor(.8),
+                      SizedBox(
+                        height: height * 0.02,
                       ),
-                      CustomText(
-                        text: "/${testFields.length}",
-                        color: colorData.fontColor(.5),
-                        weight: FontWeight.w800,
+                      CustomProgressBar(
+                          seconds: seconds, testData: currentTestField),
+                      SizedBox(
+                        height: height * 0.03,
                       ),
-                      const Spacer(),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          CustomText(
+                            text:
+                                "Question ${testFields.indexOf(currentTestField) + 1}",
+                            size: sizeData.header,
+                            weight: FontWeight.w700,
+                            color: colorData.fontColor(.8),
+                          ),
+                          CustomText(
+                            text: "/${testFields.length}",
+                            color: colorData.fontColor(.5),
+                            weight: FontWeight.w800,
+                          ),
+                          const Spacer(),
+                          Container(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: width * 0.01,
+                                vertical: height * 0.0025),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(50),
+                              color: colorData.secondaryColor(.8),
+                            ),
+                            child: Row(children: [
+                              CustomText(
+                                text: emojis['0']!,
+                                color: Colors.white,
+                                weight: FontWeight.bold,
+                                size: sizeData.header,
+                              ),
+                              CustomText(
+                                text: totalSC.toString(),
+                                weight: FontWeight.w800,
+                                color: colorData.fontColor(.9),
+                                size: sizeData.medium,
+                              ),
+                              SizedBox(
+                                width: width * 0.01,
+                              ),
+                            ]),
+                          )
+                        ],
+                      ),
                       Container(
-                        padding: EdgeInsets.symmetric(
-                            horizontal: width * 0.01,
-                            vertical: height * 0.0025),
+                        margin: EdgeInsets.only(
+                            bottom: height * 0.02, top: height * 0.02),
+                        height: 4,
+                        width: double.infinity,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(50),
-                          color: colorData.secondaryColor(.8),
+                          color: colorData.fontColor(.1),
+                          gradient: LinearGradient(
+                            colors: List.generate(
+                              30,
+                              (index) => index % 2 == 0
+                                  ? colorData.fontColor(1)
+                                  : colorData.secondaryColor(1),
+                            ).toList(),
+                          ),
                         ),
-                        child: Row(children: [
-                          CustomText(
-                            text: emojis['0']!,
-                            color: Colors.white,
-                            weight: FontWeight.bold,
-                            size: sizeData.header,
-                          ),
-                          CustomText(
-                            text: totalSC.toString(),
-                            weight: FontWeight.w800,
-                            color: colorData.fontColor(.9),
-                            size: sizeData.medium,
-                          ),
-                          SizedBox(
-                            width: width * 0.01,
-                          ),
-                        ]),
+                      ),
+                      SizedBox(
+                        height: height * 0.02,
+                      ),
+                      CustomText(
+                        text: currentTestField.question,
+                        maxLine: 5,
+                        size: sizeData.header,
+                        weight: FontWeight.w700,
+                        color: colorData.fontColor(.9),
+                        height: 1.25,
+                      ),
+                      SizedBox(
+                        height: height * 0.04,
+                      ),
+                      OptionsSelector(
+                        currentTestField: currentTestField,
+                        setOption: setOption,
                       )
                     ],
-                  ),
-                  Container(
-                    margin: EdgeInsets.only(
-                        bottom: height * 0.02, top: height * 0.02),
-                    height: 4,
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(50),
-                      color: colorData.fontColor(.1),
-                      gradient: LinearGradient(
-                        colors: List.generate(
-                          30,
-                          (index) => index % 2 == 0
-                              ? colorData.fontColor(1)
-                              : colorData.secondaryColor(1),
-                        ).toList(),
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    height: height * 0.02,
-                  ),
-                  CustomText(
-                    text: currentTestField.question,
-                    maxLine: 5,
-                    size: sizeData.header,
-                    weight: FontWeight.w700,
-                    color: colorData.fontColor(.9),
-                    height: 1.25,
-                  ),
-                  SizedBox(
-                    height: height * 0.04,
-                  ),
-                  OptionsSelector(
-                      currentTestField: currentTestField, setOption: setOption)
-                ],
-              );
+                  );
 
     return PopScope(
-      canPop: true,
+      canPop: false,
       onPopInvoked: (didPop) {},
       child: Scaffold(
         body: SafeArea(

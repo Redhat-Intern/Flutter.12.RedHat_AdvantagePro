@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 // import 'package:redhat_v1/providers/user_detail_provider.dart';
 
-import '../../components/add_staff/send_email.dart';
+import 'send_email.dart';
 import '../../model/batch.dart';
 
 Future<bool> createBatch({

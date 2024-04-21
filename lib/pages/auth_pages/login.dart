@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -23,12 +25,74 @@ class Login extends ConsumerStatefulWidget {
 class _LoginState extends ConsumerState<Login> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+  bool forgetPassword = false;
+  bool showPassword = true;
 
   @override
   void dispose() {
     emailController.dispose();
     passwordController.dispose();
     super.dispose();
+  }
+
+  void resetPassword({
+    required double textSize,
+    required Color textColor,
+    required Color backgroundColor,
+    required UserRole? role,
+  }) async {
+    try {
+      await AuthFB().sendPasswordResetEmail(email: emailController.text.trim());
+      // try {
+      //    await FirebaseFirestore.instance.collection("${role!.name}s").doc(AuthFB().currentUser!.email!).set({
+      //     "password":AuthFB().!
+      //    });
+      // } catch (e) {
+      //     ScaffoldMessenger.of(context).showSnackBar(
+      //   SnackBar(
+      //     backgroundColor: backgroundColor,
+      //     content: CustomText(
+      //       text: e.toString(),
+      //       maxLine: 3,
+      //       align: TextAlign.center,
+      //       color: textColor,
+      //       size: textSize,
+      //       weight: FontWeight.w600,
+      //     ),
+      //   ),
+      // );
+      // }
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: backgroundColor,
+          content: CustomText(
+            text: "Password Reset Email has been sent !",
+            maxLine: 3,
+            align: TextAlign.center,
+            color: textColor,
+            size: textSize,
+            weight: FontWeight.w600,
+          ),
+        ),
+      );
+    } on FirebaseAuthException catch (e) {
+      if (e.code == "user-not-found") {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: backgroundColor,
+            content: CustomText(
+              text: "No user found for that email.",
+              maxLine: 3,
+              align: TextAlign.center,
+              color: textColor,
+              size: textSize,
+              weight: FontWeight.w600,
+            ),
+          ),
+        );
+      }
+    }
   }
 
   void loginUser(
@@ -93,7 +157,9 @@ class _LoginState extends ConsumerState<Login> {
               right: 0,
               child: Image(
                 height: height * .185,
-                image: const AssetImage("assets/images/redhat.png"),
+                image: const AssetImage(
+                  "assets/images/redhat.png",
+                ),
               ),
             ),
             Container(
@@ -104,7 +170,7 @@ class _LoginState extends ConsumerState<Login> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   CustomText(
-                    text: "Login",
+                    text: forgetPassword ? "Forget Password" : "Login",
                     size: sizeData.superHeader,
                     color: fontColor(1),
                     weight: FontWeight.bold,
@@ -113,7 +179,9 @@ class _LoginState extends ConsumerState<Login> {
                     height: height * 0.01,
                   ),
                   CustomText(
-                    text: "Please signin in to continue",
+                    text: forgetPassword
+                        ? "Please enter your email Id"
+                        : "Please signin in to continue",
                     size: sizeData.header,
                     color: fontColor(.6),
                     weight: FontWeight.bold,
@@ -127,18 +195,35 @@ class _LoginState extends ConsumerState<Login> {
                     controller: emailController,
                     bottomMargin: 0.025,
                   ),
-                  LoginTextField(
-                    icon: Icons.password_rounded,
-                    labelText: "PASSWORD",
-                    controller: passwordController,
-                    bottomMargin: 0.01,
-                    isVisible: false,
-                  ),
+                  forgetPassword == false
+                      ? LoginTextField(
+                          onTap: () {
+                            setState(() {
+                              showPassword = !showPassword;
+                            });
+                          },
+                          isVisible: showPassword,
+                          icon: Icons.password_rounded,
+                          labelText: "PASSWORD",
+                          suffixIconData: showPassword == true
+                              ? Icons.remove_red_eye
+                              : Icons.visibility_off,
+                          controller: passwordController,
+                          bottomMargin: 0.01,
+                        )
+                      : const SizedBox(),
                   Align(
                     alignment: Alignment.centerRight,
                     child: GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          forgetPassword = !forgetPassword;
+                        });
+                      },
                       child: CustomText(
-                        text: "Forget Password",
+                        text: forgetPassword
+                            ? "Back to login"
+                            : "Forget Password ?",
                         size: sizeData.medium,
                         color: primaryColors[0].withOpacity(.7),
                         weight: FontWeight.bold,
@@ -146,12 +231,25 @@ class _LoginState extends ConsumerState<Login> {
                     ),
                   ),
                   GestureDetector(
-                    onTap: () => loginUser(
-                      textColor: fontColor(.8),
-                      textSize: sizeData.regular,
-                      backgroundColor: secondaryColor(1),
-                      role: role!,
-                    ),
+                    onTap: () {
+                      if (forgetPassword) {
+                        // TODO: forget password functionality
+                        resetPassword(
+                          role: role!,
+                          textColor: fontColor(.8),
+                          textSize: sizeData.regular,
+                          backgroundColor: secondaryColor(1),
+                        );
+                        print("Email Sent");
+                      } else {
+                        loginUser(
+                          textColor: fontColor(.8),
+                          textSize: sizeData.regular,
+                          backgroundColor: secondaryColor(1),
+                          role: role!,
+                        );
+                      }
+                    },
                     child: Align(
                       alignment: Alignment.centerRight,
                       child: Container(
@@ -177,7 +275,7 @@ class _LoginState extends ConsumerState<Login> {
                         alignment: Alignment.center,
                         child: CustomText(
                           weight: FontWeight.bold,
-                          text: "LOGIN",
+                          text: forgetPassword ? "SEND EMAIL" : "LOGIN",
                           size: sizeData.medium,
                           color: Colors.white,
                         ),

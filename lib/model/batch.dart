@@ -53,13 +53,14 @@ class Batch {
     );
   }
 
-  bool isEmpty() {
-    return name.isEmpty &&
-        certificateData.isEmpty &&
-        dates.isEmpty &&
-        staffs.isEmpty &&
-        adminStaff.isEmpty &&
-        students.isEmpty;
+  bool isNotEmpty() {
+    return name.isNotEmpty &&
+        name != "" &&
+        certificateData.isNotEmpty &&
+        dates.isNotEmpty &&
+        staffs.isNotEmpty &&
+        adminStaff.isNotEmpty &&
+        students.isNotEmpty;
   }
 
   Map<String, dynamic> toMap() {

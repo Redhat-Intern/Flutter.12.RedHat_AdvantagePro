@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:redhat_v1/providers/chat_scroll_provider.dart';
 
 import '../../../functions/update/update_chat_message.dart';
 import '../../../utilities/theme/color_data.dart';
@@ -48,8 +51,11 @@ class _ChatTextFieldState extends ConsumerState<ChatTextField> {
               ),
               child: TextField(
                 controller: controller,
+                onTap: () {
+                  ref.read(chatScrollProvider.notifier).jump();
+                },
                 onSubmitted: (value) {
-                  if (value.isNotEmpty) {
+                  if (value.trim().isNotEmpty) {
                     uploadChat(
                       text: controller.text.trim(),
                       ref: ref,
@@ -80,7 +86,7 @@ class _ChatTextFieldState extends ConsumerState<ChatTextField> {
                   border: InputBorder.none,
                   suffixIcon: GestureDetector(
                     onTap: () {
-                      if (controller.text.isNotEmpty) {
+                      if (controller.text.trim().isNotEmpty) {
                         uploadChat(
                           text: controller.text.trim(),
                           ref: ref,

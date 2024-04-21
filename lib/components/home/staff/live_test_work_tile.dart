@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
-import '../../../pages/test_page/conduct_live_test.dart';
+import '../../../pages/test_page/initialize_live_test.dart';
 import '../../../pages/test_page/test_creator.dart';
 import '../../../pages/test_page/live_test_result.dart';
 import '../../../utilities/static_data.dart';
@@ -40,7 +40,7 @@ class LiveTestWorkTile extends ConsumerWidget {
     );
 
     Widget result = LiveTestResult(
-      dayIndex: dayIndex,
+      dayIndex: dayIndex.toString(),
       day: day,
       batchName: batchData["name"],
     );
@@ -67,7 +67,7 @@ class LiveTestWorkTile extends ConsumerWidget {
             snapshot.data!.data()!.containsKey(dayIndex.toString())) {
           Map<String, dynamic> testData =
               Map.from(snapshot.data!.data()![dayIndex.toString()]);
-          bool isConducted = testData.containsKey("result");
+          bool isConducted = testData.containsKey("answers");
 
           Widget toMove = isConducted ? result : conduct;
           bool notDone = datePassed && testData.isEmpty;

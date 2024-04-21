@@ -1,4 +1,6 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../model/forum.dart';
@@ -20,18 +22,34 @@ class ChattingPage extends ConsumerStatefulWidget {
 }
 
 class _ChattingPageState extends ConsumerState<ChattingPage> {
+  ScrollController controller = ScrollController();
+
   @override
-  void didUpdateWidget(covariant ChattingPage oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    ScrollController controller = ref.watch(chatScrollProvider);
+  void initState() {
+    super.initState();
+    Future(() {
+      controller = ref.watch(chatScrollProvider);
+    });
     WidgetsBinding.instance.addPostFrameCallback((_) {
       controller.jumpTo(controller.position.maxScrollExtent);
     });
   }
 
   @override
+  void didUpdateWidget(covariant ChattingPage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      controller.jumpTo(controller.position.maxScrollExtent);
+    });
+  }
+
+  
+
+  @override
   Widget build(BuildContext context) {
-    ScrollController controller = ref.watch(chatScrollProvider);
+    EdgeInsets viewInsets = MediaQuery.of(context).viewInsets;
+
     ChatForum chatForum = ref.watch(forumDataProvider)[widget.index];
     CustomSizeData sizeData = CustomSizeData.from(context);
     CustomColorData colorData = CustomColorData.from(ref);
@@ -61,7 +79,6 @@ class _ChattingPageState extends ConsumerState<ChattingPage> {
               ),
               Expanded(
                 child: ListView.builder(
-                    // dragStartBehavior: DragStartBehavior.down,
                     controller: controller,
                     padding: EdgeInsets.symmetric(
                       vertical: height * 0.01,
@@ -84,7 +101,7 @@ class _ChattingPageState extends ConsumerState<ChattingPage> {
                       );
                     }),
               ),
-              ChatTextField(index: widget.index),
+              ChatTextField(index: widget.index,),
             ],
           ),
         ),

@@ -7,21 +7,27 @@ import '../common/icon.dart';
 
 class LoginTextField extends ConsumerWidget {
   final String labelText;
+  final bool? isVisible;
   final IconData icon;
   final TextEditingController controller;
   final double bottomMargin;
   final bool isReadOnly;
-  final bool isVisible;
+  final VoidCallback? onTap;
 
-  const LoginTextField({
+  final IconData? suffixIconData;
+
+  LoginTextField({
+    this.isVisible,
+    this.onTap,
+    this.suffixIconData,
     super.key,
     required this.labelText,
     required this.icon,
     required this.controller,
     required this.bottomMargin,
     this.isReadOnly = false,
-    this.isVisible = true,
   });
+  late bool showPassword;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -40,7 +46,7 @@ class LoginTextField extends ConsumerWidget {
       child: TextField(
         readOnly: isReadOnly,
         controller: controller,
-        obscureText: !isVisible,
+        obscureText: isVisible ?? false,
         style: TextStyle(
           fontWeight: FontWeight.bold,
           fontSize: sizeData.medium,
@@ -54,6 +60,16 @@ class LoginTextField extends ConsumerWidget {
             color: colorData.fontColor(.8),
             size: aspectRatio * 55,
           ),
+          suffixIcon: suffixIconData != null
+              ? GestureDetector(
+                  onTap: onTap,
+                  child: CustomIcon(
+                    icon: suffixIconData!,
+                    color: colorData.fontColor(.8),
+                    size: aspectRatio * 55,
+                  ),
+                )
+              : const SizedBox(),
           labelText: labelText,
           labelStyle: TextStyle(
             fontWeight: FontWeight.bold,

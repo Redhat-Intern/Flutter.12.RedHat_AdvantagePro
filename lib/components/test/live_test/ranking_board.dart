@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:redhat_v1/providers/livetest_provider.dart';
 
 import '../../../model/test.dart';
-import '../../../providers/livetest_provider.dart';
 import '../../../utilities/theme/color_data.dart';
 import '../../../utilities/theme/size_data.dart';
 import '../../common/text.dart';
@@ -12,10 +12,12 @@ class RankingBoard extends ConsumerWidget {
     super.key,
     required this.currentTestField,
   });
+
   final TestField currentTestField;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    Map<String,dynamic> testData = ref.watch(liveTestProvider)!;
     CustomSizeData sizeData = CustomSizeData.from(context);
     CustomColorData colorData = CustomColorData.from(ref);
 
@@ -23,7 +25,6 @@ class RankingBoard extends ConsumerWidget {
     double width = sizeData.width;
     double aspectRatio = sizeData.aspectRatio;
 
-    Map<String, dynamic> testData = ref.watch(liveTestProvider)!;
 
     if (testData["answers"] == null && testData["totalScores"] == null) {
       return const Center(
@@ -38,11 +39,12 @@ class RankingBoard extends ConsumerWidget {
 
       studentsTotalScore.entries.toList().sort((MapEntry a, MapEntry b) {
         return int.parse(a.value.toString()).compareTo(
-          int.parse(
-            b.value.toString(),
-          ),
+          int.parse(b.value.toString()),
         );
       });
+
+      Map<String, dynamic> studentData =
+          Map<String, dynamic>.from(testData["students"]);
 
       return Column(
         children: [
@@ -96,6 +98,7 @@ class RankingBoard extends ConsumerWidget {
               itemCount: studentsTotalScore.length,
               itemBuilder: (context, index) {
                 String studentID = studentsTotalScore.keys.toList()[index];
+                String name = studentData[studentID]["name"].toString();
                 Map? answerData = asnweredStudents[studentID] != null
                     ? Map.from(asnweredStudents[studentID])
                     : null;
@@ -152,7 +155,7 @@ class RankingBoard extends ConsumerWidget {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 CustomText(
-                                  text: studentID,
+                                  text: name,
                                   size: index < 2 ? sizeData.medium : null,
                                   weight: FontWeight.w700,
                                 ),

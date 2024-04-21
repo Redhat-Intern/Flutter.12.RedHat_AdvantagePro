@@ -30,7 +30,7 @@ class _AddStudentOverlayState extends ConsumerState<AddStudentOverlay> {
       'Email',
       'Phone No',
       'Occupation',
-      'Occupation Detail',
+      'Occupation detail',
     ];
     body.add(header);
     body.add([
@@ -58,7 +58,7 @@ class _AddStudentOverlayState extends ConsumerState<AddStudentOverlay> {
       "Email",
       "PhoneNo",
       "Occupation (college/professional)",
-      "Occupation Detail"
+      "Occupation detail"
     ];
     CustomSizeData sizeData = CustomSizeData.from(context);
     CustomColorData colorData = CustomColorData.from(ref);

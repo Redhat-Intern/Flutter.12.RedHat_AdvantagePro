@@ -5,7 +5,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:redhat_v1/components/common/network_image.dart';
 import 'package:redhat_v1/providers/create_batch_provider.dart';
-import 'package:shimmer/shimmer.dart';
 
 import '../../utilities/theme/color_data.dart';
 import '../../utilities/theme/size_data.dart';
