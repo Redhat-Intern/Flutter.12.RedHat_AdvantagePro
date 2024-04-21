@@ -164,50 +164,50 @@ class ChatTile extends ConsumerWidget {
                                           decoration: TextDecoration.underline),
                                     ),
                                   )
-                                : type == MessageType.audio
-                                    ? ClipRRect(
-                                        borderRadius: BorderRadius.circular(10),
-                                        child: GestureDetector(
-                                          onTap: () {
-                                            // Handle audio message tap event
-                                            // You can implement playback functionality or any other action here
-                                          },
-                                          child: AudioWaveform(
-                                            url:
-                                                'path_to_audio_file.mp3', // Replace with actual audio file path
-                                            width:
-                                                300, // Adjust waveform width as needed
-                                            height:
-                                                50, // Adjust waveform height as needed
-                                            backgroundColor: Colors.grey[
-                                                300], // Adjust waveform background color as needed
-                                            color: Colors
-                                                .blue, // Adjust waveform color as needed
-                                            progressGradient: LinearGradient(
-                                              colors: [
-                                                Colors.blue[200]!,
-                                                Colors.blue
-                                              ], // Adjust progress gradient colors as needed
-                                              stops: [0.0, 0.5],
-                                            ),
-                                            position: Duration(
-                                                seconds:
-                                                    0), // Adjust initial position if needed
-                                            positionColor: const Color.fromARGB(
-                                                255,
-                                                54,
-                                                244,
-                                                127), // Adjust position indicator color as needed
-                                            zoomLevel:
-                                                100, // Adjust zoom level as needed
-                                            zoomControllers:
-                                                true, // Enable zoom controls
-                                          ),
-                                        ),
-                                      )
-                                    : // Handle other message types...
+                                // : type == MessageType.audio
+                                // ? ClipRRect(
+                                //     borderRadius: BorderRadius.circular(10),
+                                //     child: GestureDetector(
+                                //       onTap: () {
+                                //         // Handle audio message tap event
+                                //         // You can implement playback functionality or any other action here
+                                //       },
+                                //     child: AudioWaveform(
+                                //       url:
+                                //           'path_to_audio_file.mp3', // Replace with actual audio file path
+                                //       width:
+                                //           300, // Adjust waveform width as needed
+                                //       height:
+                                //           50, // Adjust waveform height as needed
+                                //       backgroundColor: Colors.grey[
+                                //           300], // Adjust waveform background color as needed
+                                //       color: Colors
+                                //           .blue, // Adjust waveform color as needed
+                                //       progressGradient: LinearGradient(
+                                //         colors: [
+                                //           Colors.blue[200]!,
+                                //           Colors.blue
+                                //         ], // Adjust progress gradient colors as needed
+                                //         stops: [0.0, 0.5],
+                                //       ),
+                                //       position: Duration(
+                                //           seconds:
+                                //               0), // Adjust initial position if needed
+                                //       positionColor: const Color.fromARGB(
+                                //           255,
+                                //           54,
+                                //           244,
+                                //           127), // Adjust position indicator color as needed
+                                //       zoomLevel:
+                                //           100, // Adjust zoom level as needed
+                                //       zoomControllers:
+                                //           true, // Enable zoom controls
+                                //     ),
+                                //   ),
+                                // )
+                                : // Handle other message types...
 
-                                    SizedBox()),
+                                SizedBox()),
             Positioned(
               top: 0,
               right: isSentByMe ? -width * 0.03 : null,
