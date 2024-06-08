@@ -30,7 +30,9 @@ class DailyTestAttender extends ConsumerStatefulWidget {
   ConsumerState<DailyTestAttender> createState() => _DailyTestAttenderState();
 }
 
-class _DailyTestAttenderState extends ConsumerState<DailyTestAttender> {
+class _DailyTestAttenderState extends ConsumerState<DailyTestAttender>
+    with WidgetsBindingObserver {
+  int stateCount = 0;
   List<TestField> testFields = [];
   int testIndex = 0;
   List<String?> answers = [];
@@ -98,7 +100,7 @@ class _DailyTestAttenderState extends ConsumerState<DailyTestAttender> {
   @override
   void initState() {
     super.initState();
-
+    WidgetsBinding.instance.addObserver(this);
     widget.documentRef
         .get()
         .then((DocumentSnapshot<Map<String, dynamic>> value) {
@@ -121,6 +123,49 @@ class _DailyTestAttenderState extends ConsumerState<DailyTestAttender> {
         onInitializeTime = DateTime.now();
       });
     });
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+
+    if (state != AppLifecycleState.resumed) {
+      stateCount += 1;
+      debugPrint('App is in the foreground');
+      if (stateCount > 1) {
+        Navigator.pop(context);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Center(
+              child: CustomText(
+                text: "The test was closed due to application navigation.",
+                maxLine: 2,
+                color: Colors.white,
+              ),
+            ),
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Center(
+              child: CustomText(
+                text:
+                    "Test page will terminate if you navigate away from the app again",
+                maxLine: 2,
+                color: Colors.white,
+              ),
+            ),
+          ),
+        );
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.addObserver(this);
+    super.dispose();
   }
 
   @override

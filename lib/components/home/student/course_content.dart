@@ -17,7 +17,7 @@ import '../../common/waiting_widgets/course_waiting.dart';
 import 'course_files.dart';
 
 class CourseContent extends ConsumerStatefulWidget {
-  CourseContent({
+  const CourseContent({
     super.key,
     required this.batchData,
   });
@@ -28,6 +28,9 @@ class CourseContent extends ConsumerStatefulWidget {
 }
 
 class _CourseContentState extends ConsumerState<CourseContent> {
+  // Telephony telephony = Telephony.instance;
+  // bool isInCall = false;
+
   int firstIndex = 0;
 
   String remainingTime() {
@@ -51,6 +54,17 @@ class _CourseContentState extends ConsumerState<CourseContent> {
     Duration remainingTime = endOfDay.difference(now);
     return remainingTime;
   }
+
+  // Future<void> listenToCall() async {
+  //   CallState callState = await telephony.callState;
+  //   setState(() {
+  //     if (callState == CallState.RINGING || callState == CallState.OFFHOOK) {
+  //       isInCall = true;
+  //     } else {
+  //       isInCall = false;
+  //     }
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -376,6 +390,21 @@ class _CourseContentState extends ConsumerState<CourseContent> {
                   liveTestInitiated
                       ? GestureDetector(
                           onTap: () {
+                            // await listenToCall();
+                            // if (isInCall) {
+                            // ScaffoldMessenger.of(context).showSnackBar(
+                            //   const SnackBar(
+                            //     content: Center(
+                            //       child: CustomText(
+                            //         text:
+                            //             "Cannot take the test when attending the call!",
+                            //         maxLine: 2,
+                            //         color: Colors.white,
+                            //       ),
+                            //     ),
+                            //   ),
+                            // );
+                            // } else {
                             joinOrRemove(true);
                             Navigator.push(
                               context,
@@ -388,6 +417,7 @@ class _CourseContentState extends ConsumerState<CourseContent> {
                                 ),
                               ),
                             );
+                            // }
                           },
                           child: Container(
                             height: double.infinity,
