@@ -17,8 +17,11 @@ class StudentHome extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     Map<String, dynamic> userData = ref.watch(userDataProvider)!;
-    String batchName = Map.from(userData["currentBatch"]).keys.first.toString();
-    String studentID = Map.from(userData["id"])[batchName];
+    String batchName = userData['currentBatch'] != null
+        ? Map.from(userData["currentBatch"]).keys.first.toString()
+        : "";
+    String studentID =
+        userData['id'] != null ? Map.from(userData["id"])[batchName] : "";
     String email = userData["email"];
 
     CustomSizeData sizeData = CustomSizeData.from(context);
@@ -36,8 +39,6 @@ class StudentHome extends ConsumerWidget {
               .collection("batches")
               .where("students", arrayContains: {studentID: email}).snapshots(),
           builder: (context, snapshot) {
-
-            
             if (snapshot.hasData && snapshot.data!.docs.isNotEmpty) {
               List<Map<String, dynamic>> data = [];
               List<QueryDocumentSnapshot<Map<String, dynamic>>> docs =
@@ -47,7 +48,7 @@ class StudentHome extends ConsumerWidget {
               Map<String, dynamic> batchData = docs
                   .firstWhere((element) => element.data()["completed"] == null)
                   .data();
-                  
+
               for (QueryDocumentSnapshot<Map<String, dynamic>> doc
                   in docs.where((element) =>
                       batchIDList.contains(element.id.toUpperCase()))) {

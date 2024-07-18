@@ -27,7 +27,7 @@ class LoginTextField extends ConsumerWidget {
     required this.bottomMargin,
     this.isReadOnly = false,
   });
-  late bool showPassword;
+ 
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

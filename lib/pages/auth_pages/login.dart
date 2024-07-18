@@ -42,7 +42,7 @@ class _LoginState extends ConsumerState<Login> {
     required UserRole? role,
   }) async {
     try {
-      await AuthFB().sendPasswordResetEmail(email: emailController.text.trim());
+      // await AuthFB().updatePassword(newPassword);
       // try {
       //    await FirebaseFirestore.instance.collection("${role!.name}s").doc(AuthFB().currentUser!.email!).set({
       //     "password":AuthFB().!
@@ -180,7 +180,7 @@ class _LoginState extends ConsumerState<Login> {
                   ),
                   CustomText(
                     text: forgetPassword
-                        ? "Please enter your email Id"
+                        ? "Please enter your email and new password"
                         : "Please signin in to continue",
                     size: sizeData.header,
                     color: fontColor(.6),
@@ -195,23 +195,21 @@ class _LoginState extends ConsumerState<Login> {
                     controller: emailController,
                     bottomMargin: 0.025,
                   ),
-                  forgetPassword == false
-                      ? LoginTextField(
-                          onTap: () {
-                            setState(() {
-                              showPassword = !showPassword;
-                            });
-                          },
-                          isVisible: showPassword,
-                          icon: Icons.password_rounded,
-                          labelText: "PASSWORD",
-                          suffixIconData: showPassword == true
-                              ? Icons.remove_red_eye
-                              : Icons.visibility_off,
-                          controller: passwordController,
-                          bottomMargin: 0.01,
-                        )
-                      : const SizedBox(),
+                  LoginTextField(
+                    onTap: () {
+                      setState(() {
+                        showPassword = !showPassword;
+                      });
+                    },
+                    isVisible: showPassword,
+                    icon: Icons.password_rounded,
+                    labelText: "PASSWORD",
+                    suffixIconData: showPassword == true
+                        ? Icons.remove_red_eye
+                        : Icons.visibility_off,
+                    controller: passwordController,
+                    bottomMargin: 0.01,
+                  ),
                   Align(
                     alignment: Alignment.centerRight,
                     child: GestureDetector(
@@ -233,14 +231,13 @@ class _LoginState extends ConsumerState<Login> {
                   GestureDetector(
                     onTap: () {
                       if (forgetPassword) {
-                        // TODO: forget password functionality
                         resetPassword(
                           role: role!,
                           textColor: fontColor(.8),
                           textSize: sizeData.regular,
                           backgroundColor: secondaryColor(1),
                         );
-                        print("Email Sent");
+                        print("Updated the password");
                       } else {
                         loginUser(
                           textColor: fontColor(.8),
@@ -275,7 +272,7 @@ class _LoginState extends ConsumerState<Login> {
                         alignment: Alignment.center,
                         child: CustomText(
                           weight: FontWeight.bold,
-                          text: forgetPassword ? "SEND EMAIL" : "LOGIN",
+                          text: forgetPassword ? "UPDATE" : "LOGIN",
                           size: sizeData.medium,
                           color: Colors.white,
                         ),

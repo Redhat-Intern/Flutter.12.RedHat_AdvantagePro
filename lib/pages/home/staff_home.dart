@@ -34,7 +34,7 @@ class StaffHome extends ConsumerWidget {
             stream: FirebaseFirestore.instance
                 .collection("batches")
                 .where("staffs", whereIn: [
-              {userData["id"]: userData["email"]}
+              {userData["id"] ?? "": userData["email"] ?? ""}
             ]).snapshots(),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {

@@ -82,12 +82,10 @@ class CreateBatchNotifier extends StateNotifier<Batch> {
     var bytes = file.readAsBytesSync();
     var excel = Excel.decodeBytes(bytes);
 
-    String fileName = name.split('.')[0];
-
-    List<List<Data?>> sheet = excel[fileName].rows;
+    List<List<Data?>> sheet = excel.tables[excel.tables.keys.first]!.rows;
     List<List<String>> excelData = [];
 
-    print(sheet);
+    print(file.path);
     if (sheet.isNotEmpty) {
       for (var row in sheet) {
         List<String> rowStrings = [];
