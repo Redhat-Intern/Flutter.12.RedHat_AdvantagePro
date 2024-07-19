@@ -35,7 +35,9 @@ class LiveTestAttender extends ConsumerStatefulWidget {
   ConsumerState<LiveTestAttender> createState() => _LiveTestAttenderState();
 }
 
-class _LiveTestAttenderState extends ConsumerState<LiveTestAttender> {
+class _LiveTestAttenderState extends ConsumerState<LiveTestAttender>
+    with WidgetsBindingObserver {
+  int stateCount = 0;
   late List<TestField> testFields;
   late TestField currentTestField;
 
@@ -115,6 +117,7 @@ class _LiveTestAttenderState extends ConsumerState<LiveTestAttender> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     testFields = List.from(widget.testData["data"]).map((e) {
       return TestField(
         e["question"],
@@ -128,8 +131,46 @@ class _LiveTestAttenderState extends ConsumerState<LiveTestAttender> {
   }
 
   @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+
+    if (state != AppLifecycleState.resumed) {
+      stateCount += 1;
+      debugPrint('App is in the foreground');
+      if (stateCount > 1) {
+        Navigator.pop(context);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Center(
+              child: CustomText(
+                text: "The test was closed due to application navigation.",
+                maxLine: 2,
+                color: Colors.white,
+              ),
+            ),
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Center(
+              child: CustomText(
+                text:
+                    "Test page will terminate if you navigate away from the app again",
+                maxLine: 2,
+                color: Colors.white,
+              ),
+            ),
+          ),
+        );
+      }
+    }
+  }
+
+  @override
   void dispose() {
     super.dispose();
+    WidgetsBinding.instance.removeObserver(this);
   }
 
   @override
