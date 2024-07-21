@@ -6,7 +6,7 @@ import '../components/notifications/invitation.dart';
 import '../model/notification.dart';
 import '../providers/notification_data_provider.dart';
 import '../providers/notifications_provider.dart';
-import '../providers/user_select_provider.dart';
+import '../providers/user_detail_provider.dart';
 import '../utilities/static_data.dart';
 import '../utilities/theme/color_data.dart';
 import '../utilities/theme/size_data.dart';
@@ -34,7 +34,7 @@ class _NotificationsState extends ConsumerState<Notifications> {
     List<Map<String, dynamic>> data =
         notificationData.isEmpty ? [] : notificationData.first.notifications;
 
-    UserRole userRole = ref.watch(userRoleProvider)!;
+    UserRole userRole = ref.watch(userDataProvider).userRole!;
     CustomSizeData sizeData = CustomSizeData.from(context);
     CustomColorData colorData = CustomColorData.from(ref);
 

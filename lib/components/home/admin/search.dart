@@ -70,7 +70,8 @@ class _SearchState extends ConsumerState<Search> {
           var data = dataSnapShot.first.data();
           searchResult = {
             "header": data["name"],
-            "value": "Currently learning in the batch ${data["currentBatch"].keys.first}"
+            "value":
+                "Currently learning in the batch ${data["currentBatch"].keys.first}"
           };
         } else {
           searchResult = {"error": "Student ID not found"};
@@ -177,12 +178,11 @@ class _SearchState extends ConsumerState<Search> {
                         });
                       }
                     },
-                    scrollPadding: EdgeInsets.zero,
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: aspectRatio * 33,
                       color: colorData.fontColor(.8),
-                      height: 1,
+                      height: 0
                     ),
                     decoration: InputDecoration(
                       hintText: "Enter the ID",
@@ -190,7 +190,6 @@ class _SearchState extends ConsumerState<Search> {
                         fontWeight: FontWeight.w600,
                         fontSize: sizeData.medium,
                         color: colorData.fontColor(.5),
-                        height: 1,
                       ),
                       border: InputBorder.none,
                       suffixIcon: GestureDetector(

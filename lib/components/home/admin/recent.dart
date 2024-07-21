@@ -21,6 +21,7 @@ class Recent extends ConsumerStatefulWidget {
 
 class _RecentState extends ConsumerState<Recent> {
   final ScrollController _controller = ScrollController();
+  bool needToLoad = true;
   List<Map<String, dynamic>> recentBatches = [];
 
   int firstIndex = 0;
@@ -43,8 +44,10 @@ class _RecentState extends ConsumerState<Recent> {
     return StreamBuilder(
         stream: FirebaseFirestore.instance.collection("batches").snapshots(),
         builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting &&
+          if (needToLoad &&
+              snapshot.connectionState == ConnectionState.waiting &&
               recentBatches.isEmpty) {
+            needToLoad = false;
             return const RecentWaitingWidget();
           }
           if (snapshot.hasData && snapshot.data!.docs.isNotEmpty) {
@@ -138,8 +141,8 @@ class _RecentState extends ConsumerState<Recent> {
                                 width: width * 0.01,
                               ),
                               CustomText(
-                                text:
-                                    recentBatches[firstIndex]["name"].toString(),
+                                text: recentBatches[firstIndex]["name"]
+                                    .toString(),
                                 size: sizeData.regular,
                                 color: colorData.fontColor(.7),
                               ),

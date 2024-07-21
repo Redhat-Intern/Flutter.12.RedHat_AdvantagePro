@@ -4,23 +4,24 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../utilities/theme/color_data.dart';
 import '../../../utilities/theme/size_data.dart';
-import '../../../pages/add_pages/add_staff.dart';
 import '../../../pages/details/staff_detail.dart';
 import '../../../pages/show_all/staffs.dart';
 import '../../common/icon.dart';
 import '../../common/network_image.dart';
 import '../../common/text.dart';
 import '../../common/waiting_widgets/staffs_list_waiting.dart';
+import 'staff_add_button.dart';
 import 'staffs_list_place_holder.dart';
 
 class StaffsList extends ConsumerStatefulWidget {
   const StaffsList({super.key});
 
   @override
-  ConsumerState<StaffsList> createState() => _staffsListState();
-
+  ConsumerState<StaffsList> createState() => StaffsListState();
 }
-class _staffsListState extends ConsumerState<StaffsList> {
+
+class StaffsListState extends ConsumerState<StaffsList> {
+  bool needToLoad = true;
   List<Map<String, dynamic>> staffsList = [];
 
   @override
@@ -30,12 +31,17 @@ class _staffsListState extends ConsumerState<StaffsList> {
 
     double width = sizeData.width;
     double height = sizeData.height;
-    double aspectRatio = sizeData.aspectRatio;
 
     return StreamBuilder(
-        stream: FirebaseFirestore.instance.collection("staffs").snapshots(),
+        stream: FirebaseFirestore.instance
+            .collection("users")
+            .where("userRole", isEqualTo: "staff")
+            .snapshots(),
         builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting && staffsList.isEmpty) {
+          if (needToLoad &&
+              snapshot.connectionState == ConnectionState.waiting &&
+              staffsList.isEmpty) {
+            needToLoad = false;
             return const StaffsListWaiting();
           }
           if (snapshot.hasData && snapshot.data!.docs.isNotEmpty) {
@@ -93,28 +99,7 @@ class _staffsListState extends ConsumerState<StaffsList> {
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    GestureDetector(
-                      onTap: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const AddStaff(),
-                        ),
-                      ),
-                      child: Container(
-                        padding: const EdgeInsets.all(6),
-                        margin: EdgeInsets.only(
-                            right: width * 0.02, left: width * 0.01),
-                        decoration: BoxDecoration(
-                          color: colorData.secondaryColor(1),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: CustomIcon(
-                          size: aspectRatio * 60,
-                          icon: Icons.add_rounded,
-                          color: colorData.fontColor(.7),
-                        ),
-                      ),
-                    ),
+                    const StaffAddButton(),
                     Expanded(
                       child: SizedBox(
                         height: height * 0.075,

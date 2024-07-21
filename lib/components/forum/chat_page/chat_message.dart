@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
+import '../../../model/user.dart';
 import '../../../providers/user_detail_provider.dart';
-import '../../../providers/user_select_provider.dart';
 import '../../../utilities/static_data.dart';
 import '../../../utilities/theme/color_data.dart';
 import '../../../utilities/theme/size_data.dart';
@@ -36,8 +36,8 @@ class ChatTile extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    UserRole userRole = ref.watch(userRoleProvider)!;
-    Map<String, dynamic> userData = ref.watch(userDataProvider)!;
+    UserModel userData = ref.watch(userDataProvider);
+    UserRole userRole = userData.userRole!;
     CustomSizeData sizeData = CustomSizeData.from(context);
     CustomColorData colorData = CustomColorData.from(ref);
 
@@ -46,7 +46,7 @@ class ChatTile extends ConsumerWidget {
     double aspectRatio = sizeData.aspectRatio;
 
     bool isSentByMe =
-        senderId == (userRole == UserRole.admin ? "admin" : userData["email"]);
+        senderId == (userRole == UserRole.admin ? "admin" : userData.email);
 
     return Column(
       crossAxisAlignment:

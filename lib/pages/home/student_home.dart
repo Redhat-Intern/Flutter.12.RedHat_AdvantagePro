@@ -8,6 +8,7 @@ import '../../components/home/student/certifications.dart';
 import '../../components/home/student/course_content.dart';
 import '../../components/home/header.dart';
 import '../../functions/read/certificate_data.dart';
+import '../../model/user.dart';
 import '../../providers/user_detail_provider.dart';
 import '../../utilities/theme/size_data.dart';
 
@@ -16,10 +17,10 @@ class StudentHome extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    Map<String, dynamic> userData = ref.watch(userDataProvider)!;
-    String batchName = Map.from(userData["currentBatch"]).keys.first.toString();
-    String studentID = Map.from(userData["id"])[batchName];
-    String email = userData["email"];
+    UserModel userData = ref.watch(userDataProvider);
+    String batchName = Map.from(userData.currentBatch!).keys.first.toString();
+    String studentID = Map.from(userData.id!)[batchName];
+    String email = userData.email;
 
     CustomSizeData sizeData = CustomSizeData.from(context);
     double height = sizeData.height;
@@ -42,7 +43,7 @@ class StudentHome extends ConsumerWidget {
               List<Map<String, dynamic>> data = [];
               List<QueryDocumentSnapshot<Map<String, dynamic>>> docs =
                   snapshot.data!.docs;
-              Map<String, dynamic> allBatches = userData["batches"];
+              Map<String, dynamic> allBatches = userData.batch!;
               List<String> batchIDList = allBatches.keys.toList();
               Map<String, dynamic> batchData = docs
                   .firstWhere((element) => element.data()["completed"] == null)

@@ -9,6 +9,7 @@ import '../../components/test/daily_test/question_privewlist.dart';
 import '../../components/test/live_test/hold_page.dart';
 import '../../components/test/live_test/options_selector.dart';
 import '../../model/test.dart';
+import '../../model/user.dart';
 import '../../providers/user_detail_provider.dart';
 import '../../utilities/theme/color_data.dart';
 import '../../utilities/theme/size_data.dart';
@@ -52,7 +53,7 @@ class _DailyTestAttenderState extends ConsumerState<DailyTestAttender>
     });
   }
 
-  submitTest(Map<String, dynamic> userData) {
+  submitTest(UserModel userData) {
     if (testFields.length == count) {
       widget.documentRef.set({
         widget.dayIndex: {
@@ -62,8 +63,8 @@ class _DailyTestAttenderState extends ConsumerState<DailyTestAttender>
               "totalMark": totalMark,
               "startTime": onInitializeTime.toIso8601String(),
               "endTime": DateTime.now().toIso8601String(),
-              "name": userData["name"],
-              "photo": userData["photo"] ?? userData["name"].toString()[0],
+              "name": userData.name,
+              "photo": userData.imagePath,
             },
           }
         }
@@ -170,7 +171,7 @@ class _DailyTestAttenderState extends ConsumerState<DailyTestAttender>
 
   @override
   Widget build(BuildContext context) {
-    Map<String, dynamic> userData = ref.watch(userDataProvider)!;
+    UserModel userData = ref.watch(userDataProvider);
     CustomSizeData sizeData = CustomSizeData.from(context);
     CustomColorData colorData = CustomColorData.from(ref);
 

@@ -1,10 +1,9 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:redhat_v1/providers/chat_scroll_provider.dart';
 
 import '../../../functions/update/update_chat_message.dart';
+import '../../../providers/chat_scroll_provider.dart';
+import '../../../utilities/static_data.dart';
 import '../../../utilities/theme/color_data.dart';
 import '../../../utilities/theme/size_data.dart';
 import '../../common/icon.dart';
@@ -60,6 +59,7 @@ class _ChatTextFieldState extends ConsumerState<ChatTextField> {
                       text: controller.text.trim(),
                       ref: ref,
                       index: widget.index,
+                      type: MessageType.text
                     );
                   }
                   controller.clear();
@@ -91,6 +91,7 @@ class _ChatTextFieldState extends ConsumerState<ChatTextField> {
                           text: controller.text.trim(),
                           ref: ref,
                           index: widget.index,
+                          type: MessageType.text,
                         );
                         controller.clear();
                       }
