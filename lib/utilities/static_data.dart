@@ -4,7 +4,40 @@ enum From { detail, add, edit }
 
 enum CourseContentShifter { Title, Topics }
 
-enum UserRole { student, staff, admin }
+enum UserRole {
+  student,
+  staff,
+  admin,
+  superAdmin;
+
+  String get displayName {
+    switch (this) {
+      case UserRole.superAdmin:
+        return 'superAdmin';
+      case UserRole.admin:
+        return 'admin';
+      case UserRole.staff:
+        return 'staff';
+      case UserRole.student:
+        return 'student';
+    }
+  }
+
+  static UserRole fromString(String role) {
+    switch (role) {
+      case 'superAdmin':
+        return UserRole.superAdmin;
+      case 'admin':
+        return UserRole.admin;
+      case 'staff':
+        return UserRole.staff;
+      case 'student':
+        return UserRole.student;
+      default:
+        throw ArgumentError('Invalid UserRole: $role');
+    }
+  }
+}
 
 enum LoginSignup { login, singup }
 
@@ -23,6 +56,8 @@ enum TestType { live, daily }
 enum CourseFileListFrom { staffDetail, courseConent }
 
 const List<String> searchData = ["batches", "staffs", "students"];
+
+enum SnackBarType { success, error, info }
 
 const emojis = {
   "0": "🤩",

@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../components/auth/start_button.dart';
 import '../components/common/text.dart';
-import '../utilities/static_data.dart';
 
-import '../components/auth/user_select.dart';
 import '../utilities/theme/size_data.dart';
-import '../pages/auth_pages/login.dart';
 
 class MainAuthPage extends ConsumerStatefulWidget {
   const MainAuthPage({super.key});
@@ -116,71 +114,7 @@ class _MainAuthPageState extends ConsumerState<MainAuthPage> {
               SizedBox(
                 height: height * 0.04,
               ),
-              Container(
-                margin: EdgeInsets.symmetric(horizontal: width * 0.06),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12),
-                  color: const Color.fromARGB(153, 240, 240, 246),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    const UserSelect(
-                      togo: Login(),
-                      role: UserRole.student,
-                      text: "STUDENT",
-                      shaderColors: [
-                        Color(0XFF5D44F8),
-                        Colors.blue,
-                      ],
-                    ),
-                    Transform.rotate(
-                      angle: 35,
-                      child: Container(
-                        height: height * .03,
-                        width: 3,
-                        decoration: BoxDecoration(
-                          color: fontColor(.6),
-                          borderRadius: BorderRadius.circular(50),
-                        ),
-                      ),
-                    ),
-                    const UserSelect(
-                      togo: Login(),
-                      role: UserRole.staff,
-                      text: "STAFF",
-                      shaderColors: [
-                        Color.fromARGB(255, 194, 13, 1),
-                        Colors.pink
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-              SizedBox(
-                height: height * 0.01,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  UserSelect(
-                    togo: const Login(),
-                    role: UserRole.admin,
-                    size: sizeData.medium,
-                    hpad: 0,
-                    text: "...for ADMIN",
-                    shaderColors: const [
-                      Color.fromARGB(255, 194, 13, 1),
-                      Colors.pink
-                    ],
-                  ),
-                  CustomText(
-                    text: "🥷🏻  ",
-                    size: sizeData.medium,
-                    weight: FontWeight.bold,
-                  ),
-                ],
-              ),
+              const StartButton(),
               Column(
                 children: [
                   SizedBox(
@@ -201,7 +135,7 @@ class _MainAuthPageState extends ConsumerState<MainAuthPage> {
                     height: height * 0.02,
                   ),
                   CustomText(
-                    text: "By Bharathraj ❤️",
+                    text: "By MetaHumans ❤️",
                     color: fontColor(.8),
                     weight: FontWeight.w800,
                   ),

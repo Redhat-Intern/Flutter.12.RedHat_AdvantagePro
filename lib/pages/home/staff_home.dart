@@ -7,6 +7,7 @@ import '../../components/common/text.dart';
 import '../../components/common/waiting_widgets/recent_waiting.dart';
 import '../../components/home/staff/batches.dart';
 import '../../components/home/staff/work_setter.dart';
+import '../../model/user.dart';
 import '../../providers/user_detail_provider.dart';
 import '../../utilities/theme/size_data.dart';
 
@@ -18,7 +19,7 @@ class StaffHome extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    Map<String, dynamic> userData = ref.watch(userDataProvider)!;
+    UserModel userData = ref.watch(userDataProvider);
     CustomSizeData sizeData = CustomSizeData.from(context);
     // double width = sizeData.width;
     double height = sizeData.height;
@@ -34,7 +35,7 @@ class StaffHome extends ConsumerWidget {
             stream: FirebaseFirestore.instance
                 .collection("batches")
                 .where("staffs", whereIn: [
-              {userData["id"]: userData["email"]}
+              {userData.id: userData.email}
             ]).snapshots(),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {

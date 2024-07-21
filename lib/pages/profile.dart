@@ -1,10 +1,8 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:redhat_v1/providers/user_select_provider.dart';
-import 'package:redhat_v1/utilities/theme/theme_provider.dart';
-import 'package:shimmer/shimmer.dart';
 
+import '../components/common/network_image.dart';
+import '../model/user.dart';
 import '../providers/user_detail_provider.dart';
 import '../components/profile/color_palette.dart';
 import '../components/profile/theme_toggle.dart';
@@ -22,18 +20,13 @@ class Profile extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    Map<String, dynamic> userData = ref.watch(userDataProvider)!;
-    UserRole role = ref.watch(userRoleProvider)!;
+    UserModel userData = ref.watch(userDataProvider);
     CustomSizeData sizeData = CustomSizeData.from(context);
     CustomColorData colorData = CustomColorData.from(ref);
 
     double height = sizeData.height;
     double width = sizeData.width;
     double aspectRatio = sizeData.aspectRatio;
-    Map<ThemeMode, Color> themeMap = ref.watch(themeProvider);
-    ThemeProviderNotifier notifier = ref.read(themeProvider.notifier);
-
-    bool isDark = themeMap.keys.first == ThemeMode.dark;
 
     return Scaffold(
       body: SafeArea(
@@ -51,9 +44,9 @@ class Profile extends ConsumerWidget {
                 shaderCallback: (rect) {
                   return RadialGradient(
                     radius: value * 5,
-                    center: FractionalOffset(0, 1),
-                    stops: [0.0, 0.5, 0.7, 1.0],
-                    colors: [
+                    center: const FractionalOffset(0, 1),
+                    stops: const [0.0, 0.5, 0.7, 1.0],
+                    colors: const [
                       Colors.white,
                       Colors.white,
                       Colors.transparent,
@@ -75,53 +68,25 @@ class Profile extends ConsumerWidget {
                     SizedBox(
                       height: height * 0.02,
                     ),
-                    role != UserRole.student
-                        ? Container(
-                            padding: EdgeInsets.all(aspectRatio * 8),
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: colorData.secondaryColor(1),
-                            ),
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(width),
-                              child: Image.network(userData["photo"],
-                                  height: aspectRatio * 250,
-                                  width: aspectRatio * 250,
-                                  fit: BoxFit.cover, loadingBuilder:
-                                      (BuildContext context, Widget child,
-                                          ImageChunkEvent? loadingProgress) {
-                                if (loadingProgress == null) {
-                                  return child;
-                                } else {
-                                  return Shimmer.fromColors(
-                                    baseColor: colorData.backgroundColor(.1),
-                                    highlightColor:
-                                        colorData.secondaryColor(.1),
-                                    child: Container(
-                                      height: aspectRatio * 250,
-                                      width: aspectRatio * 250,
-                                      decoration: BoxDecoration(
-                                        color: colorData.secondaryColor(.5),
-                                        borderRadius:
-                                            BorderRadius.circular(width),
-                                      ),
-                                    ),
-                                  );
-                                }
-                              }),
-                            ),
+                    userData.userRole != UserRole.student
+                        ? CustomNetworkImage(
+                            size: aspectRatio * 250,
+                            radius: width,
+                            url: userData.imagePath,
+                            padding: aspectRatio * 8,
+                            backgroundColor: colorData.secondaryColor(1),
                           )
                         : const SizedBox(),
                     SizedBox(height: height * 0.02),
                     CustomText(
-                      text: userData["name"],
+                      text: userData.name,
                       size: sizeData.header,
                       weight: FontWeight.w800,
                       color: colorData.fontColor(.8),
                     ),
                     SizedBox(height: height * 0.005),
                     CustomText(
-                      text: userData["email"],
+                      text: userData.email,
                       size: sizeData.regular,
                       color: colorData.fontColor(.6),
                     ),

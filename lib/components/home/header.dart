@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../functions/update/update_notification_data.dart';
+import '../../model/user.dart';
 import '../../pages/profile.dart';
 import '../../providers/user_detail_provider.dart';
 import '../../utilities/theme/color_data.dart';
@@ -28,9 +29,9 @@ class _HeaderState extends ConsumerState<Header>
     CustomSizeData sizeData = CustomSizeData.from(context);
     CustomColorData colorData = CustomColorData.from(ref);
 
-    Map<String, dynamic> userData = ref.watch(userDataProvider)!;
-    String name = userData["name"];
-    String role = userData["role"];
+    UserModel userData = ref.watch(userDataProvider);
+    String name = userData.name;
+    String role = userData.userRole!.displayName;
 
     double width = sizeData.width;
     double height = sizeData.height;
@@ -53,7 +54,7 @@ class _HeaderState extends ConsumerState<Header>
                     List<QueryDocumentSnapshot<Map<String, dynamic>>> data =
                         snapshot.data!.docs.toList();
                     int messageCount = updateNotificationData(
-                        ref: ref, data: data, email: userData["email"]);
+                        ref: ref, data: data, email: userData.email);
 
                     return GestureDetector(
                       onTap: () {
@@ -98,7 +99,7 @@ class _HeaderState extends ConsumerState<Header>
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => Profile(),
+                    builder: (context) => const Profile(),
                   ),
                 );
               },

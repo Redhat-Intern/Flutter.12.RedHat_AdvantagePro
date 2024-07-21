@@ -37,7 +37,7 @@ class LoginSingupShifter extends ConsumerWidget {
           size: sizeData.regular,
         ),
         GestureDetector(
-          onTap: () => Navigator.push(
+          onTap: () => Navigator.pushReplacement(
             context,
             MaterialPageRoute(
               builder: (context) => shifter == LoginSignup.singup
