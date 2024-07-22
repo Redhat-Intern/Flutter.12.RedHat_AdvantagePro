@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:redhat_v1/functions/update/accept_reject_invitation.dart';
-import 'package:redhat_v1/providers/user_detail_provider.dart';
 
+import '../../functions/update/accept_reject_invitation.dart';
+import '../../model/user.dart';
+import '../../providers/user_detail_provider.dart';
 import '../../utilities/theme/color_data.dart';
 import '../../utilities/theme/size_data.dart';
 import '../common/text.dart';
@@ -21,7 +22,7 @@ class _InvitationMessageState extends ConsumerState<InvitationMessage> {
   bool isExpanded = false;
   @override
   Widget build(BuildContext context) {
-    Map<String, dynamic> userData = ref.read(userDataProvider)!;
+    UserModel userData = ref.watch(userDataProvider);
     CustomSizeData sizeData = CustomSizeData.from(context);
     CustomColorData colorData = CustomColorData.from(ref);
 
@@ -92,7 +93,7 @@ class _InvitationMessageState extends ConsumerState<InvitationMessage> {
                         GestureDetector(
                           onTap: () {
                             acceptInvitation(
-                              email: userData["email"],
+                              email: userData.email,
                               batchID: widget.batchID,
                             );
                           },

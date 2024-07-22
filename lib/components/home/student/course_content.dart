@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
 import '../../../model/certificate.dart';
+import '../../../model/user.dart';
 import '../../../pages/test_page/daily_test_attender.dart';
 import '../../../pages/test_page/live_test_result.dart';
 import '../../../pages/test_page/live_test_waiting_page.dart';
@@ -68,7 +69,7 @@ class _CourseContentState extends ConsumerState<CourseContent> {
 
   @override
   Widget build(BuildContext context) {
-    Map<String, dynamic> userData = ref.watch(userDataProvider)!;
+    UserModel userData = ref.watch(userDataProvider);
     CertificateData certificateData = ref.watch(certificateDataProvider);
     CustomSizeData sizeData = CustomSizeData.from(context);
     CustomColorData colorData = CustomColorData.from(ref);
@@ -80,13 +81,13 @@ class _CourseContentState extends ConsumerState<CourseContent> {
 
       Map<String, dynamic> data = toadd
           ? {
-              userData["id"][widget.batchData["name"]]: {
-                "name": userData["name"],
-                "photo": userData["photo"] ?? userData["name"][0]
+              userData.id![widget.batchData["name"]]!: {
+                "name": userData.name,
+                "photo": userData.imagePath
               }
             }
           : {
-              userData["id"][widget.batchData["name"]]: FieldValue.delete(),
+              userData.id![widget.batchData["name"]]!: FieldValue.delete(),
             };
       try {
         await FirebaseFirestore.instance
@@ -221,7 +222,7 @@ class _CourseContentState extends ConsumerState<CourseContent> {
                     children: [
                       dailyTest != null
                           ? DailyTestTile(
-                              userId: userData["id"][widget.batchData["name"]],
+                              userId: userData.id![widget.batchData["name"]]!,
                               dayIndex: firstIndex.toString(),
                               batchName: widget.batchData["name"],
                               timeEnd: dailyTestResult,
@@ -232,8 +233,7 @@ class _CourseContentState extends ConsumerState<CourseContent> {
                                 documentRef: FirebaseFirestore.instance
                                     .collection("dailyTest")
                                     .doc(widget.batchData["name"]),
-                                userID: userData["id"]
-                                    [widget.batchData["name"]],
+                                userID: userData.id![widget.batchData["name"]]!,
                               ),
                             )
                           : const SizedBox(),

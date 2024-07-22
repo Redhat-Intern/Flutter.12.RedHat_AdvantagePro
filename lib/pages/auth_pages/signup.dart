@@ -3,11 +3,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../functions/create/create_user.dart';
 import '../../functions/create/generate_userdata.dart';
-import '../../providers/user_select_provider.dart';
 import '../../components/add_staff/custom_input_field.dart';
 import '../../components/auth/loginsingup_shifter.dart';
 import '../../components/common/back_button.dart';
 import '../../components/common/footer.dart';
+import '../../model/user.dart';
 import '../../utilities/static_data.dart';
 import '../../utilities/theme/size_data.dart';
 
@@ -38,8 +38,8 @@ class _SignupState extends ConsumerState<Signup> {
   }
 
   void _generateUserData() async {
-    Map<String, dynamic>? userData = await generateUserData(
-        context: context, id: idCtr.text.trim(), ref: ref);
+    Map<String, dynamic>? userData =
+        await generateUserData(context: context, id: idCtr.text.trim());
     if (userData != null) {
       setState(() {
         generatedData = userData;
@@ -58,7 +58,7 @@ class _SignupState extends ConsumerState<Signup> {
       ref: ref,
       email: emailCtr.text.trim(),
       password: passwordCtr.text.trim(),
-      generatedData: generatedData,
+      generatedData: UserModel.fromJson(generatedData),
       context: context,
     );
   }
@@ -74,9 +74,7 @@ class _SignupState extends ConsumerState<Signup> {
         const Color(0XFF1C2136).withOpacity(opacity);
     Color secondaryColor(double opacity) => Colors.white.withOpacity(opacity);
 
-    UserRole? role = ref.watch(userRoleProvider);
-    String hintText = role == UserRole.staff ? "STAFF ID" : "STUDENT ID";
-
+    String hintText = "ID";
     return Scaffold(
       resizeToAvoidBottomInset: false,
       backgroundColor: const Color(0xffDADEEC),
