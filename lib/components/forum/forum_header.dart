@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:intl/intl.dart';
 
 import '../../providers/forum_category_provider.dart';
-import '../../providers/user_select_provider.dart';
+import '../../providers/user_detail_provider.dart';
 import '../../utilities/static_data.dart';
 import '../../utilities/theme/color_data.dart';
 import '../../utilities/theme/size_data.dart';
@@ -61,7 +60,7 @@ class _ForumHeaderState extends ConsumerState<ForumHeader> {
   @override
   Widget build(BuildContext context) {
     ForumCategory category = ref.watch(forumCategoryProvider);
-    UserRole userRole = ref.watch(userRoleProvider)!;
+    UserRole userRole = ref.watch(userDataProvider).userRole!;
     CustomSizeData sizeData = CustomSizeData.from(context);
     CustomColorData colorData = CustomColorData.from(ref);
 

@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../components/common/back_button.dart';
 import '../../components/common/text.dart';
 
+import '../../model/user.dart';
 import '../../providers/livetest_provider.dart';
 import '../../providers/user_detail_provider.dart';
 import '../../utilities/theme/color_data.dart';
@@ -34,7 +35,7 @@ class LiveTestWaitingRoom extends ConsumerStatefulWidget {
 class _LiveTestWaitingRoomState extends ConsumerState<LiveTestWaitingRoom> {
   @override
   Widget build(BuildContext context) {
-    Map<String, dynamic> userData = ref.watch(userDataProvider)!;
+    UserModel userData = ref.watch(userDataProvider);
     CustomSizeData sizeData = CustomSizeData.from(context);
     CustomColorData colorData = CustomColorData.from(ref);
 
@@ -132,7 +133,7 @@ class _LiveTestWaitingRoomState extends ConsumerState<LiveTestWaitingRoom> {
                 testData: testData,
                 documentRef: documentRef,
                 dayIndex: widget.dayIndex.toString(),
-                userID: userData["id"][widget.batchData["name"]],
+                userID: userData.id![widget.batchData["name"]]!,
                 batchName: widget.batchData["name"],
               );
             }

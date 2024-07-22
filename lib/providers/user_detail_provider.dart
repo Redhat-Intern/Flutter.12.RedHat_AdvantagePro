@@ -1,14 +1,29 @@
 // import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class UserDetailNotifier extends StateNotifier<Map<String, dynamic>?> {
-  UserDetailNotifier() : super(null);
+import '../model/user.dart';
+import '../utilities/static_data.dart';
 
-  void addUserData(Map<String, dynamic> userData) {
-    state = userData;
+class UserDetailNotifier extends StateNotifier<UserModel> {
+  UserDetailNotifier() : super(UserModel.empty);
+
+  void addUserData(UserModel userModel) {
+    state = userModel;
+
+    SharedPreferences.getInstance().then((value) {
+      value.setString("role", userModel.userRole!.name);
+    });
+  }
+
+  void changeRole({required UserRole role}) {
+    state = state.copyWith(userRole: role);
+
+    SharedPreferences.getInstance().then((value) {
+      value.setString("role", role.name);
+    });
   }
 }
 
-final userDataProvider =
-    StateNotifierProvider<UserDetailNotifier, Map<String, dynamic>?>(
-        (ref) => UserDetailNotifier());
+final userDataProvider = StateNotifierProvider<UserDetailNotifier, UserModel>(
+    (ref) => UserDetailNotifier());
