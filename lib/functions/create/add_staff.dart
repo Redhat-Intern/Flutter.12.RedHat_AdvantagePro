@@ -18,7 +18,7 @@ Stream<Map<int, String>> addStaff({
   String experience = experienceController.text;
 
   QuerySnapshot<Map<String, dynamic>> staffList =
-      await FirebaseFirestore.instance.collection("staffs").get();
+      await FirebaseFirestore.instance.collection("staffRequest").get();
   int staffCount = staffList.docs.length;
   String staffId = "STAFF${(staffCount + 1).toString().padLeft(3, '0')}";
 
@@ -35,6 +35,7 @@ Stream<Map<int, String>> addStaff({
   Map<String, dynamic> staffData = {
     "id": staffId,
     "name": name,
+    "email": email,
     "photo": photoURL,
     "phoneNo": phoneNo,
     "experience": experience,
