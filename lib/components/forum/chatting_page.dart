@@ -1,6 +1,4 @@
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../model/forum.dart';
@@ -9,9 +7,10 @@ import '../../providers/forum_provider.dart';
 import '../../utilities/static_data.dart';
 import '../../utilities/theme/color_data.dart';
 import '../../utilities/theme/size_data.dart';
+// import 'chat_page/chat_tile.dart';
+import 'chat_page/chat_message.dart';
 import 'chat_page/chat_page_header.dart';
 import 'chat_page/chat_textfield.dart';
-import 'chat_page/chat_tile.dart';
 
 class ChattingPage extends ConsumerStatefulWidget {
   const ChattingPage({super.key, required this.index});
@@ -43,8 +42,6 @@ class _ChattingPageState extends ConsumerState<ChattingPage> {
       controller.jumpTo(controller.position.maxScrollExtent);
     });
   }
-
-  
 
   @override
   Widget build(BuildContext context) {
@@ -101,7 +98,9 @@ class _ChattingPageState extends ConsumerState<ChattingPage> {
                       );
                     }),
               ),
-              ChatTextField(index: widget.index,),
+              ChatTextField(
+                index: widget.index,
+              ),
             ],
           ),
         ),
