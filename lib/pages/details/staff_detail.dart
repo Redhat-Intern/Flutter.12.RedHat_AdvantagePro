@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../components/common/page_header.dart';
 import '../../components/home/student/course_files.dart';
+import '../../model/user.dart';
 import '../../utilities/static_data.dart';
 import '../../utilities/theme/size_data.dart';
 
@@ -11,21 +12,11 @@ import '../../components/add_staff/custom_input_field.dart';
 import '../../components/add_staff/photo_picker.dart';
 
 class StaffDetail extends ConsumerStatefulWidget {
-  final String name;
-  final String email;
-  final String phoneNumber;
-  final String experience;
-  final Map<String, dynamic> certificatesURL;
-  final String photoURL;
+  final UserModel staff;
 
   const StaffDetail({
     super.key,
-    required this.photoURL,
-    required this.name,
-    required this.email,
-    required this.phoneNumber,
-    required this.experience,
-    required this.certificatesURL,
+    required this.staff,
   });
 
   @override
@@ -37,13 +28,14 @@ class _StaffDetailState extends ConsumerState<StaffDetail> {
   TextEditingController nameController = TextEditingController(text: "...");
   TextEditingController emailController = TextEditingController(text: "...");
   TextEditingController phoneNoController = TextEditingController(text: "");
-  TextEditingController experienceController = TextEditingController(text: "");
+  TextEditingController staffIDController = TextEditingController(text: "");
 
   void initializeData() {
-    nameController = TextEditingController(text: widget.name);
-    emailController = TextEditingController(text: widget.email);
-    phoneNoController = TextEditingController(text: widget.phoneNumber);
-    experienceController = TextEditingController(text: widget.experience);
+    nameController = TextEditingController(text: widget.staff.name);
+    emailController = TextEditingController(text: widget.staff.email);
+    phoneNoController =
+        TextEditingController(text: widget.staff.phoneNumber.toString());
+    staffIDController = TextEditingController(text: widget.staff.staffId);
   }
 
   @override
@@ -58,7 +50,7 @@ class _StaffDetailState extends ConsumerState<StaffDetail> {
     nameController.dispose();
     emailController.dispose();
     phoneNoController.dispose();
-    experienceController.dispose();
+    staffIDController.dispose();
   }
 
   @override
@@ -82,16 +74,25 @@ class _StaffDetailState extends ConsumerState<StaffDetail> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const PageHeader(tittle: "staff detail"),
+              PageHeader(
+                  tittle:
+                      "${widget.staff.userRole == UserRole.admin ? "Admin" : ""} staff detail"),
               SizedBox(
                 height: height * 0.04,
               ),
               PhotoPicker(
-                photoURL: widget.photoURL,
+                photoURL: widget.staff.imagePath,
                 from: From.detail,
               ),
               SizedBox(
                 height: height * 0.02,
+              ),
+              CustomInputField(
+                controller: staffIDController,
+                hintText: "Staff ID",
+                icon: Icons.grade_rounded,
+                inputType: TextInputType.number,
+                readOnly: true,
               ),
               CustomInputField(
                 controller: nameController,
@@ -114,13 +115,7 @@ class _StaffDetailState extends ConsumerState<StaffDetail> {
                 inputType: TextInputType.phone,
                 readOnly: true,
               ),
-              CustomInputField(
-                controller: experienceController,
-                hintText: "Edit the Year of Experience",
-                icon: Icons.grade_rounded,
-                inputType: TextInputType.number,
-                readOnly: true,
-              ),
+
               SizedBox(
                 height: height * 0.01,
               ),

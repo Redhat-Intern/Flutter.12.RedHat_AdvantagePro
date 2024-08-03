@@ -1,7 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:redhat_v1/providers/user_detail_provider.dart';
+import 'package:redhat_v1/utilities/static_data.dart';
 
+import '../../../model/user.dart';
 import '../../../utilities/theme/color_data.dart';
 import '../../../utilities/theme/size_data.dart';
 import '../../../pages/details/staff_detail.dart';
@@ -22,21 +25,27 @@ class StaffsList extends ConsumerStatefulWidget {
 
 class StaffsListState extends ConsumerState<StaffsList> {
   bool needToLoad = true;
-  List<Map<String, dynamic>> staffsList = [];
+  List<UserModel> staffsList = [];
 
   @override
   Widget build(BuildContext context) {
     CustomSizeData sizeData = CustomSizeData.from(context);
     CustomColorData colorData = CustomColorData.from(ref);
+    UserModel userData = ref.watch(userDataProvider);
 
     double width = sizeData.width;
     double height = sizeData.height;
 
     return StreamBuilder(
-        stream: FirebaseFirestore.instance
-            .collection("users")
-            .where("userRole", isEqualTo: "staff")
-            .snapshots(),
+        stream: userData.userRole == UserRole.superAdmin
+            ? FirebaseFirestore.instance
+                .collection("users")
+                .where("userRole", whereIn: ["staff", "admin"]).snapshots()
+            : FirebaseFirestore.instance
+                .collection("users")
+                .where("userRole", whereIn: ["staff", "admin"])
+                .where("id", isNotEqualTo: userData.staffId)
+                .snapshots(),
         builder: (context, snapshot) {
           if (needToLoad &&
               snapshot.connectionState == ConnectionState.waiting &&
@@ -47,11 +56,8 @@ class StaffsListState extends ConsumerState<StaffsList> {
           if (snapshot.hasData && snapshot.data!.docs.isNotEmpty) {
             staffsList = [];
             for (var element in snapshot.data!.docs) {
-              Map<String, dynamic> staffList = {"email": element.id};
-              element.data().entries.forEach((element) {
-                staffList.addAll({element.key: element.value});
-              });
-              staffsList.add(staffList);
+              UserModel staffData = UserModel.fromJson(element.data());
+              staffsList.add(staffData);
             }
 
             return Column(
@@ -99,7 +105,8 @@ class StaffsListState extends ConsumerState<StaffsList> {
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    const StaffAddButton(),
+                    if (userData.userRole == UserRole.superAdmin)
+                      const StaffAddButton(),
                     Expanded(
                       child: SizedBox(
                         height: height * 0.075,
@@ -116,20 +123,13 @@ class StaffsListState extends ConsumerState<StaffsList> {
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) => StaffDetail(
-                                      name: staffsList[index]["name"],
-                                      email: staffsList[index]["email"],
-                                      phoneNumber: staffsList[index]["phoneNo"],
-                                      photoURL: staffsList[index]["photo"],
-                                      experience: staffsList[index]
-                                          ["experience"],
-                                      certificatesURL: staffsList[index]
-                                          ["certificates"],
+                                      staff: staffsList[index],
                                     ),
                                   ),
                                 );
                               },
                               child: CustomNetworkImage(
-                                url: staffsList[index]["photo"],
+                                url: staffsList[index].imagePath,
                                 size: height * 0.075,
                                 radius: 8,
                                 rightMargin: width * .03,

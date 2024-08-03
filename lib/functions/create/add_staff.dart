@@ -2,26 +2,27 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter/material.dart';
+
+Future<bool> checkIdMatch(String id) async {
+  QuerySnapshot<Map<String, dynamic>> staffList =
+      await FirebaseFirestore.instance.collection("staffs").get();
+  for (var value in staffList.docs) {
+    if (value.id.toLowerCase() == id.toLowerCase()) {
+      return true;
+    }
+  }
+  return false;
+}
 
 Stream<Map<int, String>> addStaff({
   required Map<File, String> photo,
-  required TextEditingController nameController,
-  required TextEditingController emailController,
-  required TextEditingController phoneNoController,
-  required TextEditingController experienceController,
+  required String name,
+  required String email,
+  required String phoneNo,
+  required String staffId,
+  required bool isAdmin,
   required List<Map<File, Map<String, dynamic>>> certificates,
 }) async* {
-  String name = nameController.text;
-  String email = emailController.text;
-  String phoneNo = phoneNoController.text;
-  String experience = experienceController.text;
-
-  QuerySnapshot<Map<String, dynamic>> staffList =
-      await FirebaseFirestore.instance.collection("staffs").get();
-  int staffCount = staffList.docs.length;
-  String staffId = "STAFF${(staffCount + 1).toString().padLeft(3, '0')}";
-
   Reference storageRef = FirebaseStorage.instance.ref();
 
   String photoURL =
@@ -34,17 +35,15 @@ Stream<Map<int, String>> addStaff({
 
   Map<String, dynamic> staffData = {
     "id": staffId,
+    "email": email,
     "name": name,
-    "photo": photoURL,
+    "imagePath": photoURL,
+    "userRole": isAdmin ? "admin" : "staff",
     "phoneNo": phoneNo,
-    "experience": experience,
     "certificates": certificatesURL,
   };
 
-  FirebaseFirestore.instance
-      .collection("staffRequest")
-      .doc(email)
-      .set(staffData);
+  FirebaseFirestore.instance.collection("requests").doc(email).set(staffData);
   yield {3: "Uploaded Data to firebase"};
 }
 

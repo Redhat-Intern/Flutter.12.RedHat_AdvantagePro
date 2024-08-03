@@ -81,13 +81,13 @@ class _CourseContentState extends ConsumerState<CourseContent> {
 
       Map<String, dynamic> data = toadd
           ? {
-              userData.id![widget.batchData["name"]]!: {
+              userData.studentId![widget.batchData["name"]]!: {
                 "name": userData.name,
                 "photo": userData.imagePath
               }
             }
           : {
-              userData.id![widget.batchData["name"]]!: FieldValue.delete(),
+              userData.studentId![widget.batchData["name"]]!: FieldValue.delete(),
             };
       try {
         await FirebaseFirestore.instance
@@ -222,7 +222,7 @@ class _CourseContentState extends ConsumerState<CourseContent> {
                     children: [
                       dailyTest != null
                           ? DailyTestTile(
-                              userId: userData.id![widget.batchData["name"]]!,
+                              userId: userData.studentId![widget.batchData["name"]]!,
                               dayIndex: firstIndex.toString(),
                               batchName: widget.batchData["name"],
                               timeEnd: dailyTestResult,
@@ -233,7 +233,7 @@ class _CourseContentState extends ConsumerState<CourseContent> {
                                 documentRef: FirebaseFirestore.instance
                                     .collection("dailyTest")
                                     .doc(widget.batchData["name"]),
-                                userID: userData.id![widget.batchData["name"]]!,
+                                userID: userData.studentId![widget.batchData["name"]]!,
                               ),
                             )
                           : const SizedBox(),

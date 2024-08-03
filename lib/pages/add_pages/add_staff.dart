@@ -2,9 +2,9 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:redhat_v1/functions/create/send_email.dart';
-import 'package:redhat_v1/components/common/page_header.dart';
 
+import '../../components/common/page_header.dart';
+import '../../functions/create/send_email.dart';
 import '../../utilities/static_data.dart';
 import '../../functions/create/add_staff.dart';
 import '../../utilities/theme/color_data.dart';
@@ -24,10 +24,11 @@ class AddStaff extends ConsumerStatefulWidget {
 
 class _AddStaffState extends ConsumerState<AddStaff> {
   Map<File, String> photo = {};
+  bool isAdmin = false;
   TextEditingController nameController = TextEditingController();
   TextEditingController emailController = TextEditingController();
   TextEditingController phoneNoController = TextEditingController();
-  TextEditingController experienceController = TextEditingController();
+  TextEditingController staffIDController = TextEditingController();
   List<Map<File, Map<String, dynamic>>> certificates = [];
 
   Map<int, String> completionCount = {};
@@ -65,21 +66,25 @@ class _AddStaffState extends ConsumerState<AddStaff> {
     if (nameController.text.isEmpty ||
         emailController.text.isEmpty ||
         phoneNoController.text.isEmpty ||
-        experienceController.text.isEmpty ||
+        staffIDController.text.isEmpty ||
         photo.isEmpty ||
         certificates.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Kindly enter all the data")));
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Center(child: Text("Kindly enter all the data"))));
+    } else if (await checkIdMatch(staffIDController.text)) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Center(child: Text("Staff ID already exits"))));
     } else {
       setState(() {
         completionCount = {0: "Started"};
       });
       addStaff(
               photo: photo,
-              nameController: nameController,
-              emailController: emailController,
-              phoneNoController: phoneNoController,
-              experienceController: experienceController,
+              name: nameController.text.trim(),
+              email: emailController.text.trim(),
+              phoneNo: phoneNoController.text.trim(),
+              staffId: staffIDController.text.trim(),
+              isAdmin: isAdmin,
               certificates: certificates)
           .listen((event) {
         setState(() {
@@ -105,7 +110,7 @@ class _AddStaffState extends ConsumerState<AddStaff> {
     nameController.dispose();
     emailController.dispose();
     phoneNoController.dispose();
-    experienceController.dispose();
+    staffIDController.dispose();
   }
 
   @override
@@ -144,6 +149,12 @@ class _AddStaffState extends ConsumerState<AddStaff> {
                     height: height * 0.02,
                   ),
                   CustomInputField(
+                    controller: staffIDController,
+                    hintText: "Enter the Staff ID",
+                    icon: Icons.badge_rounded,
+                    inputType: TextInputType.text,
+                  ),
+                  CustomInputField(
                     controller: nameController,
                     hintText: "Enter the Name",
                     icon: Icons.person_rounded,
@@ -161,14 +172,33 @@ class _AddStaffState extends ConsumerState<AddStaff> {
                     icon: Icons.numbers_rounded,
                     inputType: TextInputType.phone,
                   ),
-                  CustomInputField(
-                    controller: experienceController,
-                    hintText: "Enter the Year of Experience",
-                    icon: Icons.grade_rounded,
-                    inputType: TextInputType.number,
+                  Center(
+                    child: GestureDetector(
+                      onTap: () => setState(() => isAdmin = !isAdmin),
+                      child: Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: width * 0.02,
+                          vertical: height * 0.008,
+                        ),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(8),
+                          color: isAdmin
+                              ? colorData.primaryColor(.8)
+                              : colorData.secondaryColor(0.4),
+                        ),
+                        child: CustomText(
+                          text: "SET ADMIN ACCESS",
+                          size: sizeData.regular,
+                          color: isAdmin
+                              ? Colors.white
+                              : colorData.primaryColor(1),
+                          weight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
                   ),
                   SizedBox(
-                    height: height * 0.01,
+                    height: height * 0.02,
                   ),
                   AddStaffCertificates(
                     handleCertificate: handleCertificate,

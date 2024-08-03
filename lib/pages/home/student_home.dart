@@ -19,7 +19,7 @@ class StudentHome extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     UserModel userData = ref.watch(userDataProvider);
     String batchName = Map.from(userData.currentBatch!).keys.first.toString();
-    String studentID = Map.from(userData.id!)[batchName];
+    String studentID = Map.from(userData.studentId!)[batchName];
     String email = userData.email;
 
     CustomSizeData sizeData = CustomSizeData.from(context);

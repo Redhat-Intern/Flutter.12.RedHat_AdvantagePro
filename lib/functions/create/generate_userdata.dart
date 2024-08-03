@@ -10,7 +10,7 @@ Future<Map<String, dynamic>?> generateUserData({
   QuerySnapshot<Map<String, dynamic>> queryData = await FirebaseFirestore
       .instance
       .collection("requests")
-      .where("id", isEqualTo: id.toUpperCase())
+      .where("id", isEqualTo: id.toLowerCase())
       .get();
   if (queryData.docs.isNotEmpty) {
     Map<String, dynamic> userData =

@@ -4,8 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../components/common/shimmer_box.dart';
-import '../components/common/waiting_widgets/certification_waiting.dart';
-import '../components/common/waiting_widgets/course_waiting.dart';
 import '../components/common/waiting_widgets/header_waiting.dart';
 import '../components/common/waiting_widgets/recent_waiting.dart';
 import '../components/common/waiting_widgets/search_field_waiting.dart';
@@ -77,13 +75,6 @@ class _NavigationState extends ConsumerState<Navigation> {
         const Forum(),
         const AddCertification(),
       ];
-      // loadingList.addAll([
-      //   const SearchFieldWaitingWidget(),
-      //   const RecentWaitingWidget(),
-      //   const StaffsListWaiting(),
-      //   ShimmerBox(height: height * 0.1, width: width * 0.45),
-      //   const SizedBox(),
-      // ]);
       iconNameList = [
         {Icons.home_outlined: "Home"},
         {Icons.report: "Report"},
@@ -95,12 +86,6 @@ class _NavigationState extends ConsumerState<Navigation> {
         const StaffHome(),
         const Forum(),
       ];
-      // loadingList.addAll([
-      //   SizedBox(height: height * 0.03),
-      //   const CertificationWaitingWidget(),
-      //   // need to do
-      //   const Spacer(),
-      // ]);
       iconNameList = [
         {Icons.home_outlined: "Home"},
         {Icons.forest_outlined: "Forum"},
@@ -110,56 +95,47 @@ class _NavigationState extends ConsumerState<Navigation> {
         const StudentHome(),
         const Forum(),
       ];
-      // loadingList.addAll([
-      //   SizedBox(height: height * 0.03),
-      //   const CertificationWaitingWidget(),
-      //   SizedBox(height: height * 0.02),
-      //   const CourseContentWaitingWidget(count: 3),
-      // ]);
       iconNameList = [
         {Icons.home_outlined: "Home"},
         {Icons.forest_outlined: "Forum"},
       ];
     }
 
-    return PopScope(
-      canPop: true,
-      onPopInvoked: (didPop) {
-        didPop ? exit(1) : exit(0);
-      },
-      child: Scaffold(
-        key: scaffoldKey,
-        drawerEnableOpenDragGesture: true,
-        resizeToAvoidBottomInset: false,
-        body: SafeArea(
-          child: Container(
-            margin: EdgeInsets.only(
-              left: width * 0.04,
-              right: width * 0.04,
-              top: height * 0.02,
-            ),
-            child: userData.userRole == null
-                ? Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: loadingList)
-                : WillPopScope(
-                    onWillPop: () {
-                      return popFunction(ref);
-                    },
-                    child:
-                        //  widgetList[index],
-                        IndexedStack(
-                      index: index,
-                      children: widgetList,
-                    ),
-                  ),
+    return Scaffold(
+      key: scaffoldKey,
+      drawerEnableOpenDragGesture: true,
+      resizeToAvoidBottomInset: false,
+      body: SafeArea(
+        child: Container(
+          margin: EdgeInsets.only(
+            left: width * 0.04,
+            right: width * 0.04,
+            top: height * 0.02,
           ),
+          child: userData.userRole == null
+              ? Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: loadingList)
+              : PopScope(
+                  canPop: ref.read(navigationIndexProvider) == 0,
+                  onPopInvoked: (didPop) {
+                    if (didPop) {
+                      exit(1);
+                    } else {
+                      ref.read(navigationIndexProvider.notifier).jumpTo(0);
+                    }
+                  },
+                  child: IndexedStack(
+                    index: index,
+                    children: widgetList,
+                  ),
+                ),
         ),
-        drawer: SideBar(
-          iconNameList: iconNameList,
-        ),
-        drawerScrimColor: colorData.secondaryColor(.4),
       ),
+      drawer: SideBar(
+        iconNameList: iconNameList,
+      ),
+      drawerScrimColor: colorData.secondaryColor(.4),
     );
   }
 }

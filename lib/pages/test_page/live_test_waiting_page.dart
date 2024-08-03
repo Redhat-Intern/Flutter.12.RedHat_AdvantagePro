@@ -133,7 +133,7 @@ class _LiveTestWaitingRoomState extends ConsumerState<LiveTestWaitingRoom> {
                 testData: testData,
                 documentRef: documentRef,
                 dayIndex: widget.dayIndex.toString(),
-                userID: userData.id![widget.batchData["name"]]!,
+                userID: userData.studentId![widget.batchData["name"]]!,
                 batchName: widget.batchData["name"],
               );
             }

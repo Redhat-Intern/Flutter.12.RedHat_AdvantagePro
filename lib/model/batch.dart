@@ -1,14 +1,15 @@
 import 'package:intl/intl.dart';
 
 import 'student.dart';
+import 'user.dart';
 
 class Batch {
   DateTime creationTime;
   String name;
   Map<String, dynamic> certificateData;
   List<String> dates;
-  Map<String, dynamic> staffs;
-  Map<String, dynamic> adminStaff;
+  List<UserModel> staffs;
+  UserModel adminStaff;
   List<Student> students;
 
   Batch({
@@ -26,9 +27,9 @@ class Batch {
       creationTime: DateTime.now(),
       name: '',
       certificateData: {},
-      adminStaff: {},
+      adminStaff: UserModel.empty,
       dates: [],
-      staffs: {},
+      staffs: [],
       students: [],
     );
   }
@@ -38,8 +39,8 @@ class Batch {
     String? name,
     Map<String, dynamic>? certificateData,
     List<String>? dates,
-    Map<String, dynamic>? staffs,
-    Map<String, dynamic>? adminStaff,
+    List<UserModel>? staffs,
+    UserModel? adminStaff,
     List<Student>? students,
   }) {
     return Batch(
@@ -69,12 +70,14 @@ class Batch {
       'name': name,
       'certificateID': certificateData["name"],
       'dates': dates,
-      'staffs': staffs,
-      "admin": adminStaff,
-      'students': students.map((student) => {
-            "${name}STU${(students.indexOf(student) + 1).toString().padLeft(3, '0')}":
-                student.email
-          }),
+      'staffs': staffs.map((data) => {data.staffId: data.email}),
+      "admin": {adminStaff.staffId: adminStaff.email},
+      'students': students.isNotEmpty
+          ? students.map((student) => {
+                "${name}STU${(students.indexOf(student) + 1).toString().padLeft(3, '0')}":
+                    student.email
+              })
+          : {},
     };
   }
 }

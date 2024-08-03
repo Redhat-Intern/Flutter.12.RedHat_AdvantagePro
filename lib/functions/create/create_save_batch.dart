@@ -27,15 +27,15 @@ Future<bool> createBatch({
 
     List<String> members = ['admin'];
 
-    for (var element in batch.staffs.entries) {
-      bool isAdmin = batch.adminStaff.keys.first.toString().toLowerCase() ==
-          element.key.toString().toLowerCase();
+    for (var element in batch.staffs) {
+      bool isAdmin =
+          batch.adminStaff.email.toLowerCase() == element.email.toLowerCase();
       String role = (isAdmin ? "admin" : "staff").toUpperCase();
       await FirebaseFirestore.instance
           .collection("notifications")
           .doc("invitations")
           .set({
-        element.value: {
+        element.email: {
           batch.name: {
             'message': 'You have been invited to join this batch as $role',
           }
@@ -44,16 +44,16 @@ Future<bool> createBatch({
 
       await FirebaseFirestore.instance
           .collection("staffs")
-          .doc(element.value.toString().trim())
+          .doc(element.email.toString().trim())
           .set({
         "batches": FieldValue.arrayUnion([batch.name])
       }, SetOptions(merge: true));
 
       await FirebaseFirestore.instance
           .collection("forum")
-          .doc("${element.value.toString().trim()}|admin")
+          .doc("${element.email.toString().trim()}|admin")
           .set({
-        "members": ["admin", element.value.toString().trim()],
+        "members": ["admin", element.email.toString().trim()],
         "details": {
           "name": 'admin',
         },
@@ -65,7 +65,7 @@ Future<bool> createBatch({
         }
       }, SetOptions(merge: true));
 
-      members.add(element.value);
+      members.add(element.email);
     }
 
     for (var element in batch.students) {

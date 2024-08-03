@@ -70,7 +70,8 @@ class CreateBatch extends ConsumerWidget {
                     ),
                     StreamBuilder(
                         stream: FirebaseFirestore.instance
-                            .collection("staffs")
+                            .collection("users")
+                            .where("userRole", isEqualTo: "staff")
                             .snapshots(),
                         builder: (context, snapshot) {
                           if (snapshot.hasData) {

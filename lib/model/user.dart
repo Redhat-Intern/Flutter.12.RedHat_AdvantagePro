@@ -9,11 +9,12 @@ class UserModel {
   final UserRole? userRole;
   final String? occupation;
   final String? occupationDetail;
-  final Map<String, String>? id;
+  final Map<String, String>? studentId;
+  final String? staffId;
   final Map<String, String>? batch;
   final Map<String, String>? currentBatch;
   final int? experience;
-  final List<String>? certificates;
+  final Map<String, dynamic>? certificates;
 
   const UserModel({
     required this.name,
@@ -24,7 +25,8 @@ class UserModel {
     required this.userRole,
     this.occupation,
     this.occupationDetail,
-    this.id,
+    this.studentId,
+    this.staffId,
     this.batch,
     this.currentBatch,
     this.experience,
@@ -41,11 +43,12 @@ class UserModel {
     UserRole? userRole,
     String? occupation,
     String? occupationDetail,
-    Map<String, String>? id,
+    Map<String, String>? studentId,
     Map<String, String>? batch,
     Map<String, String>? currentBatch,
     int? experience,
-    List<String>? certificates,
+    Map<String, dynamic>? certificates,
+    String? staffId,
   }) {
     return UserModel(
       name: name?.toString().trim() ?? this.name,
@@ -56,7 +59,8 @@ class UserModel {
       userRole: userRole ?? this.userRole,
       occupation: occupation ?? this.occupation,
       occupationDetail: occupationDetail ?? this.occupationDetail,
-      id: id ?? this.id,
+      studentId: studentId ?? this.studentId,
+      staffId: staffId ?? this.staffId,
       batch: batch ?? this.batch,
       currentBatch: currentBatch ?? this.currentBatch,
       experience: experience ?? this.experience,
@@ -68,8 +72,8 @@ class UserModel {
   @override
   String toString() {
     return 'UserModel(name: $name, email: $email, password: $password, phoneNumber: $phoneNumber, imagePath: $imagePath, userRole: $userRole'
-        '${userRole == UserRole.staff ? ', experience: $experience, certificates: $certificates' : ''}'
-        '${userRole == UserRole.student ? ', occupation: $occupation, occupationDetail: $occupationDetail, id: $id, batch: $batch, currentBatch: $currentBatch' : ''})';
+        '${userRole == UserRole.staff || userRole == UserRole.admin ? ', experience: $experience, staffId: $staffId, certificates: $certificates' : ''}'
+        '${userRole == UserRole.student ? ', occupation: $occupation, occupationDetail: $occupationDetail, studentId: $studentId, batch: $batch, currentBatch: $currentBatch' : ''})';
   }
 
   // fromJson method
@@ -79,15 +83,18 @@ class UserModel {
       name: json['name'],
       email: json['email'],
       password: json['password'],
-      phoneNumber: int.parse(json['phoneNumber'].toString()),
+      phoneNumber: int.parse(json['phoneNo'].toString()),
       imagePath: json['imagePath'],
       userRole: userRole,
       occupation: userRole == UserRole.student ? json['occupation'] : null,
       occupationDetail:
           userRole == UserRole.student ? json['occupationDetail'] : null,
-      id: userRole == UserRole.student
+      studentId: userRole == UserRole.student
           ? (json['id'] as Map<String, dynamic>)
               .map((key, value) => MapEntry(key, value.toString()))
+          : null,
+      staffId: userRole == UserRole.staff || userRole == UserRole.admin
+          ? json['id'].toString()
           : null,
       batch: userRole == UserRole.student
           ? (json['batch'] as Map<String, dynamic>)
@@ -97,9 +104,11 @@ class UserModel {
           ? (json['currentBatch'] as Map<String, dynamic>)
               .map((key, value) => MapEntry(key, value.toString()))
           : null,
-      experience: userRole == UserRole.staff ? json['experience'] : null,
+      experience: userRole == UserRole.staff
+          ? int.parse(json['experience'].toString())
+          : null,
       certificates: userRole == UserRole.staff
-          ? List<String>.from(json['certificates'])
+          ? Map<String, dynamic>.from(json['certificates'])
           : null,
     );
   }
@@ -110,13 +119,14 @@ class UserModel {
       'name': name,
       'email': email,
       'password': password,
-      'phoneNumber': phoneNumber,
+      'phoneNo': phoneNumber,
       'imagePath': imagePath,
-      'userRole': userRole?.index,
+      'userRole': userRole?.name,
     };
 
-    if (userRole == UserRole.staff) {
+    if (userRole == UserRole.staff || userRole == UserRole.admin) {
       json.addAll({
+        'id': staffId,
         'experience': experience,
         'certificates': certificates,
       });
@@ -124,7 +134,7 @@ class UserModel {
       json.addAll({
         'occupation': occupation,
         'occupationDetail': occupationDetail,
-        'id': id,
+        'id': studentId,
         'batch': batch,
         'currentBatch': currentBatch,
       });
@@ -143,11 +153,12 @@ class UserModel {
     userRole: null,
     occupation: '',
     occupationDetail: '',
-    id: {},
+    staffId: '',
+    studentId: {},
     batch: {},
     currentBatch: {},
     experience: 0,
-    certificates: [],
+    certificates: {},
   );
 
   // isNotEmpty method

@@ -8,6 +8,7 @@ import '../../components/common/page_header.dart';
 import '../../components/common/text.dart';
 import '../../components/common/waiting_widgets/all_batches_tile_waiting.dart';
 import '../../components/show_all/batch/text_tile.dart';
+import '../../model/user.dart';
 import '../../utilities/theme/color_data.dart';
 import '../../utilities/theme/size_data.dart';
 import '../details/staff_detail.dart';
@@ -58,8 +59,9 @@ class AllStaffs extends ConsumerWidget {
                               child: const AllBatchesTileWaitingWidget()),
                         );
                       }
-                      List<Map<String, dynamic>> staffDataList =
-                          snapshot.data!.docs.map((e) => e.data()).toList();
+                      List<UserModel> staffDataList = snapshot.data!.docs
+                          .map((e) => UserModel.fromJson(e.data()))
+                          .toList();
 
                       return ListView.builder(
                         padding: EdgeInsets.symmetric(
@@ -68,9 +70,9 @@ class AllStaffs extends ConsumerWidget {
                         ),
                         itemCount: staffDataList.length,
                         itemBuilder: (context, index) {
-                          Map<String, dynamic> staffData = staffDataList[index];
+                          UserModel staffData = staffDataList[index];
                           Map<String, dynamic> certifications =
-                              Map.from(staffData["certificates"]);
+                              staffData.certificates!;
 
                           return Stack(
                             clipBehavior: Clip.none,
@@ -80,13 +82,7 @@ class AllStaffs extends ConsumerWidget {
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) => StaffDetail(
-                                      name: staffData["name"],
-                                      email: staffData["email"],
-                                      phoneNumber: staffData["phoneNo"],
-                                      photoURL: staffData["photo"],
-                                      experience: staffData["experience"],
-                                      certificatesURL:
-                                          staffData["certificates"],
+                                      staff: staffData,
                                     ),
                                   ),
                                 ),
@@ -112,7 +108,7 @@ class AllStaffs extends ConsumerWidget {
                                               CrossAxisAlignment.center,
                                           children: [
                                             CustomText(
-                                              text: staffData["id"],
+                                              text: staffData.staffId!,
                                               weight: FontWeight.w800,
                                               color: colorData.fontColor(.7),
                                             ),
@@ -120,7 +116,7 @@ class AllStaffs extends ConsumerWidget {
                                               height: height * 0.006,
                                             ),
                                             CustomNetworkImage(
-                                              url: staffData["photo"],
+                                              url: staffData.imagePath,
                                               size: aspectRatio * 160,
                                               radius: 8,
                                             ),
@@ -138,20 +134,20 @@ class AllStaffs extends ConsumerWidget {
                                           children: [
                                             BatchTileText(
                                               header: "Name:",
-                                              value: staffData["name"],
+                                              value: staffData.name,
                                             ),
                                             BatchTileText(
                                               header: "Email:",
-                                              value: staffData["email"],
+                                              value: staffData.email,
                                             ),
                                             BatchTileText(
                                               header: "Phone NO:",
-                                              value: staffData["phoneNo"]
+                                              value: staffData.phoneNumber
                                                   .toString(),
                                             ),
                                             BatchTileText(
                                               header: "Experience:",
-                                              value: staffData["experience"]
+                                              value: staffData.experience
                                                   .toString(),
                                             ),
                                             BatchTileText(

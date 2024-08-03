@@ -24,15 +24,15 @@ class CustomSizeData {
     double width = MediaQuery.of(context).size.width;
     double aspectRatio = MediaQuery.of(context).size.aspectRatio;
 
-    double superLarge = aspectRatio * 55;
-    double superHeader = aspectRatio * 45;
-    double header = aspectRatio * 40;
-    double subHeader = aspectRatio * 36;
-    double medium = aspectRatio * 34;
-    double regular = aspectRatio * 30;
-    double small = aspectRatio * 27;
+    double superLarge = aspectRatio * 50;
+    double superHeader = aspectRatio * 40;
+    double header = aspectRatio * 36;
+    double subHeader = aspectRatio * 34;
+    double medium = aspectRatio * 30;
+    double regular = aspectRatio * 28;
+    double small = aspectRatio * 26;
     double verySmall = aspectRatio * 24;
-    double tooSmall = aspectRatio * 22;
+    double tooSmall = aspectRatio * 20;
 
     double sideBarWidth = width * 0.65;
 

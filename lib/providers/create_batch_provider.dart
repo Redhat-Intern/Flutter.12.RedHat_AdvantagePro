@@ -1,12 +1,11 @@
 import 'dart:io';
 
 import 'package:excel/excel.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:redhat_v1/components/common/text.dart';
 
 import '../model/batch.dart';
 import '../model/student.dart';
+import '../model/user.dart';
 
 class CreateBatchNotifier extends StateNotifier<Batch> {
   CreateBatchNotifier() : super(Batch.empty());
@@ -33,11 +32,11 @@ class CreateBatchNotifier extends StateNotifier<Batch> {
     state = state.copyWith(dates: newDates);
   }
 
-  void updateStaffs({required Map<String, dynamic> newStaffs}) {
-    state = state.copyWith(staffs: newStaffs);
+  void updateStaffs({required List<UserModel> staffsList}) {
+    state = state.copyWith(staffs: staffsList);
   }
 
-  void updateAdminStaff({required Map<String, dynamic> adminStaff}) {
+  void updateAdminStaff({required UserModel adminStaff}) {
     state = state.copyWith(adminStaff: adminStaff);
   }
 
