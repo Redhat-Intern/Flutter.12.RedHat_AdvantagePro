@@ -37,6 +37,7 @@ class Batches extends ConsumerWidget {
             children: [
               const PageHeader(
                 tittle: "all batches",
+                isMenuButton: false,
               ),
               SizedBox(
                 height: height * 0.02,

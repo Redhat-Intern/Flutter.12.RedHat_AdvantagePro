@@ -76,7 +76,8 @@ class _StaffDetailState extends ConsumerState<StaffDetail> {
             children: [
               PageHeader(
                   tittle:
-                      "${widget.staff.userRole == UserRole.admin ? "Admin" : ""} staff detail"),
+                      "${widget.staff.userRole == UserRole.admin ? "Admin" : ""} staff detail",
+                  isMenuButton: false),
               SizedBox(
                 height: height * 0.04,
               ),

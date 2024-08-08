@@ -29,6 +29,7 @@ class CustomNetworkImage extends ConsumerWidget {
   final double? rightMargin;
   final double? bottomMargin;
 
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     CustomColorData colorData = CustomColorData.from(ref);

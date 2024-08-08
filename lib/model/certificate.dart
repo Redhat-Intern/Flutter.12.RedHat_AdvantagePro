@@ -4,7 +4,7 @@ import 'course_data.dart';
 
 class CertificateData {
   String name;
-  File cousePDF;
+  File coursePDF;
   String description;
   String imageURL;
   int courseDataLength;
@@ -13,7 +13,7 @@ class CertificateData {
   CertificateData({
     required this.name,
     required this.courseDataList,
-    required this.cousePDF,
+    required this.coursePDF,
     required this.description,
     required this.imageURL,
     required this.courseDataLength,
@@ -23,7 +23,7 @@ class CertificateData {
     return CertificateData(
       name: '',
       courseDataList: [],
-      cousePDF: File(''),
+      coursePDF: File(''),
       description: '',
       imageURL: '',
       courseDataLength: 0,
@@ -40,7 +40,7 @@ class CertificateData {
 
   CertificateData copyWith({
     String? name,
-    File? cousePDF,
+    File? coursePDF,
     String? description,
     String? imageURL,
     int? courseDataLength,
@@ -49,10 +49,15 @@ class CertificateData {
     return CertificateData(
       name: name ?? this.name,
       courseDataList: courseDataList ?? this.courseDataList,
-      cousePDF: cousePDF ?? this.cousePDF,
+      coursePDF: coursePDF ?? this.coursePDF,
       description: description ?? this.description,
       imageURL: imageURL ?? this.imageURL,
       courseDataLength: courseDataLength ?? this.courseDataLength,
     );
+  }
+
+  @override
+  String toString() {
+    return 'CertificateData{name: $name, coursePDF: ${coursePDF.path}, description: $description, imageURL: $imageURL, courseDataLength: $courseDataLength, courseDataList: $courseDataList}';
   }
 }

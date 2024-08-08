@@ -44,7 +44,7 @@ class BatchDeatilState extends ConsumerState<BatchDetail> {
     }
 
     for (var element in staffsQueryData.docs) {
-      if (Map.from(widget.batchData["staffs"]).values.contains(element.id)) {
+      if (List.from(widget.batchData["staffs"]).contains({element.id: element.data()["id"]})) {
         setState(() {
           staffsData.addAll({element.id: element.data()});
         });
@@ -66,13 +66,9 @@ class BatchDeatilState extends ConsumerState<BatchDetail> {
     double height = sizeData.height;
     double width = sizeData.width;
     double aspectRatio = sizeData.aspectRatio;
-
-    Map<String, dynamic>? adminStaffData =
-        staffsData[Map.from(widget.batchData["admin"]).values.first];
-
-    String? adminStaffName =
-        adminStaffData != null ? adminStaffData["name"] : null;
     bool status = !(widget.batchData["completed"] == true);
+
+    print(staffsData);
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -86,7 +82,10 @@ class BatchDeatilState extends ConsumerState<BatchDetail> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              PageHeader(tittle: widget.batchData["name"]),
+              PageHeader(
+                tittle: widget.batchData["name"],
+                isMenuButton: false,
+              ),
               SizedBox(height: height * 0.03),
               Row(
                 children: [
@@ -98,7 +97,7 @@ class BatchDeatilState extends ConsumerState<BatchDetail> {
                     ),
                     child: NetworkImageRender(
                       certificateID: widget.batchData["certificateID"],
-                      size: width * .3,
+                      size: width * .25,
                       radius: 10,
                     ),
                   ),
@@ -114,13 +113,6 @@ class BatchDeatilState extends ConsumerState<BatchDetail> {
                         title: "Created Date",
                         value: widget.batchData["time"],
                       ),
-                      adminStaffName == null
-                          ? ShimmerBox(
-                              height: sizeData.subHeader, width: width * .2)
-                          : BatchDetailTile(
-                              title: "Admin Staff",
-                              value: adminStaffName,
-                            ),
                       BatchDetailTile(
                         title: "Status",
                         value: status ? "LIVE" : "COMPLETED",

@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../model/certificate.dart';
@@ -20,7 +21,7 @@ class CertificateDataNotifier extends StateNotifier<CertificateData> {
   }
 
   void updateCoursePDF({required File coursePDF}) {
-    state = state.copyWith(cousePDF: coursePDF);
+    state = state.copyWith(coursePDF: coursePDF);
   }
 
   void updateCourseDataLength({required int courseDataLength}) {
@@ -31,14 +32,18 @@ class CertificateDataNotifier extends StateNotifier<CertificateData> {
     state = state.copyWith(description: description);
   }
 
-  void updateCourseData({required CourseData courseData}) {
-    if (state.courseDataList
-        .where((element) => element.title == courseData.title)
-        .isEmpty) {
-      List<CourseData> courseDataList = state.courseDataList;
+  void addOrUpdateCourseData({required CourseData courseData}) {
+    List<CourseData> courseDataList = List.from(state.courseDataList);
+    int index = courseDataList
+        .indexWhere((element) => element.title == courseData.title);
+
+    if (index != -1) {
+      courseDataList[index] = courseData;
+    } else {
       courseDataList.add(courseData);
-      state = state.copyWith(courseDataList: courseDataList);
     }
+
+    state = state.copyWith(courseDataList: courseDataList);
   }
 
   void clearCourseData() {
@@ -47,6 +52,14 @@ class CertificateDataNotifier extends StateNotifier<CertificateData> {
 
   void updateData({required CertificateData data}) {
     state = data;
+  }
+
+  void deleteCertificate() async {
+    await FirebaseFirestore.instance
+        .collection("certificates")
+        .doc(state.name)
+        .delete();
+    clearData();
   }
 }
 

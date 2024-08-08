@@ -52,7 +52,7 @@ class _NotificationsState extends ConsumerState<Notifications> {
           ),
           child: Column(
             children: [
-              const PageHeader(tittle: "notifications"),
+              const PageHeader(tittle: "notifications",isMenuButton: false,),
               SizedBox(
                 height: height * 0.02,
               ),

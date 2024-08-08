@@ -30,7 +30,7 @@ Stream<Map<int, String>> createCertificate({
   Map<int, CourseDataUpload> contentMap = await uploadCourseContent(
       ref: storageRef, courseContent: courseContent, commonPath: commonPath);
 
-  yield {3: "uploaded certificates"};
+  yield {3: "Uploading the processed data"};
 
   Map<String, dynamic> certificateData = {
     "name": name,
@@ -50,7 +50,7 @@ Stream<Map<int, String>> createCertificate({
       .collection("certificates")
       .doc(name)
       .set(certificateData);
-  yield {4: "Uploaded Data to firebase"};
+  yield {4: "Successfully Uploaded Data to firebase"};
 }
 
 Future<String> uploadImage({

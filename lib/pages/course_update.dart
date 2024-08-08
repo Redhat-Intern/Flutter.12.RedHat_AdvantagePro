@@ -2,10 +2,8 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dio/dio.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:redhat_v1/components/common/page_header.dart';
@@ -18,11 +16,12 @@ import '../utilities/theme/color_data.dart';
 import '../utilities/theme/size_data.dart';
 
 class CourseUpdate extends ConsumerStatefulWidget {
-  const CourseUpdate(
-      {super.key,
-      required this.dayIndex,
-      required this.batchName,
-      required this.certificateName});
+  const CourseUpdate({
+    super.key,
+    required this.dayIndex,
+    required this.batchName,
+    required this.certificateName,
+  });
   final String dayIndex;
   final String batchName;
   final String certificateName;
@@ -212,7 +211,10 @@ class CourseUpdateState extends ConsumerState<CourseUpdate> {
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const PageHeader(tittle: "course edit"),
+                    const PageHeader(
+                      tittle: "course edit",
+                      isMenuButton: false,
+                    ),
                     SizedBox(height: height * 0.03),
                     CustomText(
                         text: "Title of the day:",

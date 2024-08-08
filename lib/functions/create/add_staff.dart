@@ -4,10 +4,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
 Future<bool> checkIdMatch(String id) async {
-  QuerySnapshot<Map<String, dynamic>> staffList =
-      await FirebaseFirestore.instance.collection("staffs").get();
+  QuerySnapshot<Map<String, dynamic>> staffList = await FirebaseFirestore
+      .instance
+      .collection("users")
+      .where("userRole", whereIn: ["staff", "admin"]).get();
+
   for (var value in staffList.docs) {
-    if (value.id.toLowerCase() == id.toLowerCase()) {
+    if (value.data()["id"].toLowerCase() == id.toLowerCase()) {
       return true;
     }
   }
@@ -31,7 +34,7 @@ Stream<Map<int, String>> addStaff({
 
   Map<String, Map<String, dynamic>> certificatesURL = await uploadCertificates(
       ref: storageRef, certificates: certificates, email: email);
-  yield {2: "uploaded certificates"};
+  yield {2: "Uploading Data to firebase"};
 
   Map<String, dynamic> staffData = {
     "id": staffId,
@@ -44,7 +47,7 @@ Stream<Map<int, String>> addStaff({
   };
 
   FirebaseFirestore.instance.collection("requests").doc(email).set(staffData);
-  yield {3: "Uploaded Data to firebase"};
+  yield {3: "Completed"};
 }
 
 Future<String> uploadPhoto(

@@ -82,23 +82,6 @@ class _AvailableCertificationsState
     }
   }
 
-  setBatchName() async {
-    String batchName = selectedCertificate["name"] + "001";
-    QuerySnapshot<Map<String, dynamic>> docList = await FirebaseFirestore
-        .instance
-        .collection("certificates")
-        .doc(selectedCertificate["name"])
-        .collection("instances")
-        .get();
-
-    if (docList.docs.isNotEmpty) {
-      int batchesCount = docList.docs.length + 1;
-      batchName =
-          selectedCertificate["name"] + batchesCount.toString().padLeft(3, '0');
-    }
-    ref.read(createBatchProvider.notifier).updateName(newName: batchName);
-  }
-
   @override
   void initState() {
     super.initState();
@@ -130,8 +113,6 @@ class _AvailableCertificationsState
     double width = sizeData.width;
     double height = sizeData.height;
     double aspectRatio = sizeData.aspectRatio;
-
-    String batchName = ref.watch(createBatchProvider).name;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -222,7 +203,6 @@ class _AvailableCertificationsState
                             setState(() {
                               selectedCertificate = certifications[index];
                             });
-                            await setBatchName();
                           },
                           child: Column(
                             children: [
@@ -327,39 +307,6 @@ class _AvailableCertificationsState
                       ],
                     ),
                   ),
-                  batchName != ""
-                      ? Positioned(
-                          right: width * 0.02,
-                          top: height * 0.01,
-                          child: GestureDetector(
-                            onTap: () => selectDate(
-                              context: context,
-                              days:
-                                  Map.from(selectedCertificate["courseContent"])
-                                      .length,
-                              size: Size(width * .8, height * 0.3),
-                              colorData: colorData,
-                              sizeData: sizeData,
-                            ),
-                            child: Container(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: width * 0.02,
-                                vertical: 4,
-                              ),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(6),
-                                color: colorData.backgroundColor(.8),
-                              ),
-                              child: CustomText(
-                                text: batchName,
-                                size: sizeData.small,
-                                color: colorData.primaryColor(1),
-                                weight: FontWeight.w800,
-                              ),
-                            ),
-                          ),
-                        )
-                      : const SizedBox(),
                   Positioned(
                     right: width * 0.02,
                     bottom: height * 0.01,

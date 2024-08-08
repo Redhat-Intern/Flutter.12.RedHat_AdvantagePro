@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:redhat_v1/utilities/console_logger.dart';
 
 import '../../functions/update/update_notification_data.dart';
 import '../../model/user.dart';
@@ -50,6 +51,7 @@ class _HeaderState extends ConsumerState<Header>
                     .collection("notifications")
                     .snapshots(),
                 builder: (context, snapshot) {
+                  ConsoleLogger.message(snapshot.connectionState, from: "Data");
                   if (snapshot.hasData) {
                     List<QueryDocumentSnapshot<Map<String, dynamic>>> data =
                         snapshot.data!.docs.toList();
@@ -74,17 +76,23 @@ class _HeaderState extends ConsumerState<Header>
                             icon: Icons.notifications_outlined,
                             color: colorData.fontColor(.8),
                           ),
-                          Container(
-                            padding: EdgeInsets.all(aspectRatio * 10),
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: colorData.primaryColor(1),
-                            ),
-                            child: CustomText(
-                              text: messageCount.toString(),
-                              size: aspectRatio * 22,
-                              color: colorData.sideBarTextColor(1),
-                              weight: FontWeight.bold,
+                          Positioned(
+                            top: -10,
+                            left: -2,
+                            child: Container(
+                              padding: EdgeInsets.all(aspectRatio * 10),
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: colorData.primaryColor(1),
+                              ),
+                              alignment: Alignment.center,
+                              child: CustomText(
+                                text: messageCount.toString(),
+                                size: aspectRatio * 22,
+                                color: colorData.sideBarTextColor(1),
+                                weight: FontWeight.bold,
+                                align: TextAlign.center,
+                              ),
                             ),
                           )
                         ],
@@ -113,9 +121,7 @@ class _HeaderState extends ConsumerState<Header>
                 child: Image(
                   height: aspectRatio * 70,
                   width: aspectRatio * 70,
-                  image: const AssetImage(
-                    "assets/images/redhat.png",
-                  ),
+                  image: NetworkImage(userData.imagePath),
                 ),
               ),
             )
@@ -140,13 +146,16 @@ class _HeaderState extends ConsumerState<Header>
                 SizedBox(
                   height: height * 0.002,
                 ),
-                CustomText(
-                  text: name.isEmpty
-                      ? name
-                      : name[0].toUpperCase() + name.substring(1),
-                  size: sizeData.header,
-                  color: colorData.fontColor(.8),
-                  weight: FontWeight.bold,
+                SizedBox(
+                  width: width * .6,
+                  child: CustomText(
+                    text: name.isEmpty
+                        ? name
+                        : name[0].toUpperCase() + name.substring(1),
+                    size: sizeData.header,
+                    color: colorData.fontColor(.8),
+                    weight: FontWeight.bold,
+                  ),
                 ),
               ],
             ),

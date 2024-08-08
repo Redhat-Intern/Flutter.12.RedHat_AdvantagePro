@@ -11,9 +11,9 @@ class UserModel {
   final String? occupationDetail;
   final Map<String, String>? studentId;
   final String? staffId;
+  final List<String>? staffBatches;
   final Map<String, String>? batch;
   final Map<String, String>? currentBatch;
-  final int? experience;
   final Map<String, dynamic>? certificates;
 
   const UserModel({
@@ -29,8 +29,8 @@ class UserModel {
     this.staffId,
     this.batch,
     this.currentBatch,
-    this.experience,
     this.certificates,
+    this.staffBatches,
   });
 
   // copyWith method
@@ -46,9 +46,9 @@ class UserModel {
     Map<String, String>? studentId,
     Map<String, String>? batch,
     Map<String, String>? currentBatch,
-    int? experience,
     Map<String, dynamic>? certificates,
     String? staffId,
+    List<String>? staffBatches,
   }) {
     return UserModel(
       name: name?.toString().trim() ?? this.name,
@@ -63,8 +63,8 @@ class UserModel {
       staffId: staffId ?? this.staffId,
       batch: batch ?? this.batch,
       currentBatch: currentBatch ?? this.currentBatch,
-      experience: experience ?? this.experience,
       certificates: certificates ?? this.certificates,
+      staffBatches: staffBatches ?? this.staffBatches,
     );
   }
 
@@ -72,7 +72,8 @@ class UserModel {
   @override
   String toString() {
     return 'UserModel(name: $name, email: $email, password: $password, phoneNumber: $phoneNumber, imagePath: $imagePath, userRole: $userRole'
-        '${userRole == UserRole.staff || userRole == UserRole.admin ? ', experience: $experience, staffId: $staffId, certificates: $certificates' : ''}'
+        '${userRole == UserRole.staff ? ', staffId: $staffId, certificates: $certificates , Batches: $staffBatches' : ''}'
+        '${userRole == UserRole.admin ? ', staffId: $staffId, certificates: $certificates' : ''}'
         '${userRole == UserRole.student ? ', occupation: $occupation, occupationDetail: $occupationDetail, studentId: $studentId, batch: $batch, currentBatch: $currentBatch' : ''})';
   }
 
@@ -104,11 +105,12 @@ class UserModel {
           ? (json['currentBatch'] as Map<String, dynamic>)
               .map((key, value) => MapEntry(key, value.toString()))
           : null,
-      experience: userRole == UserRole.staff
-          ? int.parse(json['experience'].toString())
-          : null,
-      certificates: userRole == UserRole.staff
+      certificates: userRole == UserRole.staff ||
+              userRole == UserRole.admin && json['certificates'] != null
           ? Map<String, dynamic>.from(json['certificates'])
+          : null,
+      staffBatches: userRole == UserRole.staff && json["batches"] != null
+          ? List.from(json["batches"])
           : null,
     );
   }
@@ -124,10 +126,15 @@ class UserModel {
       'userRole': userRole?.name,
     };
 
-    if (userRole == UserRole.staff || userRole == UserRole.admin) {
+    if (userRole == UserRole.staff) {
       json.addAll({
         'id': staffId,
-        'experience': experience,
+        'batches': staffBatches,
+        'certificates': certificates,
+      });
+    } else if (userRole == UserRole.admin) {
+      json.addAll({
+        'id': staffId,
         'certificates': certificates,
       });
     } else if (userRole == UserRole.student) {
@@ -157,7 +164,6 @@ class UserModel {
     studentId: {},
     batch: {},
     currentBatch: {},
-    experience: 0,
     certificates: {},
   );
 

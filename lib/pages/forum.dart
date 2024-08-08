@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../components/common/page_header.dart';
 import '../components/common/text.dart';
 import '../components/forum/chat.dart';
 import '../components/forum/forum_header.dart';
@@ -34,18 +35,9 @@ class ForumState extends ConsumerState<Forum> {
 
     return Column(
       children: [
-        Row(
-          children: [
-            const MenuButton(),
-            const Spacer(),
-            CustomText(
-              text: "FORUM",
-              size: sizeData.header,
-              color: colorData.fontColor(1),
-              weight: FontWeight.w600,
-            ),
-            const Spacer(),
-          ],
+        const PageHeader(
+          tittle: "FORUM",
+          isMenuButton: true,
         ),
         SizedBox(
           height: height * 0.02,

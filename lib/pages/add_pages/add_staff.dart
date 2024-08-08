@@ -2,6 +2,8 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lottie/lottie.dart';
+import 'package:redhat_v1/utilities/console_logger.dart';
 
 import '../../components/common/page_header.dart';
 import '../../functions/create/send_email.dart';
@@ -76,17 +78,17 @@ class _AddStaffState extends ConsumerState<AddStaff> {
           content: Center(child: Text("Staff ID already exits"))));
     } else {
       setState(() {
-        completionCount = {0: "Started"};
+        completionCount = {0: "Started uploading basic details"};
       });
       addStaff(
-              photo: photo,
-              name: nameController.text.trim(),
-              email: emailController.text.trim(),
-              phoneNo: phoneNoController.text.trim(),
-              staffId: staffIDController.text.trim(),
-              isAdmin: isAdmin,
-              certificates: certificates)
-          .listen((event) {
+        photo: photo,
+        name: nameController.text.trim(),
+        email: emailController.text.trim(),
+        phoneNo: phoneNoController.text.trim(),
+        staffId: staffIDController.text.trim(),
+        isAdmin: isAdmin,
+        certificates: certificates,
+      ).listen((event) {
         setState(() {
           if (event.keys.first == 1) {
             sendStaffEmail(
@@ -94,7 +96,7 @@ class _AddStaffState extends ConsumerState<AddStaff> {
                 receiverEmail: emailController.text,
                 name: nameController.text,
                 registrationNo: event.values.first.toString());
-            completionCount = {1: "Photo uploaded"};
+            completionCount = {1: "Uploading certificates"};
           } else if (event.keys.first == 3) {
             completionCount = event;
             Navigator.pop(context);
@@ -137,7 +139,7 @@ class _AddStaffState extends ConsumerState<AddStaff> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const PageHeader(tittle: "add staff"),
+                  const PageHeader(tittle: "add staff", isMenuButton: false),
                   SizedBox(
                     height: height * 0.04,
                   ),
@@ -237,54 +239,40 @@ class _AddStaffState extends ConsumerState<AddStaff> {
                         width: width,
                         decoration: BoxDecoration(boxShadow: [
                           BoxShadow(
-                            color: colorData.secondaryColor(.5),
+                            color: colorData.secondaryColor(.8),
                             blurRadius: 400,
                             spreadRadius: 400,
                           ),
                         ]),
-                        child: Center(
-                          child: Container(
-                            // width: width * .5,
-                            height: height * .23,
-                            padding:
-                                EdgeInsets.symmetric(horizontal: width * 0.05),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(8),
-                              gradient: LinearGradient(
-                                  begin: Alignment.topLeft,
-                                  end: Alignment.bottomRight,
-                                  colors: [
-                                    colorData.primaryColor(.2),
-                                    colorData.primaryColor(.6)
-                                  ]),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Lottie.asset(
+                              "assets/json/uploading.json",
+                              width: width * .7,
                             ),
-                            child: Column(
-                              children: [
-                                SizedBox(
-                                  height: height * 0.06,
-                                ),
-                                CircularProgressIndicator.adaptive(
-                                  strokeWidth: 8,
-                                  strokeAlign: 5,
-                                  strokeCap: StrokeCap.round,
-                                  backgroundColor: Colors.white,
-                                  valueColor: AlwaysStoppedAnimation(
-                                    colorData.primaryColor(1),
-                                  ),
-                                  value: completionCount.keys.first * 0.33,
-                                ),
-                                SizedBox(
-                                  height: height * 0.06,
-                                ),
-                                CustomText(
-                                  text: completionCount.values.first,
-                                  size: sizeData.medium,
-                                  color: colorData.secondaryColor(1),
-                                  weight: FontWeight.w600,
-                                )
-                              ],
+                            Lottie.asset(
+                              "assets/json/loadingProgress.json",
+                              width: width * .5,
                             ),
-                          ),
+                            SizedBox(
+                              height: height * 0.06,
+                            ),
+                            SizedBox(
+                              width: width * .7,
+                              child: CustomText(
+                                text: completionCount.values.first,
+                                size: sizeData.medium,
+                                color: colorData.primaryColor(1),
+                                weight: FontWeight.w600,
+                                maxLine: 3,
+                                align: TextAlign.center,
+                              ),
+                            ),
+                            SizedBox(
+                              height: height * 0.1,
+                            ),
+                          ],
                         ),
                       ),
                     ),

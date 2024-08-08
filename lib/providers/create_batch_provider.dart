@@ -14,6 +14,10 @@ class CreateBatchNotifier extends StateNotifier<Batch> {
     state = Batch.empty();
   }
 
+  void setBatchName(String name) {
+    state = state.copyWith(name: name);
+  }
+
   void updateTime() {
     state = state.copyWith(creationTime: DateTime.now());
   }
@@ -34,10 +38,6 @@ class CreateBatchNotifier extends StateNotifier<Batch> {
 
   void updateStaffs({required List<UserModel> staffsList}) {
     state = state.copyWith(staffs: staffsList);
-  }
-
-  void updateAdminStaff({required UserModel adminStaff}) {
-    state = state.copyWith(adminStaff: adminStaff);
   }
 
   void addDataToSheet(List<List<String>> data) {

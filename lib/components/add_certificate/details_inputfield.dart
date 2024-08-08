@@ -1,33 +1,31 @@
-
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
+import 'package:redhat_v1/components/common/network_image.dart';
 import '../../utilities/static_data.dart';
 import '../../utilities/theme/color_data.dart';
 import '../../utilities/theme/size_data.dart';
 
 import 'certificate_image_picker.dart';
 
-class CertificateDetail extends ConsumerStatefulWidget {
+class CertificateDetail extends ConsumerWidget {
   final TextEditingController name;
   final TextEditingController discription;
-  final Function imageSetter;
+  final Function? imageSetter;
+  final From from;
+  final String? imageURL;
 
   const CertificateDetail({
     super.key,
     required this.name,
     required this.discription,
-    required this.imageSetter,
+    this.imageSetter,
+    required this.from,
+    this.imageURL,
   });
 
   @override
-  ConsumerState<CertificateDetail> createState() => _CertificateDetailState();
-}
-
-class _CertificateDetailState extends ConsumerState<CertificateDetail> {
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     CustomSizeData sizeData = CustomSizeData.from(context);
     CustomColorData colorData = CustomColorData.from(ref);
 
@@ -47,11 +45,17 @@ class _CertificateDetailState extends ConsumerState<CertificateDetail> {
       radius: const Radius.circular(8),
       child: Row(
         children: [
-          CertificateImagePicker(
-            from: From.add,
-            imageURL: "",
-            setter: widget.imageSetter,
-          ),
+          from == From.add
+              ? CertificateImagePicker(
+                  from: From.add,
+                  imageURL: "",
+                  setter: imageSetter!,
+                )
+              : CustomNetworkImage(
+                  size: height * 0.12,
+                  radius: 8,
+                  url: imageURL,
+                ),
           SizedBox(
             width: width * 0.02,
           ),
@@ -71,7 +75,7 @@ class _CertificateDetailState extends ConsumerState<CertificateDetail> {
                     ),
                   ),
                   child: TextField(
-                    controller: widget.name,
+                    controller: name,
                     keyboardType: TextInputType.text,
                     style: TextStyle(
                       fontWeight: FontWeight.w600,
@@ -109,7 +113,7 @@ class _CertificateDetailState extends ConsumerState<CertificateDetail> {
                     ),
                   ),
                   child: TextField(
-                    controller: widget.discription,
+                    controller: discription,
                     keyboardType: TextInputType.text,
                     maxLines: 2,
                     style: TextStyle(

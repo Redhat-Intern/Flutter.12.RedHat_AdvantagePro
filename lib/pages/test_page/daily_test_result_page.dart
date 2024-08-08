@@ -77,6 +77,7 @@ class DailyTestResult extends ConsumerWidget {
                   children: [
                     PageHeader(
                       tittle: "DAILY TEST RESULT",
+                      isMenuButton: false,
                       secondaryWidget: CustomText(
                         text: day,
                         size: sizeData.medium,

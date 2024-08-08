@@ -10,6 +10,11 @@ class CourseData {
     required this.topics,
     required this.files,
   });
+
+  @override
+  String toString() {
+    return 'CourseData{title: $title, topics: $topics, files: $files}';
+  }
 }
 
 class CourseDataUpload {

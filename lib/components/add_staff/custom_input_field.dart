@@ -8,21 +8,23 @@ import '../common/icon.dart';
 class CustomInputField extends ConsumerWidget {
   const CustomInputField({
     super.key,
-    required this.controller,
+    this.controller,
     required this.hintText,
     required this.icon,
     required this.inputType,
     this.readOnly = false,
     this.bottomMar,
     this.visibleText = true,
+    this.listener,
   });
-  final TextEditingController controller;
+  final TextEditingController? controller;
   final String hintText;
   final IconData icon;
   final TextInputType inputType;
   final bool readOnly;
   final double? bottomMar;
   final bool visibleText;
+  final Function? listener;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -74,6 +76,11 @@ class CustomInputField extends ConsumerWidget {
               readOnly: readOnly,
               controller: controller,
               keyboardType: inputType,
+              onChanged: (value) {
+                if (listener != null) {
+                  listener!(value);
+                }
+              },
               style: TextStyle(
                 fontWeight: FontWeight.w800,
                 fontSize: sizeData.regular,
@@ -96,7 +103,7 @@ class CustomInputField extends ConsumerWidget {
                   bottom: height * 0.015,
                 ),
               ),
-            ), 
+            ),
           ),
         ],
       ),

@@ -37,8 +37,6 @@ class StudentHome extends ConsumerWidget {
               .collection("batches")
               .where("students", arrayContains: {studentID: email}).snapshots(),
           builder: (context, snapshot) {
-
-            
             if (snapshot.hasData && snapshot.data!.docs.isNotEmpty) {
               List<Map<String, dynamic>> data = [];
               List<QueryDocumentSnapshot<Map<String, dynamic>>> docs =
@@ -48,7 +46,7 @@ class StudentHome extends ConsumerWidget {
               Map<String, dynamic> batchData = docs
                   .firstWhere((element) => element.data()["completed"] == null)
                   .data();
-                  
+
               for (QueryDocumentSnapshot<Map<String, dynamic>> doc
                   in docs.where((element) =>
                       batchIDList.contains(element.id.toUpperCase()))) {
@@ -60,10 +58,10 @@ class StudentHome extends ConsumerWidget {
                 data.add(doc.data());
               }
 
-              readCertificateData(
+              CertificateService(ref: ref).readCertificateData(
                 batchName: batchData["name"],
                 certificateName: batchData["certificateID"],
-                ref: ref,
+                isFromBatch: true,
               );
 
               return Expanded(

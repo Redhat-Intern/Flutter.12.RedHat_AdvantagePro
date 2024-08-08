@@ -25,7 +25,6 @@ class AssignStaff extends ConsumerStatefulWidget {
 
 class _AssignStaffState extends ConsumerState<AssignStaff> {
   bool movedOver = false;
-  UserModel? batchAdmin;
   List<UserModel> selectedStaffs = [];
   List<UserModel> availableStaffs = [];
 
@@ -233,7 +232,8 @@ class _AssignStaffState extends ConsumerState<AssignStaff> {
                 weight: FontWeight.w600,
               ),
               Tooltip(
-                message: "Long Press a staff\n to make him as Batch Admin",
+                message: "Double tap a staff\n to unselect",
+                triggerMode: TooltipTriggerMode.tap,
                 textAlign: TextAlign.center,
                 textStyle: TextStyle(
                   fontWeight: FontWeight.w600,
@@ -241,7 +241,7 @@ class _AssignStaffState extends ConsumerState<AssignStaff> {
                   fontSize: sizeData.small,
                 ),
                 waitDuration: const Duration(microseconds: 1),
-                showDuration: const Duration(milliseconds: 800),
+                showDuration: const Duration(seconds: 2),
                 padding: EdgeInsets.symmetric(
                     horizontal: width * 0.02, vertical: height * 0.005),
                 decoration: BoxDecoration(
@@ -296,7 +296,6 @@ class _AssignStaffState extends ConsumerState<AssignStaff> {
                       : const SizedBox(),
                   DragTarget(
                     onAcceptWithDetails: (DragTargetDetails<UserModel?> data) {
-                      print(data.data.toString());
                       setState(() {
                         selectedStaffs.add(data.data!);
                         ref
@@ -325,34 +324,16 @@ class _AssignStaffState extends ConsumerState<AssignStaff> {
                           onDoubleTap: () {
                             setState(() {
                               availableStaffs.add(selectedStaffs[index]);
-                              if (selectedStaffs[index].name ==
-                                  batchAdmin?.name) {
-                                batchAdmin = null;
-                                ref
-                                    .read(createBatchProvider.notifier)
-                                    .updateAdminStaff(
-                                        adminStaff: UserModel.empty);
-                              }
+
                               selectedStaffs.removeAt(index);
                               ref
                                   .read(createBatchProvider.notifier)
                                   .updateStaffs(staffsList: selectedStaffs);
                             });
                           },
-                          onLongPress: () {
-                            setState(() {
-                              batchAdmin = selectedStaffs[index];
-                              ref
-                                  .read(createBatchProvider.notifier)
-                                  .updateAdminStaff(
-                                      adminStaff: selectedStaffs[index]);
-                            });
-                          },
                           child: Container(
-                            padding: EdgeInsets.all(
-                              batchAdmin?.name == selectedStaffs[index].name
-                                  ? 1
-                                  : 3,
+                            padding: const EdgeInsets.all(
+                              3,
                             ),
                             margin: EdgeInsets.only(
                               right: width * 0.04,
@@ -360,15 +341,8 @@ class _AssignStaffState extends ConsumerState<AssignStaff> {
                             decoration: BoxDecoration(
                               color: colorData.secondaryColor(1),
                               borderRadius: BorderRadius.circular(8),
-                              border: batchAdmin?.name ==
-                                      selectedStaffs[index].name
-                                  ? Border.all(
-                                      color: colorData.primaryColor(1),
-                                      strokeAlign: BorderSide.strokeAlignCenter,
-                                      width: 2,
-                                    )
-                                  : Border.all(
-                                      color: Colors.transparent, width: 0),
+                              border: Border.all(
+                                  color: Colors.transparent, width: 0),
                             ),
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(8),
@@ -390,33 +364,6 @@ class _AssignStaffState extends ConsumerState<AssignStaff> {
           SizedBox(
             height: height * 0.015,
           ),
-          batchAdmin != null
-              ? Row(
-                  children: [
-                    CustomText(
-                      text: "Admin staff:",
-                      size: sizeData.verySmall,
-                      color: colorData.fontColor(.6),
-                    ),
-                    SizedBox(
-                      width: width * 0.01,
-                    ),
-                    CustomText(
-                      text: batchAdmin!.name.toString().trim(),
-                      color: colorData.fontColor(.8),
-                      weight: FontWeight.w700,
-                    ),
-                    SizedBox(
-                      width: width * 0.02,
-                    ),
-                    CustomText(
-                      text: "(ID: ${batchAdmin!.staffId})",
-                      size: sizeData.small,
-                      color: colorData.fontColor(.8),
-                    )
-                  ],
-                )
-              : const SizedBox()
         ],
       ),
     );

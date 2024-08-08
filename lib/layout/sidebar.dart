@@ -110,7 +110,7 @@ class _SideBarState extends ConsumerState<SideBar> {
                                     color: index == currentListIndex
                                         ? colorData.sideBarTextColor(1)
                                         : colorData.sideBarTextColor(.7),
-                                    size: aspectRatio * 48),
+                                    size: aspectRatio * 50),
                                 SizedBox(
                                   width: width * 0.02,
                                 ),

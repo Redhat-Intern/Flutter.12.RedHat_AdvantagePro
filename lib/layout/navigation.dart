@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:material_symbols_icons/material_symbols_icons.dart';
 
 import '../components/common/shimmer_box.dart';
 import '../components/common/waiting_widgets/header_waiting.dart';
@@ -10,6 +11,7 @@ import '../components/common/waiting_widgets/search_field_waiting.dart';
 import '../components/common/waiting_widgets/staffs_list_waiting.dart';
 import '../model/user.dart';
 import '../pages/add_pages/add_certification.dart';
+import '../pages/certificates.dart';
 import '../pages/home/admin_home.dart';
 import '../pages/home/staff_home.dart';
 import '../pages/home/student_home.dart';
@@ -73,13 +75,13 @@ class _NavigationState extends ConsumerState<Navigation> {
         const AdminHome(),
         const Report(),
         const Forum(),
-        const AddCertification(),
+        const Certificates(),
       ];
       iconNameList = [
-        {Icons.home_outlined: "Home"},
-        {Icons.report: "Report"},
-        {Icons.forest_outlined: "Forum"},
-        {Icons.add_moderator_rounded: "Certification"},
+        {Symbols.home_app_logo_rounded: "Home"},
+        {Symbols.crisis_alert_rounded: "Report"},
+        {Symbols.forum_rounded: "Forum"},
+        {Symbols.developer_guide_rounded: "Certification"},
       ];
     } else if (userData.userRole == UserRole.staff) {
       widgetList = [
@@ -87,8 +89,8 @@ class _NavigationState extends ConsumerState<Navigation> {
         const Forum(),
       ];
       iconNameList = [
-        {Icons.home_outlined: "Home"},
-        {Icons.forest_outlined: "Forum"},
+        {Symbols.home_app_logo_rounded: "Home"},
+        {Symbols.forum_rounded: "Forum"},
       ];
     } else if (userData.userRole == UserRole.student) {
       widgetList = [
@@ -96,8 +98,8 @@ class _NavigationState extends ConsumerState<Navigation> {
         const Forum(),
       ];
       iconNameList = [
-        {Icons.home_outlined: "Home"},
-        {Icons.forest_outlined: "Forum"},
+        {Symbols.home_app_logo_rounded: "Home"},
+        {Symbols.forum_rounded: "Forum"},
       ];
     }
 

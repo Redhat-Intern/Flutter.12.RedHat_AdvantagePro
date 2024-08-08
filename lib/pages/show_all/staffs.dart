@@ -37,6 +37,7 @@ class AllStaffs extends ConsumerWidget {
             children: [
               const PageHeader(
                 tittle: "all Staffs",
+                isMenuButton: false,
               ),
               SizedBox(
                 height: height * 0.02,
@@ -133,6 +134,10 @@ class AllStaffs extends ConsumerWidget {
                                               CrossAxisAlignment.start,
                                           children: [
                                             BatchTileText(
+                                              header: "ID:",
+                                              value: staffData.staffId!,
+                                            ),
+                                            BatchTileText(
                                               header: "Name:",
                                               value: staffData.name,
                                             ),
@@ -143,11 +148,6 @@ class AllStaffs extends ConsumerWidget {
                                             BatchTileText(
                                               header: "Phone NO:",
                                               value: staffData.phoneNumber
-                                                  .toString(),
-                                            ),
-                                            BatchTileText(
-                                              header: "Experience:",
-                                              value: staffData.experience
                                                   .toString(),
                                             ),
                                             BatchTileText(

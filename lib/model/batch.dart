@@ -9,7 +9,6 @@ class Batch {
   Map<String, dynamic> certificateData;
   List<String> dates;
   List<UserModel> staffs;
-  UserModel adminStaff;
   List<Student> students;
 
   Batch({
@@ -18,7 +17,6 @@ class Batch {
     required this.certificateData,
     required this.dates,
     required this.staffs,
-    required this.adminStaff,
     required this.students,
   });
 
@@ -27,7 +25,6 @@ class Batch {
       creationTime: DateTime.now(),
       name: '',
       certificateData: {},
-      adminStaff: UserModel.empty,
       dates: [],
       staffs: [],
       students: [],
@@ -49,29 +46,26 @@ class Batch {
       certificateData: certificateData ?? this.certificateData,
       dates: dates ?? this.dates,
       staffs: staffs ?? this.staffs,
-      adminStaff: adminStaff ?? this.adminStaff,
       students: students ?? this.students,
     );
   }
 
-  bool isNotEmpty() {
+  bool isNotEmpty({required bool needStudentCheck}) {
     return name.isNotEmpty &&
         name != "" &&
         certificateData.isNotEmpty &&
         dates.isNotEmpty &&
         staffs.isNotEmpty &&
-        adminStaff.isNotEmpty &&
-        students.isNotEmpty;
+        (needStudentCheck ? students.isNotEmpty : true);
   }
 
   Map<String, dynamic> toMap() {
     return {
       'time': DateFormat("dd-MM-yyyy").format(creationTime),
-      'name': name,
+      'name': name.toUpperCase(),
       'certificateID': certificateData["name"],
       'dates': dates,
       'staffs': staffs.map((data) => {data.staffId: data.email}),
-      "admin": {adminStaff.staffId: adminStaff.email},
       'students': students.isNotEmpty
           ? students.map((student) => {
                 "${name}STU${(students.indexOf(student) + 1).toString().padLeft(3, '0')}":
