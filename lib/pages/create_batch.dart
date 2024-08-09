@@ -6,11 +6,13 @@ import 'package:redhat_v1/components/common/network_image.dart';
 import 'package:redhat_v1/components/common/text.dart';
 import 'package:redhat_v1/functions/read/certificate_data.dart';
 import 'package:redhat_v1/pages/create_new_batch.dart';
+import 'package:redhat_v1/pages/create_saved_batch.dart';
 import 'package:redhat_v1/providers/certificate_data_provider.dart';
 
 import '../components/common/icon.dart';
 import '../components/common/page_header.dart';
 import '../model/user.dart';
+import '../providers/create_batch_provider.dart';
 import '../providers/user_detail_provider.dart';
 import '../utilities/theme/color_data.dart';
 import '../utilities/theme/size_data.dart';
@@ -25,17 +27,6 @@ class CreateBatch extends ConsumerStatefulWidget {
 
 class _CreateBatchState extends ConsumerState<CreateBatch> {
   TextEditingController searchCtr = TextEditingController();
-  late List<Map<String, dynamic>> batchDataList;
-
-  Future<String> fetchImagePaths({required String certificateId}) async {
-    DocumentSnapshot<Map<String, dynamic>> data = await FirebaseFirestore
-        .instance
-        .collection("certificates")
-        .doc(certificateId)
-        .get();
-    String imageURL = data.data()!["image"];
-    return imageURL;
-  }
 
   @override
   void initState() {
@@ -167,11 +158,10 @@ class _CreateBatchState extends ConsumerState<CreateBatch> {
                       .snapshots(),
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
-                      batchDataList = snapshot.data!.docs
+                      List<Map<String, dynamic>> batchDataList = snapshot
+                          .data!.docs
                           .map((value) => value.data())
                           .toList();
-
-                      // fetchImagePaths();
 
                       if (searchCtr.text.isNotEmpty) {
                         batchDataList = batchDataList
@@ -204,7 +194,38 @@ class _CreateBatchState extends ConsumerState<CreateBatch> {
                                 //
                                 //
                                 return GestureDetector(
-                                  onTap: () {},
+                                  onTap: () {
+                                    ref
+                                        .read(createBatchProvider.notifier)
+                                        .setBatchName(
+                                            batchDataList[index]["name"]);
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => CreateSavedBatch(
+                                          certificateID: batchDataList[index]
+                                              ["certificateID"],
+                                          name: batchDataList[index]["name"],
+                                          selectDates: List.from(
+                                            batchDataList[index]["dates"],
+                                          ),
+                                          staffID: List.from(
+                                                  batchDataList[index]
+                                                      ["staffs"])
+                                              .map((element) =>
+                                                  Map.from(element)
+                                                      .keys
+                                                      .first
+                                                      .toString())
+                                              .toList(),
+                                        ),
+                                      ),
+                                    ).then((_) {
+                                      ref
+                                          .read(createBatchProvider.notifier)
+                                          .clearData();
+                                    });
+                                  },
                                   child: Container(
                                     margin: EdgeInsets.only(
                                       bottom: height * 0.02,
@@ -223,12 +244,9 @@ class _CreateBatchState extends ConsumerState<CreateBatch> {
                                         color: colorData.secondaryColor(.1)),
                                     child: Row(
                                       children: [
-                                        CustomNetworkImage(
-                                          size: height * .12,
-                                          radius: 8,
-                                          url: batchDataList[index]["image"],
-                                          rightMargin: sizeData.width * 0.03,
-                                        ),
+                                        ImageLoader(
+                                            certificateID: batchDataList[index]
+                                                ["certificateID"]),
                                         Expanded(
                                             child: Column(
                                           crossAxisAlignment:
@@ -415,6 +433,49 @@ class _CreateBatchState extends ConsumerState<CreateBatch> {
           ]),
         ),
       ),
+    );
+  }
+}
+
+class ImageLoader extends ConsumerStatefulWidget {
+  const ImageLoader({super.key, required this.certificateID});
+  final String certificateID;
+
+  @override
+  ConsumerState<ImageLoader> createState() => _ImageLoaderState();
+}
+
+class _ImageLoaderState extends ConsumerState<ImageLoader> {
+  String? imagePath;
+
+  fetchImagePath() async {
+    DocumentSnapshot<Map<String, dynamic>> data = await FirebaseFirestore
+        .instance
+        .collection("certificates")
+        .doc(widget.certificateID)
+        .get();
+    setState(() {
+      imagePath = data.data()!["image"];
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    fetchImagePath();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    CustomSizeData sizeData = CustomSizeData.from(context);
+
+    double height = sizeData.height;
+
+    return CustomNetworkImage(
+      size: height * .12,
+      radius: 8,
+      url: imagePath,
+      rightMargin: sizeData.width * 0.03,
     );
   }
 }

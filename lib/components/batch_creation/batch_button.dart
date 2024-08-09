@@ -10,7 +10,10 @@ import '../../providers/create_batch_provider.dart';
 import '../common/text.dart';
 
 class BatchButton extends ConsumerWidget {
-  const BatchButton({super.key});
+  const BatchButton(
+      {super.key, this.isCreateButton = true, this.isSaveButton = true});
+  final bool? isSaveButton;
+  final bool? isCreateButton;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -21,123 +24,125 @@ class BatchButton extends ConsumerWidget {
     double width = sizeData.width;
 
     return Row(
-      mainAxisAlignment: MainAxisAlignment.end,
+      mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        GestureDetector(
-          onTap: () async {
-            ref.read(createBatchProvider.notifier).updateTime();
-            Batch batchData = ref.watch(createBatchProvider);
+        if (isCreateButton!)
+          GestureDetector(
+            onTap: () async {
+              ref.read(createBatchProvider.notifier).updateTime();
+              Batch batchData = ref.watch(createBatchProvider);
 
-            if (batchData.isNotEmpty(needStudentCheck: true)) {
-              createBatch(batch: batchData, ref: ref);
-              ref.read(createBatchProvider.notifier).clearData();
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                    content: Center(
-                  child: CustomText(
-                    text: "Batch Created Successfuly",
-                    color: Colors.white,
-                    weight: FontWeight.w700,
-                  ),
-                )),
-              );
-              Navigator.pop(context);
-            } else {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                    content: Center(
-                  child: CustomText(
-                    text: "Kindly fill all the details!",
-                    color: Colors.white,
-                    weight: FontWeight.w700,
-                  ),
-                )),
-              );
-            }
-          },
-          child: Container(
-            padding: EdgeInsets.symmetric(
-              vertical: height * 0.01,
-              horizontal: width * 0.08,
-            ),
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(8),
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  colorData.primaryColor(.4),
-                  colorData.primaryColor(1),
-                ],
+              if (batchData.isNotEmpty(needStudentCheck: true)) {
+                createBatch(batch: batchData, ref: ref);
+                ref.read(createBatchProvider.notifier).clearData();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                      content: Center(
+                    child: CustomText(
+                      text: "Batch Created Successfuly",
+                      color: Colors.white,
+                      weight: FontWeight.w700,
+                    ),
+                  )),
+                );
+                Navigator.pop(context);
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                      content: Center(
+                    child: CustomText(
+                      text: "Kindly fill all the details!",
+                      color: Colors.white,
+                      weight: FontWeight.w700,
+                    ),
+                  )),
+                );
+              }
+            },
+            child: Container(
+              padding: EdgeInsets.symmetric(
+                vertical: height * 0.01,
+                horizontal: width * 0.08,
+              ),
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(8),
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    colorData.primaryColor(.4),
+                    colorData.primaryColor(1),
+                  ],
+                ),
+              ),
+              child: CustomText(
+                text: "CREATE BATCH",
+                size: sizeData.regular,
+                color: colorData.secondaryColor(1),
+                weight: FontWeight.w600,
               ),
             ),
-            child: CustomText(
-              text: "CREATE BATCH",
-              size: sizeData.regular,
-              color: colorData.secondaryColor(1),
-              weight: FontWeight.w600,
-            ),
           ),
-        ),
-        const Spacer(),
-        GestureDetector(
-          onTap: () async {
-            ref.read(createBatchProvider.notifier).updateTime();
-            Batch batchData = ref.watch(createBatchProvider);
+        if (isCreateButton! && isSaveButton!) const Spacer(),
+        if (isSaveButton!)
+          GestureDetector(
+            onTap: () async {
+              ref.read(createBatchProvider.notifier).updateTime();
+              Batch batchData = ref.watch(createBatchProvider);
 
-            if (batchData.isNotEmpty(needStudentCheck: false)) {
-              saveBatch(batch: batchData);
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                    content: Center(
-                  child: CustomText(
-                    text: "Batch Saved Successfuly",
-                    color: Colors.white,
-                    weight: FontWeight.w700,
-                  ),
-                )),
-              );
-              ref.read(createBatchProvider.notifier).clearData();
-              Navigator.pop(context);
-            } else {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                    content: Center(
-                  child: CustomText(
-                    text: "Kindly fill all the details!",
-                    color: Colors.white,
-                    weight: FontWeight.w700,
-                  ),
-                )),
-              );
-            }
-          },
-          child: Container(
-            padding: EdgeInsets.symmetric(
-              vertical: height * 0.01,
-              horizontal: width * 0.08,
-            ),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(8),
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  colorData.secondaryColor(.2),
-                  colorData.secondaryColor(.8),
-                ],
+              if (batchData.isNotEmpty(needStudentCheck: false)) {
+                saveBatch(batch: batchData);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                      content: Center(
+                    child: CustomText(
+                      text: "Batch Saved Successfuly",
+                      color: Colors.white,
+                      weight: FontWeight.w700,
+                    ),
+                  )),
+                );
+                ref.read(createBatchProvider.notifier).clearData();
+                Navigator.pop(context);
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                      content: Center(
+                    child: CustomText(
+                      text: "Kindly fill all the details!",
+                      color: Colors.white,
+                      weight: FontWeight.w700,
+                    ),
+                  )),
+                );
+              }
+            },
+            child: Container(
+              padding: EdgeInsets.symmetric(
+                vertical: height * 0.01,
+                horizontal: width * 0.08,
+              ),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(8),
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    colorData.secondaryColor(.2),
+                    colorData.secondaryColor(.8),
+                  ],
+                ),
+              ),
+              child: CustomText(
+                text: "SAVE BATCH",
+                size: sizeData.medium,
+                color: colorData.fontColor(.8),
+                weight: FontWeight.w800,
               ),
             ),
-            child: CustomText(
-              text: "SAVE BATCH",
-              size: sizeData.medium,
-              color: colorData.fontColor(.8),
-              weight: FontWeight.w800,
-            ),
           ),
-        ),
       ],
     );
   }

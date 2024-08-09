@@ -10,7 +10,6 @@ Future<bool> createBatch({
   required WidgetRef ref,
 }) async {
   Map<String, dynamic> batchData = batch.toMap();
-  // Map<String, dynamic> userData = ref.watch(userDataProvider)!;
 
   try {
     await FirebaseFirestore.instance
@@ -24,6 +23,11 @@ Future<bool> createBatch({
         .collection("instances")
         .doc(batch.name)
         .set(batch.certificateData);
+
+    await FirebaseFirestore.instance
+        .collection("savedBatches")
+        .doc(batch.name.toUpperCase())
+        .delete();
 
     List<String> members = ['admin'];
 
@@ -144,7 +148,7 @@ Future<bool> saveBatch({
   try {
     await FirebaseFirestore.instance
         .collection("savedBatches")
-        .doc(batch.name)
+        .doc(batch.name.toUpperCase())
         .set(batchData)
         .onError((error, stackTrace) => error = error);
     return true;

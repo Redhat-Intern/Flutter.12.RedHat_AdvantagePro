@@ -17,6 +17,7 @@ class CourseFilePicker extends ConsumerStatefulWidget {
   final Function handleFile;
   final Map<File, Map<String, dynamic>> content;
   final double? containerHeight;
+
   const CourseFilePicker(
       {super.key,
       required this.handleFile,
@@ -91,7 +92,7 @@ class _CourseFilePickerState extends ConsumerState<CourseFilePicker> {
                   });
                 } catch (e) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
+                    const SnackBar(
                         content: Center(
                       child: CustomText(
                         text: "File not found",

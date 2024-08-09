@@ -18,6 +18,7 @@ class DataPreview extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     List<Student> excelData = ref.watch(createBatchProvider).students;
     List<String> columns = [
+      "RegistrationID",
       "Name",
       "Email",
       "PhoneNO",
@@ -56,7 +57,7 @@ class DataPreview extends ConsumerWidget {
               dividerThickness: .3,
               headingRowHeight: height * 0.06,
               headingRowColor:
-                  MaterialStatePropertyAll(colorData.backgroundColor(1)),
+                  WidgetStatePropertyAll(colorData.backgroundColor(1)),
               dataTextStyle: TextStyle(
                 fontSize: sizeData.regular,
                 fontWeight: FontWeight.w600,
@@ -79,6 +80,7 @@ class DataPreview extends ConsumerWidget {
                 (index) {
                   Student stuData = excelData[index];
                   List<dynamic> rowData = [
+                    stuData.registrationID,
                     stuData.name,
                     stuData.email,
                     stuData.phoneNo,

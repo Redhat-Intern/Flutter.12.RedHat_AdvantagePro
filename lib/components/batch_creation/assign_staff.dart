@@ -3,21 +3,26 @@ import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:redhat_v1/components/common/icon.dart';
+import 'package:redhat_v1/components/common/network_image.dart';
 import 'package:redhat_v1/providers/create_batch_provider.dart';
 import 'package:shimmer/shimmer.dart';
 
 import '../../model/user.dart';
+import '../../utilities/static_data.dart';
 import '../../utilities/theme/color_data.dart';
 import '../../utilities/theme/size_data.dart';
 
 import '../../components/common/text.dart';
 
 class AssignStaff extends ConsumerStatefulWidget {
-  final List<QueryDocumentSnapshot<Map<String, dynamic>>> docs;
   const AssignStaff({
     super.key,
-    required this.docs,
+    this.docs,
+    this.from = From.edit,
   });
+
+  final List<QueryDocumentSnapshot<Map<String, dynamic>>>? docs;
+  final From? from;
 
   @override
   ConsumerState<AssignStaff> createState() => _AssignStaffState();
@@ -31,16 +36,35 @@ class _AssignStaffState extends ConsumerState<AssignStaff> {
   @override
   void initState() {
     super.initState();
-    List<UserModel> availableStaffsList = [];
-    if (widget.docs.isNotEmpty) {
-      for (var element in widget.docs) {
-        UserModel value = UserModel.fromJson(element.data());
-        availableStaffsList.add(value);
+    if (widget.from == From.edit) {
+      List<UserModel> availableStaffsList = [];
+      if (widget.docs!.isNotEmpty) {
+        for (var element in widget.docs!) {
+          UserModel value = UserModel.fromJson(element.data());
+          availableStaffsList.add(value);
+        }
       }
+      setState(() {
+        availableStaffs = availableStaffsList;
+      });
+    } else {
+      List<UserModel> selectedStaffsList = [];
+
+      if (widget.docs!.isNotEmpty) {
+        for (var element in widget.docs!) {
+          UserModel value = UserModel.fromJson(element.data());
+          selectedStaffsList.add(value);
+        }
+      }
+      setState(() {
+        selectedStaffs = selectedStaffsList;
+      });
+      Future(() {
+        ref
+            .read(createBatchProvider.notifier)
+            .updateStaffs(staffsList: selectedStaffsList);
+      });
     }
-    setState(() {
-      availableStaffs = availableStaffsList;
-    });
   }
 
   @override
@@ -52,8 +76,8 @@ class _AssignStaffState extends ConsumerState<AssignStaff> {
     double height = sizeData.height;
     double aspectRatio = sizeData.aspectRatio;
 
-    return Container(
-      child: Column(
+    if (widget.from == From.edit) {
+      return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           CustomText(
@@ -365,7 +389,37 @@ class _AssignStaffState extends ConsumerState<AssignStaff> {
             height: height * 0.015,
           ),
         ],
-      ),
-    );
+      );
+    } else {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          CustomText(
+            text: "Selected Staff",
+            size: sizeData.medium,
+            color: colorData.fontColor(.8),
+            weight: FontWeight.w600,
+          ),
+          Container(
+            margin: EdgeInsets.only(top: height * 0.02),
+            height: height * 0.07,
+            child: ListView.builder(
+              physics: const BouncingScrollPhysics(),
+              scrollDirection: Axis.horizontal,
+              padding: EdgeInsets.symmetric(horizontal: width * 0.02),
+              itemCount: selectedStaffs.length,
+              itemBuilder: (BuildContext context, int index) {
+                return CustomNetworkImage(
+                  size: height * 0.07,
+                  radius: 8,
+                  url: selectedStaffs[index].imagePath,
+                  rightMargin: width * 0.02,
+                );
+              },
+            ),
+          )
+        ],
+      );
+    }
   }
 }

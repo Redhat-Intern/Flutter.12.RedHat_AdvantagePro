@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:redhat_v1/providers/create_batch_provider.dart';
 
 import '../../model/student.dart';
+import '../../providers/create_batch_provider.dart';
 import '../../utilities/static_data.dart';
 import '../../utilities/theme/color_data.dart';
 import '../../utilities/theme/size_data.dart';
+import '../add_staff/custom_input_field.dart';
 import '../common/text.dart';
-import 'student_inputfield.dart';
 
 class AddIndividualStudentOverlay extends ConsumerStatefulWidget {
   final From from;
   final Student? data;
+
   const AddIndividualStudentOverlay({
     super.key,
     required this.from,
@@ -25,6 +26,7 @@ class AddIndividualStudentOverlay extends ConsumerStatefulWidget {
 
 class _AddIndividualStudentOverlayState
     extends ConsumerState<AddIndividualStudentOverlay> {
+  TextEditingController registrationIDCtr = TextEditingController();
   TextEditingController nameCtr = TextEditingController();
   TextEditingController emailCtr = TextEditingController();
   TextEditingController phoneNoCtr = TextEditingController();
@@ -37,6 +39,7 @@ class _AddIndividualStudentOverlayState
     super.initState();
     setState(() {
       if (widget.from == From.edit) {
+        registrationIDCtr.text = widget.data!.registrationID;
         nameCtr.text = widget.data!.name;
         emailCtr.text = widget.data!.email;
         phoneNoCtr.text = widget.data!.phoneNo;
@@ -48,6 +51,7 @@ class _AddIndividualStudentOverlayState
 
   @override
   void dispose() {
+    registrationIDCtr.dispose();
     nameCtr.dispose();
     emailCtr.dispose();
     phoneNoCtr.dispose();
@@ -56,12 +60,13 @@ class _AddIndividualStudentOverlayState
   }
 
   void addStudent() {
-    if (nameCtr.text != "" &&
+    if (registrationIDCtr.text != "" &&
+        nameCtr.text != "" &&
         emailCtr.text != "" &&
         phoneNoCtr.text != "" &&
         occupationDetailCtr.text != "") {
-
       Student data = Student(
+        registrationID: registrationIDCtr.text,
         name: nameCtr.text,
         email: emailCtr.text,
         phoneNo: phoneNoCtr.text,
@@ -69,14 +74,26 @@ class _AddIndividualStudentOverlayState
         occDetail: occupationDetailCtr.text,
       );
 
-      widget.from == From.edit
-          ? ref.read(createBatchProvider.notifier).modifyStudent(student: data)
-          : ref.read(createBatchProvider.notifier).addStudent(student: data);
-      Navigator.pop(context);
+      if (widget.from == From.edit) {
+        ref.read(createBatchProvider.notifier).modifyStudent(student: data);
+        Navigator.pop(context);
+      } else {
+        bool check =
+            ref.read(createBatchProvider.notifier).addStudent(student: data);
+        if (check) {
+          Navigator.pop(context);
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Center(child: Text("RegistrationID must me *UNIQUE*")),
+            ),
+          );
+        }
+      }
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text("Kindly enter all the details"),
+          content: Center(child: Text("Kindly enter all the details")),
         ),
       );
       Navigator.pop(context);
@@ -109,19 +126,26 @@ class _AddIndividualStudentOverlayState
       ),
       actionsOverflowAlignment: OverflowBarAlignment.center,
       actions: [
-        StudentDataInputField(
+        CustomInputField(
+          controller: registrationIDCtr,
+          hintText: "Enter the Registration ID",
+          icon: Icons.badge_rounded,
+          inputType: TextInputType.text,
+          readOnly: widget.from == From.edit,
+        ),
+        CustomInputField(
           controller: nameCtr,
           hintText: "Enter the Name",
           icon: Icons.person_rounded,
           inputType: TextInputType.text,
         ),
-        StudentDataInputField(
+        CustomInputField(
           controller: emailCtr,
           hintText: "Enter the Email",
           icon: Icons.email_rounded,
           inputType: TextInputType.emailAddress,
         ),
-        StudentDataInputField(
+        CustomInputField(
           controller: phoneNoCtr,
           hintText: "Enter the PhoneNo",
           icon: Icons.numbers_rounded,
@@ -137,7 +161,7 @@ class _AddIndividualStudentOverlayState
                     }),
                     child: AnimatedContainer(
                       duration: const Duration(milliseconds: 500),
-                      margin: EdgeInsets.only(bottom: height*0.02),
+                      margin: EdgeInsets.only(bottom: height * 0.02),
                       padding: EdgeInsets.symmetric(
                           horizontal: width * 0.025, vertical: height * 0.008),
                       decoration: BoxDecoration(
@@ -168,7 +192,7 @@ class _AddIndividualStudentOverlayState
                   ))
               .toList(),
         ),
-        StudentDataInputField(
+        CustomInputField(
           controller: occupationDetailCtr,
           hintText: "Enter the occupation detail",
           icon: Icons.work_rounded,

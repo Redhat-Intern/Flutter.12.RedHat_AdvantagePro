@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:redhat_v1/components/common/network_image.dart';
 import 'package:redhat_v1/providers/create_batch_provider.dart';
 
+import '../../utilities/static_data.dart';
 import '../../utilities/theme/color_data.dart';
 import '../../utilities/theme/size_data.dart';
 
@@ -13,11 +14,17 @@ import '../common/text.dart';
 import 'batch_field_tile.dart';
 
 class AvailableCertifications extends ConsumerStatefulWidget {
-  final List<QueryDocumentSnapshot<Map<String, dynamic>>> docs;
   const AvailableCertifications({
     super.key,
-    required this.docs,
+    this.docs,
+    this.from = From.edit,
+    this.doc,
+    this.dates,
   });
+  final List<QueryDocumentSnapshot<Map<String, dynamic>>>? docs;
+  final From? from;
+  final QueryDocumentSnapshot<Map<String, dynamic>>? doc;
+  final List<String>? dates;
 
   @override
   ConsumerState<AvailableCertifications> createState() =>
@@ -85,16 +92,34 @@ class _AvailableCertificationsState
   @override
   void initState() {
     super.initState();
-    List<Map<String, dynamic>> certificationsData = [];
-    for (var element in widget.docs) {
-      Map<String, dynamic> value =
-          Map.fromEntries(element.data().entries.toSet());
-      value.addAll({"id": element.id.toString()});
-      certificationsData.add(value);
+    if (widget.from == From.edit) {
+      List<Map<String, dynamic>> certificationsData = [];
+      for (var element in widget.docs!) {
+        Map<String, dynamic> value =
+            Map.fromEntries(element.data().entries.toSet());
+        value.addAll({"id": element.id.toString()});
+        certificationsData.add(value);
+      }
+      setState(() {
+        certifications = certificationsData;
+      });
+    } else {
+      setState(() {
+        selectedCertificate = widget.doc!.data();
+        selectedDates = widget.dates!;
+        startDate = DateFormat('dd-MM-yyyy').parse(widget.dates!.first);
+        endDate = DateFormat('dd-MM-yyyy').parse(widget.dates!.last);
+      });
+      Future(() {
+        ref
+            .read(createBatchProvider.notifier)
+            .updateDates(newDates: widget.dates!);
+
+        ref
+            .read(createBatchProvider.notifier)
+            .updateCertificate(newCertificateData: widget.doc!.data());
+      });
     }
-    setState(() {
-      certifications = certificationsData;
-    });
   }
 
   int firstIndex = 0;
@@ -128,7 +153,7 @@ class _AvailableCertificationsState
               color: colorData.fontColor(.8),
               weight: FontWeight.w600,
             ),
-            selectedCertificate.isNotEmpty
+            widget.from == From.edit && selectedCertificate.isNotEmpty
                 ? GestureDetector(
                     onTap: () {
                       setState(() {
@@ -307,36 +332,37 @@ class _AvailableCertificationsState
                       ],
                     ),
                   ),
-                  Positioned(
-                    right: width * 0.02,
-                    bottom: height * 0.01,
-                    child: GestureDetector(
-                      onTap: () => selectDate(
-                        context: context,
-                        days: Map.from(selectedCertificate["courseContent"])
-                            .length,
-                        size: Size(width * .8, height * 0.3),
-                        colorData: colorData,
-                        sizeData: sizeData,
+                  if (widget.from == From.edit)
+                    Positioned(
+                      right: width * 0.02,
+                      bottom: height * 0.01,
+                      child: GestureDetector(
+                        onTap: () => selectDate(
+                          context: context,
+                          days: Map.from(selectedCertificate["courseContent"])
+                              .length,
+                          size: Size(width * .8, height * 0.3),
+                          colorData: colorData,
+                          sizeData: sizeData,
+                        ),
+                        child: Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: width * 0.02,
+                            vertical: 4,
+                          ),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(6),
+                            color: colorData.primaryColor(.8),
+                          ),
+                          child: CustomText(
+                            text: "SET DATE",
+                            size: sizeData.small,
+                            color: colorData.secondaryColor(1),
+                            weight: FontWeight.w600,
+                          ),
+                        ),
                       ),
-                      child: Container(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: width * 0.02,
-                          vertical: 4,
-                        ),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(6),
-                          color: colorData.primaryColor(.8),
-                        ),
-                        child: CustomText(
-                          text: "SET DATE",
-                          size: sizeData.small,
-                          color: colorData.secondaryColor(1),
-                          weight: FontWeight.w600,
-                        ),
-                      ),
-                    ),
-                  )
+                    )
                 ],
               ),
         SizedBox(

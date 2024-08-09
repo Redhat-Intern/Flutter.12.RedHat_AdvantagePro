@@ -67,10 +67,7 @@ class Batch {
       'dates': dates,
       'staffs': staffs.map((data) => {data.staffId: data.email}),
       'students': students.isNotEmpty
-          ? students.map((student) => {
-                "${name}STU${(students.indexOf(student) + 1).toString().padLeft(3, '0')}":
-                    student.email
-              })
+          ? students.map((student) => {student.registrationID: student.email})
           : {},
     };
   }

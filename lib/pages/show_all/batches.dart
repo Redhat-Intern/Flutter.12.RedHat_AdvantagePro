@@ -169,13 +169,6 @@ class Batches extends ConsumerWidget {
                                               value: batchData["time"],
                                             ),
                                             BatchTileText(
-                                              header: "Admin Staff:",
-                                              value:
-                                                  Map.from(batchData["admin"])
-                                                      .keys
-                                                      .first,
-                                            ),
-                                            BatchTileText(
                                               header: "Students Count:",
                                               value:
                                                   studentsListLength.toString(),

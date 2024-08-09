@@ -51,7 +51,6 @@ class _HeaderState extends ConsumerState<Header>
                     .collection("notifications")
                     .snapshots(),
                 builder: (context, snapshot) {
-                  ConsoleLogger.message(snapshot.connectionState, from: "Data");
                   if (snapshot.hasData) {
                     List<QueryDocumentSnapshot<Map<String, dynamic>>> data =
                         snapshot.data!.docs.toList();

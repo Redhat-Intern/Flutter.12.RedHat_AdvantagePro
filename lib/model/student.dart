@@ -2,6 +2,7 @@
 enum StudentOcc { college, professional }
 
 class Student {
+  String registrationID;
   String name;
   String email;
   String phoneNo;
@@ -9,6 +10,7 @@ class Student {
   String occDetail;
 
   Student({
+    required this.registrationID,
     required this.name,
     required this.email,
     required this.phoneNo,
@@ -18,6 +20,7 @@ class Student {
 
   Map<String, dynamic> toMap() {
     return {
+      'registrationID': registrationID,
       'name': name,
       'email': email,
       'phoneNo': phoneNo,

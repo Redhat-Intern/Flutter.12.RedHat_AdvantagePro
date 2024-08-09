@@ -10,7 +10,6 @@ import '../components/common/waiting_widgets/recent_waiting.dart';
 import '../components/common/waiting_widgets/search_field_waiting.dart';
 import '../components/common/waiting_widgets/staffs_list_waiting.dart';
 import '../model/user.dart';
-import '../pages/add_pages/add_certification.dart';
 import '../pages/certificates.dart';
 import '../pages/home/admin_home.dart';
 import '../pages/home/staff_home.dart';

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:redhat_v1/utilities/static_data.dart';
 
 import '../../utilities/theme/color_data.dart';
 import '../../utilities/theme/size_data.dart';
@@ -16,6 +17,7 @@ class CustomInputField extends ConsumerWidget {
     this.bottomMar,
     this.visibleText = true,
     this.listener,
+    this.initialValue,
   });
   final TextEditingController? controller;
   final String hintText;
@@ -25,6 +27,7 @@ class CustomInputField extends ConsumerWidget {
   final double? bottomMar;
   final bool visibleText;
   final Function? listener;
+  final String? initialValue;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -72,8 +75,9 @@ class CustomInputField extends ConsumerWidget {
             ),
           ),
           Expanded(
-            child: TextField(
+            child: TextFormField(
               readOnly: readOnly,
+              initialValue: initialValue,
               controller: controller,
               keyboardType: inputType,
               onChanged: (value) {

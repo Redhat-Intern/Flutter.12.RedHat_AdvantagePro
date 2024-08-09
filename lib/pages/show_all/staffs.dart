@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:redhat_v1/utilities/static_data.dart';
 
 import '../../components/common/loader_ball.dart';
 import '../../components/common/network_image.dart';
@@ -45,8 +46,9 @@ class AllStaffs extends ConsumerWidget {
               Expanded(
                 child: StreamBuilder(
                     stream: FirebaseFirestore.instance
-                        .collection("staffs")
-                        .snapshots(),
+                        .collection("users")
+                        .where("userRole",
+                            whereIn: ["staff", "admin"]).snapshots(),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return ListView.builder(
@@ -109,7 +111,8 @@ class AllStaffs extends ConsumerWidget {
                                               CrossAxisAlignment.center,
                                           children: [
                                             CustomText(
-                                              text: staffData.staffId!,
+                                              text: staffData.staffId!
+                                                  .toUpperCase(),
                                               weight: FontWeight.w800,
                                               color: colorData.fontColor(.7),
                                             ),
@@ -118,8 +121,18 @@ class AllStaffs extends ConsumerWidget {
                                             ),
                                             CustomNetworkImage(
                                               url: staffData.imagePath,
-                                              size: aspectRatio * 160,
+                                              size: aspectRatio * 180,
                                               radius: 8,
+                                              border: Border.all(
+                                                  color: colorData.primaryColor(
+                                                      staffData.userRole ==
+                                                              UserRole.admin
+                                                          ? 1
+                                                          : .4),
+                                                  width: staffData.userRole ==
+                                                          UserRole.admin
+                                                      ? 3
+                                                      : 2),
                                             ),
                                           ],
                                         ),
