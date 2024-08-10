@@ -67,9 +67,7 @@ class CourseService {
 
       // Update basic information
       ref.read(courseDataProvider.notifier).updateName(newName: name);
-      ref
-          .read(courseDataProvider.notifier)
-          .updateImageURL(imageURL: imageURL);
+      ref.read(courseDataProvider.notifier).updateImageURL(imageURL: imageURL);
       ref
           .read(courseDataProvider.notifier)
           .updateDescription(description: description);
@@ -79,8 +77,8 @@ class CourseService {
           courseDataLength: Map.from(courseData["courseContent"]).length);
 
       // Download the course PDF
-      File? coursePDF = await downloadFile(
-          courseData["coursePDF"], "${name}_coursePDF.pdf");
+      File? coursePDF =
+          await downloadFile(courseData["coursePDF"], "${name}_coursePDF.pdf");
       if (coursePDF != null) {
         ref
             .read(courseDataProvider.notifier)
@@ -97,7 +95,6 @@ class CourseService {
             title: courseDataEntry.value["title"],
             topics: courseDataEntry.value["topics"],
             files: courseFiles);
-
         ref
             .read(courseDataProvider.notifier)
             .addOrUpdateCourseData(courseData: courseData);

@@ -71,6 +71,7 @@ class _CourseContentState extends ConsumerState<CourseContent> {
   Widget build(BuildContext context) {
     UserModel userData = ref.watch(userDataProvider).key;
     CourseData courseData = ref.watch(courseDataProvider);
+
     CustomSizeData sizeData = CustomSizeData.from(context);
     CustomColorData colorData = CustomColorData.from(ref);
     double width = sizeData.width;

@@ -85,25 +85,25 @@ class UserModel {
       email: json['email'],
       password: json['password'],
       phoneNumber: int.parse(json['phoneNo'].toString()),
-      imagePath: userRole != UserRole.student ? json['imagePath'] : '',
+      imagePath: json['imagePath'],
       userRole: userRole,
       occupation: userRole == UserRole.student ? json['occupation'] : null,
       occupationDetail:
           userRole == UserRole.student ? json['occupationDetail'] : null,
       studentId: userRole == UserRole.student
-          ? (json['id'] as Map<String, dynamic>)
-              .map((key, value) => MapEntry(key, value.toString()))
+          ? (json['id'] as Map<String, dynamic>).map((key, value) =>
+              MapEntry(key.toUpperCase(), value.toString().toUpperCase()))
           : null,
       staffId: userRole == UserRole.staff || userRole == UserRole.admin
-          ? json['id'].toString()
+          ? json['id'].toString().toUpperCase()
           : null,
       batch: userRole == UserRole.student
-          ? (json['batch'] as Map<String, dynamic>)
-              .map((key, value) => MapEntry(key, value.toString()))
+          ? (json['batch'] as Map<String, dynamic>).map((key, value) =>
+              MapEntry(key.toUpperCase(), value.toString().toUpperCase()))
           : null,
       currentBatch: userRole == UserRole.student
-          ? (json['currentBatch'] as Map<String, dynamic>)
-              .map((key, value) => MapEntry(key, value.toString()))
+          ? (json['currentBatch'] as Map<String, dynamic>).map((key, value) =>
+              MapEntry(key.toUpperCase(), value.toString().toUpperCase()))
           : null,
       courses: userRole == UserRole.staff ||
               userRole == UserRole.admin && json['courses'] != null
@@ -122,33 +122,31 @@ class UserModel {
       'email': email,
       'password': password,
       'phoneNo': phoneNumber,
+      'imagePath': imagePath,
       'userRole': userRole?.name,
     };
 
     if (userRole == UserRole.staff) {
       json.addAll({
-        'imagePath': imagePath,
-        'id': staffId,
-        'batches': staffBatches,
+        'id': staffId!.toUpperCase(),
+        'batches': staffBatches!.map((value) => value.toUpperCase()),
         'courses': courses,
-      });
-    } else if (userRole == UserRole.superAdmin) {
-      json.addAll({
-        'imagePath': imagePath,
       });
     } else if (userRole == UserRole.admin) {
       json.addAll({
-        'imagePath': imagePath,
-        'id': staffId,
+        'id': staffId!.toUpperCase(),
         'courses': courses,
       });
     } else if (userRole == UserRole.student) {
       json.addAll({
         'occupation': occupation,
         'occupationDetail': occupationDetail,
-        'id': studentId,
-        'batch': batch,
-        'currentBatch': currentBatch,
+        'id': studentId!.map(
+            (key, value) => MapEntry(key.toUpperCase(), value.toUpperCase())),
+        'batch': batch!.map(
+            (key, value) => MapEntry(key.toUpperCase(), value.toUpperCase())),
+        'currentBatch': currentBatch!.map(
+            (key, value) => MapEntry(key.toUpperCase(), value.toUpperCase())),
       });
     }
 

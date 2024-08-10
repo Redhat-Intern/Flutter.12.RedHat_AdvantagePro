@@ -14,14 +14,14 @@ Future<bool> createBatch({
   try {
     await FirebaseFirestore.instance
         .collection("batches")
-        .doc(batch.name)
+        .doc(batch.name.toUpperCase())
         .set(batchData);
 
     await FirebaseFirestore.instance
         .collection("courses")
-        .doc(batch.courseData["name"])
+        .doc(batch.courseData["name"].toString().toUpperCase())
         .collection("instances")
-        .doc(batch.name)
+        .doc(batch.name.toUpperCase())
         .set(batch.courseData);
 
     await FirebaseFirestore.instance
@@ -48,7 +48,7 @@ Future<bool> createBatch({
           .collection("users")
           .doc(element.email.toString().trim())
           .set({
-        "batches": FieldValue.arrayUnion([batch.name])
+        "batches": FieldValue.arrayUnion([batch.name.toUpperCase()])
       }, SetOptions(merge: true));
 
       // await FirebaseFirestore.instance
@@ -74,7 +74,7 @@ Future<bool> createBatch({
       Map<String, dynamic> studentData = element.toMap();
       studentData.addEntries([
         MapEntry("batchName", batch.name),
-        MapEntry("courseID", batch.courseData["name"]),
+        MapEntry("courseID", batch.courseData["name"].toString().toUpperCase()),
       ]);
 
       await FirebaseFirestore.instance

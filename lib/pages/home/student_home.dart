@@ -30,7 +30,7 @@ class StudentHome extends ConsumerWidget {
       children: [
         const Header(),
         SizedBox(
-          height: height * 0.02,
+          height: height * 0.03,
         ),
         StreamBuilder(
           stream: FirebaseFirestore.instance
@@ -69,7 +69,7 @@ class StudentHome extends ConsumerWidget {
                   children: [
                     Certifications(batchList: data),
                     SizedBox(
-                      height: height * 0.02,
+                      height: height * 0.03,
                     ),
                     CourseContent(batchData: batchData),
                   ],

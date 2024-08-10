@@ -65,9 +65,10 @@ class Batch {
       'name': name.toUpperCase(),
       'courseID': courseData["name"],
       'dates': dates,
-      'staffs': staffs.map((data) => {data.staffId: data.email}),
+      'staffs': staffs.map((data) => {data.staffId!.toUpperCase(): data.email}),
       'students': students.isNotEmpty
-          ? students.map((student) => {student.registrationID: student.email})
+          ? students.map((student) =>
+              {student.registrationID.toUpperCase(): student.email})
           : {},
     };
   }

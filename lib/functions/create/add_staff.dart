@@ -53,10 +53,11 @@ Stream<Map<int, String>> addStaff({
 Future<String> uploadPhoto(
     {required Reference ref,
     required Map<File, String> photo,
-    required String email}) async {
+    required String email,
+    String? collName}) async {
   File photoFile = photo.keys.first;
   String photoName = photo.values.first;
-  String path = "staff/$email/photo/$photoName";
+  String path = "staff/${collName ?? email}/photo/$photoName";
   UploadTask uploadTask = ref.child(path).putFile(photoFile);
   TaskSnapshot onCompleted = await uploadTask.whenComplete(() {});
   String url = await onCompleted.ref.getDownloadURL();

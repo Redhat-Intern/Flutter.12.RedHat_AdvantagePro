@@ -13,6 +13,7 @@ import '../../utilities/theme/size_data.dart';
 import '../../pages/notification.dart';
 import '../common/icon.dart';
 import '../common/menu_button.dart';
+import '../common/network_image.dart';
 import '../common/text.dart';
 import '../common/waiting_widgets/notification_waiting.dart';
 
@@ -110,18 +111,10 @@ class _HeaderState extends ConsumerState<Header>
                   ),
                 );
               },
-              child: Container(
-                padding: EdgeInsets.all(aspectRatio * 6),
-                margin: EdgeInsets.only(left: width * 0.02),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8),
-                  color: colorData.secondaryColor(1),
-                ),
-                child: Image(
-                  height: aspectRatio * 70,
-                  width: aspectRatio * 70,
-                  image: NetworkImage(userData.imagePath),
-                ),
+              child: CustomNetworkImage(
+                size: aspectRatio * 70,
+                radius: 8,
+                url: userData.imagePath == '' ? null : userData.imagePath,
               ),
             )
           ],

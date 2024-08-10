@@ -1,6 +1,9 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../components/add_staff/photo_picker.dart';
 import '../../functions/create/create_user.dart';
 import '../../functions/create/generate_userdata.dart';
 import '../../components/add_staff/custom_input_field.dart';
@@ -27,6 +30,13 @@ class _SignupState extends ConsumerState<Signup> {
   TextEditingController passwordCtr = TextEditingController();
 
   Map<String, dynamic> generatedData = {};
+  Map<File, String> photo = {};
+
+  void setPhoto(File photo, String photoName) {
+    setState(() {
+      this.photo = {photo: photoName};
+    });
+  }
 
   @override
   void dispose() {
@@ -40,13 +50,38 @@ class _SignupState extends ConsumerState<Signup> {
   void _generateUserData() async {
     Map<String, dynamic>? userData =
         await generateUserData(context: context, id: idCtr.text.trim());
-    print(userData);
     if (userData != null) {
-      setState(() {
-        generatedData = userData;
-        emailCtr.text = userData["email"];
-        nameCtr.text = userData["name"];
-      });
+      if (userData["userRole"] == "student") {
+        setState(() {
+          generatedData["name"] = userData["name"];
+          generatedData["email"] = userData["email"];
+          generatedData["phoneNo"] = userData["phoneNo"];
+          generatedData["userRole"] = "student";
+          generatedData["imagePath"] = "";
+          generatedData["id"] = {
+            userData["batchName"].toString().toUpperCase():
+                userData["id"].toString().toUpperCase()
+          };
+          generatedData["batch"] = {
+            userData["batchName"].toString().toUpperCase():
+                userData["courseID"].toString().toUpperCase()
+          };
+          generatedData["occupation"] = userData["occupation"];
+          generatedData["occupationDetail"] = userData["occDetail"];
+          generatedData["currentBatch"] = {
+            userData["batchName"].toString().toUpperCase():
+                userData["courseID"].toString().toUpperCase()
+          };
+          emailCtr.text = userData["email"];
+          nameCtr.text = userData["name"];
+        });
+      } else {
+        setState(() {
+          generatedData = userData;
+          emailCtr.text = userData["email"];
+          nameCtr.text = userData["name"];
+        });
+      }
     }
   }
 
@@ -61,6 +96,7 @@ class _SignupState extends ConsumerState<Signup> {
       password: passwordCtr.text.trim(),
       generatedData: UserModel.fromJson(generatedData),
       context: context,
+      photo: photo,
     );
   }
 
@@ -92,14 +128,17 @@ class _SignupState extends ConsumerState<Signup> {
               top: 0,
               right: 0,
               child: Image(
-                height: height * .185,
+                height: height * (.185),
                 image: const AssetImage("assets/images/redhat.png"),
               ),
             ),
             Container(
               width: width,
               padding: EdgeInsets.only(
-                  left: width * 0.05, right: width * 0.05, top: height * 0.2),
+                  left: width * 0.05,
+                  right: width * 0.05,
+                  top: height *
+                      (generatedData["userRole"] == "student" ? .125 : 0.2)),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -114,12 +153,13 @@ class _SignupState extends ConsumerState<Signup> {
                   ),
                   CustomText(
                     text: "Create a account to continue",
-                    size: sizeData.header,
+                    size: sizeData.subHeader,
                     color: fontColor(.6),
                     weight: FontWeight.bold,
                   ),
                   SizedBox(
-                    height: height * 0.04,
+                    height: height *
+                        (generatedData["userRole"] == "student" ? .02 : 0.04),
                   ),
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -156,17 +196,28 @@ class _SignupState extends ConsumerState<Signup> {
                   SizedBox(
                     height: height * 0.02,
                   ),
-                  Align(
-                    alignment: Alignment.center,
-                    child: CustomText(
-                      text: "Enter the $hintText and generate to signup!",
-                      weight: FontWeight.w700,
-                      color: const Color.fromARGB(255, 80, 143, 82),
+                  if (generatedData["userRole"] != "student")
+                    Align(
+                      alignment: Alignment.center,
+                      child: CustomText(
+                        text: "Enter the $hintText and generate to signup!",
+                        weight: FontWeight.w700,
+                        color: const Color.fromARGB(255, 80, 143, 82),
+                      ),
                     ),
-                  ),
-                  SizedBox(
-                    height: height * 0.03,
-                  ),
+                  if (generatedData["userRole"] != "student")
+                    SizedBox(
+                      height: height * 0.03,
+                    ),
+                  if (generatedData["userRole"] == "student")
+                    PhotoPicker(
+                      setter: setPhoto,
+                      from: From.add,
+                    ),
+                  if (generatedData["userRole"] == "student")
+                    SizedBox(
+                      height: height * 0.02,
+                    ),
                   CustomInputField(
                     controller: nameCtr,
                     hintText: "NAME",

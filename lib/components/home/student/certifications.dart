@@ -56,6 +56,7 @@ class _CertificationsState extends ConsumerState<Certifications> {
   Widget build(BuildContext context) {
     CustomSizeData sizeData = CustomSizeData.from(context);
     CustomColorData colorData = CustomColorData.from(ref);
+    print(widget.batchList);
 
     double width = sizeData.width;
     double height = sizeData.height;
@@ -95,36 +96,42 @@ class _CertificationsState extends ConsumerState<Certifications> {
                       bool isFirst =
                           certificationsList[index]["completed"] ?? true;
 
-                      return Column(
-                        children: [
-                          SizedBox(
-                            height: height * 0.01,
-                          ),
-                          CustomText(
-                              text: certificationsList[index]["name"],
-                              weight: FontWeight.w800),
-                          SizedBox(
-                            height: height * 0.005,
-                          ),
-                          Container(
-                            margin: EdgeInsets.only(right: width * 0.02),
-                            padding: EdgeInsets.all(isFirst ? 3 : 5),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(8),
-                              border: Border.all(
-                                color: isFirst
-                                    ? colorData.primaryColor(.6)
-                                    : Colors.transparent,
-                                width: 2,
+                      return GestureDetector(
+                        onTap: () {},
+                        child: Container(
+                          color: Colors.transparent,
+                          child: Column(
+                            children: [
+                              SizedBox(
+                                height: height * 0.01,
                               ),
-                            ),
-                            child: CustomNetworkImage(
-                              size: height * .125,
-                              radius: 8,
-                              url: certificationsList[index]['image'],
-                            ),
+                              CustomText(
+                                  text: certificationsList[index]["name"],
+                                  weight: FontWeight.w800),
+                              SizedBox(
+                                height: height * 0.005,
+                              ),
+                              Container(
+                                margin: EdgeInsets.only(right: width * 0.02),
+                                padding: EdgeInsets.all(isFirst ? 3 : 5),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(8),
+                                  border: Border.all(
+                                    color: isFirst
+                                        ? colorData.primaryColor(.6)
+                                        : Colors.transparent,
+                                    width: 2,
+                                  ),
+                                ),
+                                child: CustomNetworkImage(
+                                  size: height * .125,
+                                  radius: 8,
+                                  url: certificationsList[index]['image'],
+                                ),
+                              ),
+                            ],
                           ),
-                        ],
+                        ),
                       );
                     },
                   ),
