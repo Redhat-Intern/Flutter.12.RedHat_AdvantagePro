@@ -14,7 +14,7 @@ class UserModel {
   final List<String>? staffBatches;
   final Map<String, String>? batch;
   final Map<String, String>? currentBatch;
-  final Map<String, dynamic>? certificates;
+  final Map<String, dynamic>? courses;
 
   const UserModel({
     required this.name,
@@ -29,7 +29,7 @@ class UserModel {
     this.staffId,
     this.batch,
     this.currentBatch,
-    this.certificates,
+    this.courses,
     this.staffBatches,
   });
 
@@ -46,7 +46,7 @@ class UserModel {
     Map<String, String>? studentId,
     Map<String, String>? batch,
     Map<String, String>? currentBatch,
-    Map<String, dynamic>? certificates,
+    Map<String, dynamic>? courses,
     String? staffId,
     List<String>? staffBatches,
   }) {
@@ -63,7 +63,7 @@ class UserModel {
       staffId: staffId ?? this.staffId,
       batch: batch ?? this.batch,
       currentBatch: currentBatch ?? this.currentBatch,
-      certificates: certificates ?? this.certificates,
+      courses: courses ?? this.courses,
       staffBatches: staffBatches ?? this.staffBatches,
     );
   }
@@ -72,8 +72,8 @@ class UserModel {
   @override
   String toString() {
     return 'UserModel(name: $name, email: $email, password: $password, phoneNumber: $phoneNumber, imagePath: $imagePath, userRole: $userRole'
-        '${userRole == UserRole.staff ? ', staffId: $staffId, certificates: $certificates , Batches: $staffBatches' : ''}'
-        '${userRole == UserRole.admin ? ', staffId: $staffId, certificates: $certificates' : ''}'
+        '${userRole == UserRole.staff ? ', staffId: $staffId, courses: $courses , Batches: $staffBatches' : ''}'
+        '${userRole == UserRole.admin ? ', staffId: $staffId, courses: $courses' : ''}'
         '${userRole == UserRole.student ? ', occupation: $occupation, occupationDetail: $occupationDetail, studentId: $studentId, batch: $batch, currentBatch: $currentBatch' : ''})';
   }
 
@@ -85,7 +85,7 @@ class UserModel {
       email: json['email'],
       password: json['password'],
       phoneNumber: int.parse(json['phoneNo'].toString()),
-      imagePath: json['imagePath'],
+      imagePath: userRole != UserRole.student ? json['imagePath'] : '',
       userRole: userRole,
       occupation: userRole == UserRole.student ? json['occupation'] : null,
       occupationDetail:
@@ -105,9 +105,9 @@ class UserModel {
           ? (json['currentBatch'] as Map<String, dynamic>)
               .map((key, value) => MapEntry(key, value.toString()))
           : null,
-      certificates: userRole == UserRole.staff ||
-              userRole == UserRole.admin && json['certificates'] != null
-          ? Map<String, dynamic>.from(json['certificates'])
+      courses: userRole == UserRole.staff ||
+              userRole == UserRole.admin && json['courses'] != null
+          ? Map<String, dynamic>.from(json['courses'])
           : null,
       staffBatches: userRole == UserRole.staff && json["batches"] != null
           ? List.from(json["batches"])
@@ -122,20 +122,25 @@ class UserModel {
       'email': email,
       'password': password,
       'phoneNo': phoneNumber,
-      'imagePath': imagePath,
       'userRole': userRole?.name,
     };
 
     if (userRole == UserRole.staff) {
       json.addAll({
+        'imagePath': imagePath,
         'id': staffId,
         'batches': staffBatches,
-        'certificates': certificates,
+        'courses': courses,
+      });
+    } else if (userRole == UserRole.superAdmin) {
+      json.addAll({
+        'imagePath': imagePath,
       });
     } else if (userRole == UserRole.admin) {
       json.addAll({
+        'imagePath': imagePath,
         'id': staffId,
-        'certificates': certificates,
+        'courses': courses,
       });
     } else if (userRole == UserRole.student) {
       json.addAll({
@@ -164,7 +169,7 @@ class UserModel {
     studentId: {},
     batch: {},
     currentBatch: {},
-    certificates: {},
+    courses: {},
   );
 
   // isNotEmpty method

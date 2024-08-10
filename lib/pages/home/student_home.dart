@@ -7,7 +7,7 @@ import '../../components/common/waiting_widgets/certification_waiting.dart';
 import '../../components/home/student/certifications.dart';
 import '../../components/home/student/course_content.dart';
 import '../../components/home/header.dart';
-import '../../functions/read/certificate_data.dart';
+import '../../functions/read/course_data.dart';
 import '../../model/user.dart';
 import '../../providers/user_detail_provider.dart';
 import '../../utilities/theme/size_data.dart';
@@ -17,7 +17,7 @@ class StudentHome extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    UserModel userData = ref.watch(userDataProvider);
+    UserModel userData = ref.watch(userDataProvider).key;
     String batchName = Map.from(userData.currentBatch!).keys.first.toString();
     String studentID = Map.from(userData.studentId!)[batchName];
     String email = userData.email;
@@ -58,9 +58,9 @@ class StudentHome extends ConsumerWidget {
                 data.add(doc.data());
               }
 
-              CertificateService(ref: ref).readCertificateData(
+              CourseService(ref: ref).readCourseData(
                 batchName: batchData["name"],
-                certificateName: batchData["certificateID"],
+                courseName: batchData["courseID"],
                 isFromBatch: true,
               );
 

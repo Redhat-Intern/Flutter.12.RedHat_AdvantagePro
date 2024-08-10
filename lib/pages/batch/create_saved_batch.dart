@@ -2,30 +2,30 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../components/add_staff/custom_input_field.dart';
-import '../components/common/page_header.dart';
-import '../components/home/student/certifications_place_holder.dart';
-import '../utilities/static_data.dart';
-import '../utilities/theme/size_data.dart';
-import '../providers/create_batch_provider.dart';
+import '../../components/add_staff/custom_input_field.dart';
+import '../../components/common/page_header.dart';
+import '../../components/home/student/certifications_place_holder.dart';
+import '../../utilities/static_data.dart';
+import '../../utilities/theme/size_data.dart';
+import '../../providers/create_batch_provider.dart';
 
-import '../components/batch_creation/preview.dart';
-import '../components/batch_creation/add_students.dart';
-import '../components/batch_creation/assign_staff.dart';
-import '../components/batch_creation/avalilable_certifications.dart';
-import '../components/batch_creation/batch_button.dart';
+import '../../components/batch_creation/preview.dart';
+import '../../components/batch_creation/add_students.dart';
+import '../../components/batch_creation/assign_staff.dart';
+import '../../components/batch_creation/avalilable_certifications.dart';
+import '../../components/batch_creation/batch_button.dart';
 
 class CreateSavedBatch extends ConsumerWidget {
   const CreateSavedBatch({
     super.key,
-    required this.certificateID,
+    required this.courseID,
     required this.name,
     required this.selectDates,
     required this.staffID,
   });
 
   final String name;
-  final String certificateID;
+  final String courseID;
   final List<String> selectDates;
   final List<String> staffID;
 
@@ -75,14 +75,14 @@ class CreateSavedBatch extends ConsumerWidget {
                     ),
                     StreamBuilder(
                         stream: FirebaseFirestore.instance
-                            .collection("certificates")
+                            .collection("courses")
                             .snapshots(),
                         builder: (context, snapshot) {
                           if (snapshot.hasData &&
                               snapshot.data!.docs.isNotEmpty) {
                             QueryDocumentSnapshot<Map<String, dynamic>> doc =
                                 snapshot.data!.docs.firstWhere(
-                                    (element) => element.id == certificateID);
+                                    (element) => element.id == courseID);
                             return AvailableCertifications(
                               doc: doc,
                               from: From.detail,

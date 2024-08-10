@@ -33,8 +33,8 @@ class _CertificationsState extends ConsumerState<Certifications> {
       for (var element in widget.batchList) {
         Map<String, dynamic> data = element;
         FirebaseFirestore.instance
-            .collection("certificates")
-            .doc(element["certificateID"])
+            .collection("courses")
+            .doc(element["courseID"])
             .get()
             .then((value) {
           setState(() {

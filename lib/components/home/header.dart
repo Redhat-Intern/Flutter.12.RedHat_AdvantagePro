@@ -30,7 +30,7 @@ class _HeaderState extends ConsumerState<Header>
     CustomSizeData sizeData = CustomSizeData.from(context);
     CustomColorData colorData = CustomColorData.from(ref);
 
-    UserModel userData = ref.watch(userDataProvider);
+    UserModel userData = ref.watch(userDataProvider).key;
     String name = userData.name;
     String role = userData.userRole!.displayName;
 

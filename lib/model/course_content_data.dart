@@ -1,11 +1,11 @@
 import 'dart:io';
 
-class CourseData {
+class CourseContentData {
   String title;
   String topics;
   Map<File, Map<String, dynamic>> files;
 
-  CourseData({
+  CourseContentData({
     required this.title,
     required this.topics,
     required this.files,
@@ -17,12 +17,12 @@ class CourseData {
   }
 }
 
-class CourseDataUpload {
+class CourseContentDataUpload {
   String title;
   String topics;
   Map<String, Map<String, dynamic>> files;
 
-  CourseDataUpload({
+  CourseContentDataUpload({
     required this.title,
     required this.topics,
     required this.files,

@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lottie/lottie.dart';
 import 'package:redhat_v1/utilities/console_logger.dart';
 
+import '../../components/add_staff/add_staff_courses.dart';
 import '../../components/common/page_header.dart';
 import '../../functions/create/send_email.dart';
 import '../../utilities/static_data.dart';
@@ -12,7 +13,6 @@ import '../../functions/create/add_staff.dart';
 import '../../utilities/theme/color_data.dart';
 import '../../utilities/theme/size_data.dart';
 
-import '../../components/add_staff/add_staff_certificate.dart';
 import '../../components/add_staff/custom_input_field.dart';
 import '../../components/add_staff/photo_picker.dart';
 import '../../components/common/text.dart';
@@ -31,7 +31,7 @@ class _AddStaffState extends ConsumerState<AddStaff> {
   TextEditingController emailController = TextEditingController();
   TextEditingController phoneNoController = TextEditingController();
   TextEditingController staffIDController = TextEditingController();
-  List<Map<File, Map<String, dynamic>>> certificates = [];
+  List<Map<File, Map<String, dynamic>>> courses = [];
 
   Map<int, String> completionCount = {};
 
@@ -41,25 +41,24 @@ class _AddStaffState extends ConsumerState<AddStaff> {
     });
   }
 
-  bool hasDuplicate({required Map<File, Map<String, dynamic>> certificate}) {
-    for (var element in certificates) {
-      if (element.values.first["name"] == certificate.values.first["name"]) {
+  bool hasDuplicate({required Map<File, Map<String, dynamic>> course}) {
+    for (var element in courses) {
+      if (element.values.first["name"] == course.values.first["name"]) {
         return false;
       }
     }
     return true;
   }
 
-  void handleCertificate(
-      {required Map<File, Map<String, dynamic>> certificate,
-      required bool set}) {
+  void handleCourse(
+      {required Map<File, Map<String, dynamic>> course, required bool set}) {
     setState(() {
       if (set) {
-        if (hasDuplicate(certificate: certificate)) {
-          certificates.add(certificate);
+        if (hasDuplicate(course: course)) {
+          courses.add(course);
         }
       } else {
-        certificates.remove(certificate);
+        courses.remove(course);
       }
     });
   }
@@ -70,7 +69,7 @@ class _AddStaffState extends ConsumerState<AddStaff> {
         phoneNoController.text.isEmpty ||
         staffIDController.text.isEmpty ||
         photo.isEmpty ||
-        certificates.isEmpty) {
+        courses.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
           content: Center(child: Text("Kindly enter all the data"))));
     } else if (await checkIdMatch(staffIDController.text)) {
@@ -87,7 +86,7 @@ class _AddStaffState extends ConsumerState<AddStaff> {
         phoneNo: phoneNoController.text.trim(),
         staffId: staffIDController.text.trim(),
         isAdmin: isAdmin,
-        certificates: certificates,
+        courses: courses,
       ).listen((event) {
         setState(() {
           if (event.keys.first == 1) {
@@ -96,7 +95,7 @@ class _AddStaffState extends ConsumerState<AddStaff> {
                 receiverEmail: emailController.text,
                 name: nameController.text,
                 registrationNo: event.values.first.toString());
-            completionCount = {1: "Uploading certificates"};
+            completionCount = {1: "Uploading courses"};
           } else if (event.keys.first == 3) {
             completionCount = event;
             Navigator.pop(context);
@@ -202,8 +201,8 @@ class _AddStaffState extends ConsumerState<AddStaff> {
                   SizedBox(
                     height: height * 0.02,
                   ),
-                  AddStaffCertificates(
-                    handleCertificate: handleCertificate,
+                  AddStaffCourses(
+                    handleCourse: handleCourse,
                   ),
                   const Spacer(),
                   GestureDetector(

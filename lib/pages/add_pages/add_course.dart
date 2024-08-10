@@ -7,25 +7,25 @@ import 'package:redhat_v1/utilities/static_data.dart';
 
 import '../../components/common/icon.dart';
 import '../../components/common/page_header.dart';
-import '../../functions/create/create_certficate.dart';
+import '../../functions/create/create_course.dart';
 import '../../utilities/theme/color_data.dart';
 import '../../utilities/theme/size_data.dart';
-import '../../model/course_data.dart';
+import '../../model/course_content_data.dart';
 
-import '../../components/add_certificate/certificate_pdf_picker.dart';
-import '../../components/add_certificate/course_content_textfield.dart';
-import '../../components/add_certificate/details_inputfield.dart';
-import '../../components/add_certificate/course_files.dart';
+import '../../components/add_course/course_pdf_picker.dart';
+import '../../components/add_course/course_content_textfield.dart';
+import '../../components/add_course/details_inputfield.dart';
+import '../../components/add_course/course_files.dart';
 import '../../components/common/text.dart';
 
 class AddCertification extends ConsumerStatefulWidget {
   const AddCertification({super.key});
 
   @override
-  ConsumerState<AddCertification> createState() => AddCertificateState();
+  ConsumerState<AddCertification> createState() => AddCourseState();
 }
 
-class AddCertificateState extends ConsumerState<AddCertification> {
+class AddCourseState extends ConsumerState<AddCertification> {
   TextEditingController name = TextEditingController();
   TextEditingController discription = TextEditingController();
   Map<File, String> image = {};
@@ -36,8 +36,8 @@ class AddCertificateState extends ConsumerState<AddCertification> {
 
   Map<int, String> completionCount = {};
 
-  Map<int, CourseData> courseContent = {
-    0: CourseData(files: {}, title: "", topics: "")
+  Map<int, CourseContentData> courseContent = {
+    0: CourseContentData(files: {}, title: "", topics: "")
   };
 
   int firstIndex = 0;
@@ -50,7 +50,7 @@ class AddCertificateState extends ConsumerState<AddCertification> {
       topics.clear();
       title.clear();
       completionCount.clear();
-      courseContent = {0: CourseData(files: {}, title: "", topics: "")};
+      courseContent = {0: CourseContentData(files: {}, title: "", topics: "")};
       firstIndex = 0;
     });
   }
@@ -60,18 +60,18 @@ class AddCertificateState extends ConsumerState<AddCertification> {
     super.initState();
     clearData();
     title.addListener(() {
-      CourseData currentData = courseContent[firstIndex]!;
+      CourseContentData currentData = courseContent[firstIndex]!;
       currentData.title = title.text;
     });
     topics.addListener(() {
-      CourseData currentData = courseContent[firstIndex]!;
+      CourseContentData currentData = courseContent[firstIndex]!;
       currentData.topics = topics.text;
     });
   }
 
   void dayChange({required int day}) {
     setState(() {
-      CourseData currentData = courseContent[day]!;
+      CourseContentData currentData = courseContent[day]!;
       title.text = currentData.title;
       topics.text = currentData.topics;
     });
@@ -79,7 +79,7 @@ class AddCertificateState extends ConsumerState<AddCertification> {
 
   bool hasDuplicate(
       {required MapEntry<File, Map<String, dynamic>> courseFile,
-      required CourseData currentData}) {
+      required CourseContentData currentData}) {
     bool isDuplicate = false;
     currentData.files.forEach((key, value) {
       if (value["name"] == courseFile.value["name"]) {
@@ -92,7 +92,7 @@ class AddCertificateState extends ConsumerState<AddCertification> {
   void handleFile(
       {required MapEntry<File, Map<String, dynamic>> file, required bool set}) {
     setState(() {
-      CourseData currentData = courseContent[firstIndex]!;
+      CourseContentData currentData = courseContent[firstIndex]!;
       if (set) {
         if (hasDuplicate(courseFile: file, currentData: currentData)) {
           currentData.files.addEntries([file]);
@@ -103,7 +103,7 @@ class AddCertificateState extends ConsumerState<AddCertification> {
     });
   }
 
-  void setCertificateImage(File image, String imageName) {
+  void setCourseImage(File image, String imageName) {
     setState(() {
       this.image = {image: imageName};
     });
@@ -115,7 +115,7 @@ class AddCertificateState extends ConsumerState<AddCertification> {
     });
   }
 
-  void setCourseContent(Map<int, CourseData> courseContent) {
+  void setCourseContent(Map<int, CourseContentData> courseContent) {
     setState(() {
       this.courseContent = courseContent;
     });
@@ -168,7 +168,7 @@ class AddCertificateState extends ConsumerState<AddCertification> {
         completionCount = {0: "Started"};
       });
 
-      createCertificate(
+      createCourse(
         image: image,
         nameController: name,
         discriptionController: discription,
@@ -225,7 +225,7 @@ class AddCertificateState extends ConsumerState<AddCertification> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   PageHeader(
-                    tittle: "create certificate",
+                    tittle: "create course",
                     isMenuButton: false,
                     secondaryWidget: GestureDetector(
                       onTap: () {
@@ -268,16 +268,16 @@ class AddCertificateState extends ConsumerState<AddCertification> {
                   SizedBox(
                     height: height * .03,
                   ),
-                  CertificateDetail(
+                  CourseDetail(
                     discription: discription,
                     name: name,
-                    imageSetter: setCertificateImage,
+                    imageSetter: setCourseImage,
                     from: From.add,
                   ),
                   SizedBox(
                     height: height * .04,
                   ),
-                  CertificatePDF(
+                  CoursePDF(
                     setter: setCoursePDF,
                     from: From.add,
                   ),
@@ -400,7 +400,7 @@ class AddCertificateState extends ConsumerState<AddCertification> {
                               GestureDetector(
                                 onTap: () => setState(() {
                                   courseContent.addAll({
-                                    courseContent.length: CourseData(
+                                    courseContent.length: CourseContentData(
                                         files: {}, title: "", topics: "")
                                   });
                                 }),

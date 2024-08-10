@@ -20,7 +20,7 @@ class Profile extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    UserModel userData = ref.watch(userDataProvider);
+    UserModel userData = ref.watch(userDataProvider).key;
     CustomSizeData sizeData = CustomSizeData.from(context);
     CustomColorData colorData = CustomColorData.from(ref);
 
@@ -68,7 +68,7 @@ class Profile extends ConsumerWidget {
                     SizedBox(
                       height: height * 0.02,
                     ),
-                    userData.userRole != UserRole.student
+                    userData.userRole != null
                         ? CustomNetworkImage(
                             size: aspectRatio * 250,
                             radius: width,
@@ -115,7 +115,7 @@ class Profile extends ConsumerWidget {
                       text: 'Logout',
                       icon: Icons.logout_outlined,
                       todo: () {
-                        AuthFB().signOut();
+                        AuthFB().signOut(ref: ref);
                         Navigator.pop(context);
                       },
                     ),

@@ -6,8 +6,8 @@ import '../../utilities/theme/size_data.dart';
 
 import '../common/text.dart';
 
-class StaffCertificatesTile extends ConsumerWidget {
-  const StaffCertificatesTile({
+class StaffCourseTile extends ConsumerWidget {
+  const StaffCourseTile({
     super.key,
     required this.value,
     required this.field,

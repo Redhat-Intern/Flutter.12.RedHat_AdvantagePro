@@ -6,16 +6,16 @@ import '../../utilities/static_data.dart';
 import '../../utilities/theme/color_data.dart';
 import '../../utilities/theme/size_data.dart';
 
-import 'certificate_image_picker.dart';
+import '../add_course/course_image_picker.dart';
 
-class CertificateDetail extends ConsumerWidget {
+class CourseDetail extends ConsumerWidget {
   final TextEditingController name;
   final TextEditingController discription;
   final Function? imageSetter;
   final From from;
   final String? imageURL;
 
-  const CertificateDetail({
+  const CourseDetail({
     super.key,
     required this.name,
     required this.discription,
@@ -46,7 +46,7 @@ class CertificateDetail extends ConsumerWidget {
       child: Row(
         children: [
           from == From.add
-              ? CertificateImagePicker(
+              ? CourseImagePicker(
                   from: From.add,
                   imageURL: "",
                   setter: imageSetter!,

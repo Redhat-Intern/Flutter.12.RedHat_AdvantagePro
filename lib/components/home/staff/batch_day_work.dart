@@ -44,7 +44,7 @@ class BatchDayWork extends ConsumerWidget {
                 MaterialPageRoute(
                     builder: (context) => CourseUpdate(
                           batchName: batchData["name"],
-                          certificateName: batchData["certificateID"],
+                          courseName: batchData["courseID"],
                           dayIndex: dayIndex.toString(),
                         ))),
             child: Row(

@@ -96,7 +96,7 @@ class BatchDeatilState extends ConsumerState<BatchDetail> {
                       color: colorData.primaryColor(1),
                     ),
                     child: NetworkImageRender(
-                      certificateID: widget.batchData["certificateID"],
+                      courseID: widget.batchData["courseID"],
                       size: width * .25,
                       radius: 10,
                     ),
@@ -106,8 +106,8 @@ class BatchDeatilState extends ConsumerState<BatchDetail> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       BatchDetailTile(
-                        title: "Certificate ID",
-                        value: widget.batchData["certificateID"],
+                        title: "Course ID",
+                        value: widget.batchData["courseID"],
                       ),
                       BatchDetailTile(
                         title: "Created Date",

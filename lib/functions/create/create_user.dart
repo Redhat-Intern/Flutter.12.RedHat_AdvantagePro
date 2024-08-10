@@ -24,7 +24,6 @@ Future createUser({
         .doc(email)
         .set(generatedData.toJson());
     await FirebaseFirestore.instance.collection("requests").doc(email).delete();
-
     Navigator.pop(context);
   }).catchError((error) {
     Color secondaryColor(double opacity) => Colors.white.withOpacity(opacity);

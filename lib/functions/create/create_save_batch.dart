@@ -18,11 +18,11 @@ Future<bool> createBatch({
         .set(batchData);
 
     await FirebaseFirestore.instance
-        .collection("certificates")
-        .doc(batch.certificateData["name"])
+        .collection("courses")
+        .doc(batch.courseData["name"])
         .collection("instances")
         .doc(batch.name)
-        .set(batch.certificateData);
+        .set(batch.courseData);
 
     await FirebaseFirestore.instance
         .collection("savedBatches")
@@ -71,13 +71,10 @@ Future<bool> createBatch({
     }
 
     for (var element in batch.students) {
-      String regID =
-          "${batch.name}STU${(batch.students.indexOf(element) + 1).toString().padLeft(3, '0')}";
       Map<String, dynamic> studentData = element.toMap();
       studentData.addEntries([
-        MapEntry("id", regID),
         MapEntry("batchName", batch.name),
-        MapEntry("certificateID", batch.certificateData["name"]),
+        MapEntry("courseID", batch.courseData["name"]),
       ]);
 
       await FirebaseFirestore.instance
@@ -98,7 +95,7 @@ Future<bool> createBatch({
       //       element.email: {
       //         batch.name: {
       //           'message':
-      //               'Welcome to the cretification course of ${batch.certificateData["name"]}',
+      //               'Welcome to the cretification course of ${batch.courseData["name"]}',
       //           'id': regID,
       //         }
       //       }
@@ -109,7 +106,7 @@ Future<bool> createBatch({
           receiverEmail: element.email,
           name: element.name,
           batchID: batch.name,
-          registrationNo: regID,
+          registrationNo: element.registrationID,
         );
       } else {
         // sendInvitation();
@@ -125,7 +122,7 @@ Future<bool> createBatch({
     //   "members": members,
     //   "details": {
     //     "name": batch.name,
-    //     "image": batch.certificateData["image"],
+    //     "image": batch.courseData["image"],
     //   },
     //   "admin|${DateTime.now().toIso8601String()}": {
     //     "text":
@@ -138,6 +135,21 @@ Future<bool> createBatch({
     return true;
   } catch (exception) {
     return false;
+  }
+}
+
+Future<bool> uniqueIDCheck({
+  required String batchID,
+  required String collName,
+}) async {
+  try {
+    var data = await FirebaseFirestore.instance
+        .collection(collName)
+        .doc(batchID)
+        .get();
+    return data.exists;
+  } catch (error) {
+    return true;
   }
 }
 

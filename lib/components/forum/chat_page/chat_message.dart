@@ -36,7 +36,7 @@ class ChatTile extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    UserModel userData = ref.watch(userDataProvider);
+    UserModel userData = ref.watch(userDataProvider).key;
     UserRole userRole = userData.userRole!;
     CustomSizeData sizeData = CustomSizeData.from(context);
     CustomColorData colorData = CustomColorData.from(ref);

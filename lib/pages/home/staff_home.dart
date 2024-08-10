@@ -19,7 +19,7 @@ class StaffHome extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    UserModel userData = ref.watch(userDataProvider);
+    UserModel userData = ref.watch(userDataProvider).key;
     CustomSizeData sizeData = CustomSizeData.from(context);
     // double width = sizeData.width;
     double height = sizeData.height;
@@ -32,11 +32,8 @@ class StaffHome extends ConsumerWidget {
           height: height * 0.02,
         ),
         StreamBuilder(
-            stream: FirebaseFirestore.instance
-                .collection("batches")
-                .where("staffs", whereIn: [
-              {userData.staffId: userData.email}
-            ]).snapshots(),
+            stream:
+                FirebaseFirestore.instance.collection("batches").snapshots(),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Expanded(
@@ -52,8 +49,10 @@ class StaffHome extends ConsumerWidget {
 
               if (snapshot.hasData && snapshot.data!.docs.isNotEmpty) {
                 List<QueryDocumentSnapshot<Map<String, dynamic>>> docs =
-                    snapshot.data!.docs;
-
+                    snapshot.data!.docs
+                        .where(
+                            (data) => userData.staffBatches!.contains(data.id))
+                        .toList();
                 List<Map<String, dynamic>> recentBatches = [];
                 List<QueryDocumentSnapshot<Map<String, dynamic>>> liveBatches =
                     [];
@@ -73,7 +72,7 @@ class StaffHome extends ConsumerWidget {
                   }
 
                   recentBatches.add({
-                    "certificateID": data["certificateID"],
+                    "courseID": data["courseID"],
                     "count": count,
                     "id": i.id,
                     "isLive": isLive,

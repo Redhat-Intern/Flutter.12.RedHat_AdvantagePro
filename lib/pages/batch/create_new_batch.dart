@@ -3,16 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:redhat_v1/components/add_staff/custom_input_field.dart';
 
-import '../components/common/page_header.dart';
-import '../components/home/student/certifications_place_holder.dart';
-import '../utilities/theme/size_data.dart';
-import '../providers/create_batch_provider.dart';
+import '../../components/common/page_header.dart';
+import '../../components/home/student/certifications_place_holder.dart';
+import '../../utilities/theme/size_data.dart';
+import '../../providers/create_batch_provider.dart';
 
-import '../components/batch_creation/preview.dart';
-import '../components/batch_creation/add_students.dart';
-import '../components/batch_creation/assign_staff.dart';
-import '../components/batch_creation/avalilable_certifications.dart';
-import '../components/batch_creation/batch_button.dart';
+import '../../components/batch_creation/preview.dart';
+import '../../components/batch_creation/add_students.dart';
+import '../../components/batch_creation/assign_staff.dart';
+import '../../components/batch_creation/avalilable_certifications.dart';
+import '../../components/batch_creation/batch_button.dart';
 
 class CreateNewBatch extends ConsumerWidget {
   const CreateNewBatch({super.key});
@@ -67,7 +67,7 @@ class CreateNewBatch extends ConsumerWidget {
                     ),
                     StreamBuilder(
                         stream: FirebaseFirestore.instance
-                            .collection("certificates")
+                            .collection("courses")
                             .snapshots(),
                         builder: (context, snapshot) {
                           if (snapshot.hasData &&

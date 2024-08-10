@@ -1,30 +1,26 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:redhat_v1/components/common/network_image.dart';
-import 'package:redhat_v1/components/common/text.dart';
-import 'package:redhat_v1/functions/read/certificate_data.dart';
-import 'package:redhat_v1/model/certificate.dart';
-import 'package:redhat_v1/providers/certificate_data_provider.dart';
 
 import '../components/common/icon.dart';
+import '../components/common/network_image.dart';
 import '../components/common/page_header.dart';
-import '../model/user.dart';
-import '../providers/user_detail_provider.dart';
+import '../components/common/text.dart';
+import '../functions/read/course_data.dart';
+import '../providers/course_data_provider.dart';
 import '../utilities/theme/color_data.dart';
 import '../utilities/theme/size_data.dart';
-import 'add_pages/add_certification.dart';
+import 'add_pages/add_course.dart';
 import 'details/certificate_detail.dart';
 
-class Certificates extends ConsumerStatefulWidget {
-  const Certificates({super.key});
+class Courses extends ConsumerStatefulWidget {
+  const Courses({super.key});
 
   @override
-  ConsumerState<Certificates> createState() => _CertificatesState();
+  ConsumerState<Courses> createState() => _CoursesState();
 }
 
-class _CertificatesState extends ConsumerState<Certificates> {
+class _CoursesState extends ConsumerState<Courses> {
   TextEditingController searchCtr = TextEditingController();
 
   @override
@@ -41,7 +37,6 @@ class _CertificatesState extends ConsumerState<Certificates> {
 
   @override
   Widget build(BuildContext context) {
-    UserModel userData = ref.watch(userDataProvider);
     CustomSizeData sizeData = CustomSizeData.from(context);
     CustomColorData colorData = CustomColorData.from(ref);
 
@@ -55,7 +50,7 @@ class _CertificatesState extends ConsumerState<Certificates> {
         height: height * 0.02,
       ),
 
-      //   Add certificate
+      //   Add course
       GestureDetector(
         onTap: () => Navigator.push(context,
             MaterialPageRoute(builder: (context) => const AddCertification())),
@@ -77,7 +72,7 @@ class _CertificatesState extends ConsumerState<Certificates> {
             ),
           ),
           child: CustomText(
-            text: "Add Certificate",
+            text: "Add Course",
             size: sizeData.medium,
             color: colorData.secondaryColor(1),
             weight: FontWeight.w800,
@@ -85,12 +80,12 @@ class _CertificatesState extends ConsumerState<Certificates> {
         ),
       ),
 
-      // Certificate List
+      // Course List
 
       Align(
         alignment: Alignment.centerLeft,
         child: CustomText(
-          text: "Certificates",
+          text: "Courses",
           size: sizeData.subHeader,
           color: colorData.fontColor(.8),
           weight: FontWeight.w600,
@@ -122,7 +117,7 @@ class _CertificatesState extends ConsumerState<Certificates> {
             contentPadding: EdgeInsets.only(
               bottom: height * 0.02,
             ),
-            hintText: "Search for certificate",
+            hintText: "Search for course",
             hintStyle: TextStyle(
               fontWeight: FontWeight.w600,
               fontSize: sizeData.medium,
@@ -138,20 +133,19 @@ class _CertificatesState extends ConsumerState<Certificates> {
         ),
       ),
 
-      // List of Certificates
+      // List of Courses
 
       Expanded(
         child: StreamBuilder(
-            stream: FirebaseFirestore.instance
-                .collection("certificates")
-                .snapshots(),
+            stream:
+                FirebaseFirestore.instance.collection("courses").snapshots(),
             builder: (context, snapshot) {
               if (snapshot.hasData) {
-                List<Map<String, dynamic>> certificateList =
+                List<Map<String, dynamic>> courseList =
                     snapshot.data!.docs.map((value) => value.data()).toList();
 
                 if (searchCtr.text.isNotEmpty) {
-                  certificateList = certificateList
+                  courseList = courseList
                       .where((data) => data["name"]
                           .toString()
                           .toLowerCase()
@@ -159,7 +153,7 @@ class _CertificatesState extends ConsumerState<Certificates> {
                       .toList();
                 }
 
-                return certificateList.isEmpty
+                return courseList.isEmpty
                     ? Column(
                         children: [
                           SizedBox(height: height * 0.04),
@@ -174,29 +168,26 @@ class _CertificatesState extends ConsumerState<Certificates> {
                     : ListView.builder(
                         padding: EdgeInsets.symmetric(
                             vertical: height * 0.01, horizontal: width * 0.01),
-                        itemCount: certificateList.length,
+                        itemCount: courseList.length,
                         itemBuilder: (context, index) {
                           //
                           //
                           return GestureDetector(
                             onTap: () {
-                              ref
-                                  .read(certificateDataProvider.notifier)
-                                  .clearData();
-                              CertificateService(ref: ref).readCertificateData(
-                                  certificateName: certificateList[index]
-                                      ["name"],
+                              ref.read(courseDataProvider.notifier).clearData();
+                              CourseService(ref: ref).readCourseData(
+                                  courseName: courseList[index]["name"],
                                   isFromBatch: false);
 
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) =>
-                                      const CertificateDetailPage(),
+                                      const CourseDetailPage(),
                                 ),
                               ).then((_) {
                                 ref
-                                    .read(certificateDataProvider.notifier)
+                                    .read(courseDataProvider.notifier)
                                     .clearData();
                               });
                             },
@@ -220,7 +211,7 @@ class _CertificatesState extends ConsumerState<Certificates> {
                                   CustomNetworkImage(
                                     size: height * .12,
                                     radius: 8,
-                                    url: certificateList[index]["image"],
+                                    url: courseList[index]["image"],
                                     rightMargin: sizeData.width * 0.03,
                                   ),
                                   Expanded(
@@ -242,8 +233,7 @@ class _CertificatesState extends ConsumerState<Certificates> {
                                               ),
                                             ),
                                             TextSpan(
-                                              text: certificateList[index]
-                                                  ["name"],
+                                              text: courseList[index]["name"],
                                               style: TextStyle(
                                                 fontSize: sizeData.medium,
                                                 color: colorData.fontColor(.9),
@@ -266,7 +256,7 @@ class _CertificatesState extends ConsumerState<Certificates> {
                                               ),
                                             ),
                                             TextSpan(
-                                              text: certificateList[index]
+                                              text: courseList[index]
                                                   ["description"],
                                               style: TextStyle(
                                                 fontSize: sizeData.medium,
@@ -290,9 +280,8 @@ class _CertificatesState extends ConsumerState<Certificates> {
                                               ),
                                             ),
                                             TextSpan(
-                                              text: Map.from(
-                                                      certificateList[index]
-                                                          ["courseContent"])
+                                              text: Map.from(courseList[index]
+                                                      ["courseContent"])
                                                   .length
                                                   .toString(),
                                               style: TextStyle(

@@ -75,7 +75,7 @@ class AllStaffs extends ConsumerWidget {
                         itemBuilder: (context, index) {
                           UserModel staffData = staffDataList[index];
                           Map<String, dynamic> certifications =
-                              staffData.certificates!;
+                              staffData.courses!;
 
                           return Stack(
                             clipBehavior: Clip.none,
@@ -121,7 +121,7 @@ class AllStaffs extends ConsumerWidget {
                                             ),
                                             CustomNetworkImage(
                                               url: staffData.imagePath,
-                                              size: aspectRatio * 180,
+                                              size: aspectRatio * 200,
                                               radius: 8,
                                               border: Border.all(
                                                   color: colorData.primaryColor(
@@ -161,11 +161,6 @@ class AllStaffs extends ConsumerWidget {
                                             BatchTileText(
                                               header: "Phone NO:",
                                               value: staffData.phoneNumber
-                                                  .toString(),
-                                            ),
-                                            BatchTileText(
-                                              header: "Certifications:",
-                                              value: certifications.length
                                                   .toString(),
                                             ),
                                           ],

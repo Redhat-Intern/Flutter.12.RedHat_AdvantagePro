@@ -2,14 +2,14 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../model/certificate.dart';
-import '../model/course_data.dart';
+import '../model/course.dart';
+import '../model/course_content_data.dart';
 
-class CertificateDataNotifier extends StateNotifier<CertificateData> {
-  CertificateDataNotifier() : super(CertificateData.empty());
+class CourseDataNotifier extends StateNotifier<CourseData> {
+  CourseDataNotifier() : super(CourseData.empty());
 
   void clearData() {
-    state = CertificateData.empty();
+    state = CourseData.empty();
   }
 
   void updateName({required String newName}) {
@@ -32,8 +32,8 @@ class CertificateDataNotifier extends StateNotifier<CertificateData> {
     state = state.copyWith(description: description);
   }
 
-  void addOrUpdateCourseData({required CourseData courseData}) {
-    List<CourseData> courseDataList = List.from(state.courseDataList);
+  void addOrUpdateCourseData({required CourseContentData courseData}) {
+    List<CourseContentData> courseDataList = List.from(state.courseDataList);
     int index = courseDataList
         .indexWhere((element) => element.title == courseData.title);
 
@@ -50,19 +50,19 @@ class CertificateDataNotifier extends StateNotifier<CertificateData> {
     state = state.copyWith(courseDataList: []);
   }
 
-  void updateData({required CertificateData data}) {
+  void updateData({required CourseData data}) {
     state = data;
   }
 
-  void deleteCertificate() async {
+  void deleteCourse() async {
     await FirebaseFirestore.instance
-        .collection("certificates")
+        .collection("courses")
         .doc(state.name)
         .delete();
     clearData();
   }
 }
 
-final certificateDataProvider =
-    StateNotifierProvider<CertificateDataNotifier, CertificateData>(
-        (ref) => CertificateDataNotifier());
+final courseDataProvider =
+    StateNotifierProvider<CourseDataNotifier, CourseData>(
+        (ref) => CourseDataNotifier());

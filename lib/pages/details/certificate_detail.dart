@@ -6,32 +6,32 @@ import '../../components/common/icon.dart';
 import '../../components/common/page_header.dart';
 import '../../components/common/waiting_widgets/course_waiting.dart';
 import '../../components/home/student/course_files.dart';
-import '../../model/certificate.dart';
-import '../../providers/certificate_data_provider.dart';
+import '../../model/course.dart';
+import '../../providers/course_data_provider.dart';
 import '../../utilities/static_data.dart';
 import '../../utilities/theme/color_data.dart';
 import '../../utilities/theme/size_data.dart';
 
-import '../../components/add_certificate/certificate_pdf_picker.dart';
-import '../../components/add_certificate/course_content_textfield.dart';
-import '../../components/add_certificate/details_inputfield.dart';
+import '../../components/add_course/course_pdf_picker.dart';
+import '../../components/add_course/course_content_textfield.dart';
+import '../../components/add_course/details_inputfield.dart';
 import '../../components/common/text.dart';
 
-class CertificateDetailPage extends ConsumerStatefulWidget {
-  const CertificateDetailPage({super.key});
+class CourseDetailPage extends ConsumerStatefulWidget {
+  const CourseDetailPage({super.key});
 
   @override
-  ConsumerState<CertificateDetailPage> createState() => AddCertificateState();
+  ConsumerState<CourseDetailPage> createState() => AddCourseState();
 }
 
-class AddCertificateState extends ConsumerState<CertificateDetailPage> {
+class AddCourseState extends ConsumerState<CourseDetailPage> {
   int firstIndex = 0;
 
   @override
   Widget build(BuildContext context) {
     CustomSizeData sizeData = CustomSizeData.from(context);
     CustomColorData colorData = CustomColorData.from(ref);
-    CertificateData certificateData = ref.watch(certificateDataProvider);
+    CourseData courseData = ref.watch(courseDataProvider);
 
     double height = sizeData.height;
     double width = sizeData.width;
@@ -46,17 +46,17 @@ class AddCertificateState extends ConsumerState<CertificateDetailPage> {
             right: width * 0.04,
             top: height * 0.02,
           ),
-          child: !certificateData.isEmpty()
+          child: !courseData.isEmpty()
               ? Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     PageHeader(
-                      tittle: "certificate",
+                      tittle: "course",
                       isMenuButton: false,
                       secondaryWidget: GestureDetector(
                         onTap: () {
-                          ref.read(certificateDataProvider.notifier).deleteCertificate();
+                          ref.read(courseDataProvider.notifier).deleteCourse();
                           Navigator.pop(context);
                         },
                         child: Container(
@@ -93,26 +93,26 @@ class AddCertificateState extends ConsumerState<CertificateDetailPage> {
                     SizedBox(
                       height: height * .03,
                     ),
-                    CertificateDetail(
+                    CourseDetail(
                       discription: TextEditingController(
-                          text: certificateData.description),
-                      name: TextEditingController(text: certificateData.name),
+                          text: courseData.description),
+                      name: TextEditingController(text: courseData.name),
                       from: From.detail,
-                      imageURL: certificateData.imageURL,
+                      imageURL: courseData.imageURL,
                     ),
                     SizedBox(
                       height: height * .04,
                     ),
-                    CertificatePDF(
+                    CoursePDF(
                       from: From.detail,
-                      file: certificateData.coursePDF,
+                      file: courseData.coursePDF,
                     ),
                     SizedBox(
                       height: height * .04,
                     ),
-                    certificateData.courseDataList.isEmpty
+                    courseData.courseDataList.isEmpty
                         ? CourseContentWaitingWidget(
-                            count: certificateData.courseDataLength,
+                            count: courseData.courseDataLength,
                           )
                         : Expanded(
                             child: Column(
@@ -147,7 +147,7 @@ class AddCertificateState extends ConsumerState<CertificateDetailPage> {
                                       vertical: height * 0.005,
                                     ),
                                     scrollDirection: Axis.horizontal,
-                                    itemCount: certificateData.courseDataLength,
+                                    itemCount: courseData.courseDataLength,
                                     itemBuilder: (context, index) {
                                       return GestureDetector(
                                         onTap: () => setState(() {
@@ -199,9 +199,9 @@ class AddCertificateState extends ConsumerState<CertificateDetailPage> {
                                         CourseContentInputField(
                                           header: "Title: ",
                                           from: From.detail,
-                                          text: certificateData
+                                          text: courseData
                                                   .courseDataList.isNotEmpty
-                                              ? certificateData
+                                              ? courseData
                                                   .courseDataList[firstIndex]
                                                   .title
                                               : null,
@@ -212,9 +212,9 @@ class AddCertificateState extends ConsumerState<CertificateDetailPage> {
                                         CourseContentInputField(
                                           header: "Topics: ",
                                           from: From.detail,
-                                          text: certificateData
+                                          text: courseData
                                                   .courseDataList.isNotEmpty
-                                              ? certificateData
+                                              ? courseData
                                                   .courseDataList[firstIndex]
                                                   .topics
                                               : null,
@@ -224,7 +224,7 @@ class AddCertificateState extends ConsumerState<CertificateDetailPage> {
                                           height: height * 0.01,
                                         ),
                                         CourseFiles(
-                                            courseFiles: certificateData
+                                            courseFiles: courseData
                                                 .courseDataList[firstIndex]
                                                 .files),
                                       ],

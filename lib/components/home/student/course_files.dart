@@ -74,6 +74,7 @@ class CourseFiles extends ConsumerWidget {
                           bool isImage =
                               extension == "png" || extension == "jpg";
                           String name = thisFileMap.value["name"];
+
                           int size =
                               int.parse(thisFileMap.value["size"].toString());
                           double kb = size / 1024;

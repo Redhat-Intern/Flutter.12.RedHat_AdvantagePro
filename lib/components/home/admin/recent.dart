@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:redhat_v1/utilities/console_logger.dart';
 
 import '../../../pages/details/batch_detail.dart';
 import '../../../utilities/theme/color_data.dart';
@@ -186,7 +187,10 @@ class _RecentState extends ConsumerState<Recent> {
                                           .floor()
                                       : 0);
                               firstVisibleItemIndex = firstVisibleItemIndex >= 0
-                                  ? firstVisibleItemIndex
+                                  ? recentBatches.length - 1 <
+                                          firstVisibleItemIndex
+                                      ? recentBatches.length - 1
+                                      : firstVisibleItemIndex
                                   : 0;
                               setState(() {
                                 firstIndex = firstVisibleItemIndex;
@@ -205,6 +209,13 @@ class _RecentState extends ConsumerState<Recent> {
                             physics: const BouncingScrollPhysics(),
                             itemBuilder: (BuildContext context, int index) {
                               bool isFirst = firstIndex == index;
+                              bool isLast = index == recentBatches.length - 1;
+                              index = index > recentBatches.length - 1
+                                  ? index = recentBatches.length - 1
+                                  : index;
+                              double rightMargin =
+                                  (height * .14 + width * 0.02) *
+                                      (recentBatches.length > 3 ? 2 : 1);
                               return GestureDetector(
                                 onTap: () => Navigator.push(
                                   context,
@@ -215,11 +226,11 @@ class _RecentState extends ConsumerState<Recent> {
                                   ),
                                 ),
                                 child: NetworkImageRender(
-                                  certificateID: recentBatches[index]
-                                      ["certificateID"],
+                                  courseID: recentBatches[index]["courseID"],
                                   radius: 8,
                                   size: height * .14,
-                                  rightMargin: width * 0.02,
+                                  rightMargin:
+                                      isLast ? rightMargin : width * 0.02,
                                   border: isFirst
                                       ? Border.all(
                                           color: colorData.primaryColor(.6),

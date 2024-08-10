@@ -34,7 +34,7 @@ class _NotificationsState extends ConsumerState<Notifications> {
     List<Map<String, dynamic>> data =
         notificationData.isEmpty ? [] : notificationData.first.notifications;
 
-    UserRole userRole = ref.watch(userDataProvider).userRole!;
+    UserRole userRole = ref.watch(userDataProvider).key.userRole!;
     CustomSizeData sizeData = CustomSizeData.from(context);
     CustomColorData colorData = CustomColorData.from(ref);
 

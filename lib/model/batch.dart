@@ -6,7 +6,7 @@ import 'user.dart';
 class Batch {
   DateTime creationTime;
   String name;
-  Map<String, dynamic> certificateData;
+  Map<String, dynamic> courseData;
   List<String> dates;
   List<UserModel> staffs;
   List<Student> students;
@@ -14,7 +14,7 @@ class Batch {
   Batch({
     required this.creationTime,
     required this.name,
-    required this.certificateData,
+    required this.courseData,
     required this.dates,
     required this.staffs,
     required this.students,
@@ -24,7 +24,7 @@ class Batch {
     return Batch(
       creationTime: DateTime.now(),
       name: '',
-      certificateData: {},
+      courseData: {},
       dates: [],
       staffs: [],
       students: [],
@@ -34,7 +34,7 @@ class Batch {
   Batch copyWith({
     DateTime? creationTime,
     String? name,
-    Map<String, dynamic>? certificateData,
+    Map<String, dynamic>? courseData,
     List<String>? dates,
     List<UserModel>? staffs,
     UserModel? adminStaff,
@@ -43,7 +43,7 @@ class Batch {
     return Batch(
       creationTime: creationTime ?? this.creationTime,
       name: name ?? this.name,
-      certificateData: certificateData ?? this.certificateData,
+      courseData: courseData ?? this.courseData,
       dates: dates ?? this.dates,
       staffs: staffs ?? this.staffs,
       students: students ?? this.students,
@@ -53,7 +53,7 @@ class Batch {
   bool isNotEmpty({required bool needStudentCheck}) {
     return name.isNotEmpty &&
         name != "" &&
-        certificateData.isNotEmpty &&
+        courseData.isNotEmpty &&
         dates.isNotEmpty &&
         staffs.isNotEmpty &&
         (needStudentCheck ? students.isNotEmpty : true);
@@ -63,7 +63,7 @@ class Batch {
     return {
       'time': DateFormat("dd-MM-yyyy").format(creationTime),
       'name': name.toUpperCase(),
-      'certificateID': certificateData["name"],
+      'courseID': courseData["name"],
       'dates': dates,
       'staffs': staffs.map((data) => {data.staffId: data.email}),
       'students': students.isNotEmpty

@@ -36,7 +36,7 @@ class _AvailableCertificationsState
   final ScrollController _controller = ScrollController();
 
   List<Map<String, dynamic>> certifications = [];
-  Map<String, dynamic> selectedCertificate = {};
+  Map<String, dynamic> selectedCourse = {};
   List<String> selectedDates = [];
 
   DateTime? startDate;
@@ -78,8 +78,8 @@ class _AvailableCertificationsState
         selectedDates =
             dates.map((e) => DateFormat('dd-MM-yyyy').format(e!)).toList();
 
-        ref.read(createBatchProvider.notifier).updateCertificate(
-              newCertificateData: selectedCertificate,
+        ref.read(createBatchProvider.notifier).updateCourse(
+              newCourseData: selectedCourse,
             );
 
         ref
@@ -105,7 +105,7 @@ class _AvailableCertificationsState
       });
     } else {
       setState(() {
-        selectedCertificate = widget.doc!.data();
+        selectedCourse = widget.doc!.data();
         selectedDates = widget.dates!;
         startDate = DateFormat('dd-MM-yyyy').parse(widget.dates!.first);
         endDate = DateFormat('dd-MM-yyyy').parse(widget.dates!.last);
@@ -117,7 +117,7 @@ class _AvailableCertificationsState
 
         ref
             .read(createBatchProvider.notifier)
-            .updateCertificate(newCertificateData: widget.doc!.data());
+            .updateCourse(newCourseData: widget.doc!.data());
       });
     }
   }
@@ -148,16 +148,16 @@ class _AvailableCertificationsState
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             CustomText(
-              text: "Available Certificates",
+              text: "Available Courses",
               size: sizeData.medium,
               color: colorData.fontColor(.8),
               weight: FontWeight.w600,
             ),
-            widget.from == From.edit && selectedCertificate.isNotEmpty
+            widget.from == From.edit && selectedCourse.isNotEmpty
                 ? GestureDetector(
                     onTap: () {
                       setState(() {
-                        selectedCertificate = {};
+                        selectedCourse = {};
                         selectedDates = [];
                         startDate = null;
                         endDate = null;
@@ -176,7 +176,7 @@ class _AvailableCertificationsState
         SizedBox(
           height: height * 0.0125,
         ),
-        selectedCertificate.isEmpty
+        selectedCourse.isEmpty
             ? Container(
                 padding: EdgeInsets.only(
                   top: height * 0.01,
@@ -226,7 +226,7 @@ class _AvailableCertificationsState
                         return GestureDetector(
                           onTap: () async {
                             setState(() {
-                              selectedCertificate = certifications[index];
+                              selectedCourse = certifications[index];
                             });
                           },
                           child: Column(
@@ -293,7 +293,7 @@ class _AvailableCertificationsState
                         ClipRRect(
                           borderRadius: BorderRadius.circular(8),
                           child: Image.network(
-                            selectedCertificate["image"],
+                            selectedCourse["image"],
                             height: height * 0.125,
                             width: height * 0.125,
                             fit: BoxFit.cover,
@@ -307,12 +307,12 @@ class _AvailableCertificationsState
                           children: [
                             BatchFieldTile(
                               field: "NAME",
-                              value: selectedCertificate["name"],
+                              value: selectedCourse["name"],
                             ),
                             BatchFieldTile(
                               field: "duration",
                               value: selectedDates.isEmpty
-                                  ? "${Map.from(selectedCertificate["courseContent"]).length} Days"
+                                  ? "${Map.from(selectedCourse["courseContent"]).length} Days"
                                   : "${selectedDates.length} Days",
                             ),
                             BatchFieldTile(
@@ -339,7 +339,7 @@ class _AvailableCertificationsState
                       child: GestureDetector(
                         onTap: () => selectDate(
                           context: context,
-                          days: Map.from(selectedCertificate["courseContent"])
+                          days: Map.from(selectedCourse["courseContent"])
                               .length,
                           size: Size(width * .8, height * 0.3),
                           colorData: colorData,

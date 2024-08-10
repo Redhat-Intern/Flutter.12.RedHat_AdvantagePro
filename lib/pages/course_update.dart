@@ -8,9 +8,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:redhat_v1/components/common/page_header.dart';
 import 'package:redhat_v1/components/common/text.dart';
-import 'package:redhat_v1/functions/create/create_certficate.dart';
+import 'package:redhat_v1/functions/create/create_course.dart';
 
-import '../components/add_certificate/course_files.dart';
+import '../components/add_course/course_files.dart';
 import '../components/common/shimmer_box.dart';
 import '../utilities/theme/color_data.dart';
 import '../utilities/theme/size_data.dart';
@@ -20,11 +20,11 @@ class CourseUpdate extends ConsumerStatefulWidget {
     super.key,
     required this.dayIndex,
     required this.batchName,
-    required this.certificateName,
+    required this.courseName,
   });
   final String dayIndex;
   final String batchName;
-  final String certificateName;
+  final String courseName;
 
   @override
   ConsumerState<CourseUpdate> createState() => CourseUpdateState();
@@ -95,7 +95,7 @@ class CourseUpdateState extends ConsumerState<CourseUpdate> {
     Reference ref = FirebaseStorage.instance.ref();
 
     Reference dayFolderRef = ref.child(
-        "certificate/${widget.certificateName}/courseData/${widget.dayIndex}/");
+        "course/${widget.courseName}/courseData/${widget.dayIndex}/");
     ListResult result = await dayFolderRef.listAll();
 
     for (var element in result.items) {
@@ -105,14 +105,14 @@ class CourseUpdateState extends ConsumerState<CourseUpdate> {
     Map<String, Map<String, dynamic>> uploadedFilesData = await uploadFiles(
         files: courseFiles,
         path:
-            "certificate/${widget.certificateName}/courseData/${widget.dayIndex}/",
+            "course/${widget.courseName}/courseData/${widget.dayIndex}/",
         ref: ref);
 
     print("ploaded files");
 
     DocumentReference docRef = FirebaseFirestore.instance
-        .collection("certificates")
-        .doc(widget.certificateName)
+        .collection("courses")
+        .doc(widget.courseName)
         .collection("instances")
         .doc(widget.batchName);
 
@@ -182,8 +182,8 @@ class CourseUpdateState extends ConsumerState<CourseUpdate> {
           ),
           child: StreamBuilder(
               stream: FirebaseFirestore.instance
-                  .collection("certificates")
-                  .doc(widget.certificateName)
+                  .collection("courses")
+                  .doc(widget.courseName)
                   .collection("instances")
                   .doc(widget.batchName)
                   .snapshots(),

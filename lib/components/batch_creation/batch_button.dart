@@ -34,19 +34,34 @@ class BatchButton extends ConsumerWidget {
               Batch batchData = ref.watch(createBatchProvider);
 
               if (batchData.isNotEmpty(needStudentCheck: true)) {
-                createBatch(batch: batchData, ref: ref);
-                ref.read(createBatchProvider.notifier).clearData();
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                      content: Center(
-                    child: CustomText(
-                      text: "Batch Created Successfuly",
-                      color: Colors.white,
-                      weight: FontWeight.w700,
-                    ),
-                  )),
-                );
-                Navigator.pop(context);
+                if (await uniqueIDCheck(
+                    batchID: batchData.name.toUpperCase(),
+                    collName: "batches")) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                        content: Center(
+                      child: CustomText(
+                        text: "Batch ID already exists in BATCHES",
+                        color: Colors.white,
+                        weight: FontWeight.w700,
+                      ),
+                    )),
+                  );
+                } else {
+                  createBatch(batch: batchData, ref: ref);
+                  ref.read(createBatchProvider.notifier).clearData();
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                        content: Center(
+                      child: CustomText(
+                        text: "Batch Created Successfuly",
+                        color: Colors.white,
+                        weight: FontWeight.w700,
+                      ),
+                    )),
+                  );
+                  Navigator.pop(context);
+                }
               } else {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
@@ -93,19 +108,47 @@ class BatchButton extends ConsumerWidget {
               Batch batchData = ref.watch(createBatchProvider);
 
               if (batchData.isNotEmpty(needStudentCheck: false)) {
-                saveBatch(batch: batchData);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                      content: Center(
-                    child: CustomText(
-                      text: "Batch Saved Successfuly",
-                      color: Colors.white,
-                      weight: FontWeight.w700,
-                    ),
-                  )),
-                );
-                ref.read(createBatchProvider.notifier).clearData();
-                Navigator.pop(context);
+                if (await uniqueIDCheck(
+                    batchID: batchData.name.toUpperCase(),
+                    collName: "batches")) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                        content: Center(
+                      child: CustomText(
+                        text: "Batch ID already exists in BATCHES",
+                        color: Colors.white,
+                        weight: FontWeight.w700,
+                      ),
+                    )),
+                  );
+                } else if (await uniqueIDCheck(
+                    batchID: batchData.name.toUpperCase(),
+                    collName: "savedBatches")) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                        content: Center(
+                      child: CustomText(
+                        text: "Batch ID already exists in SAVED BATCHES",
+                        color: Colors.white,
+                        weight: FontWeight.w700,
+                      ),
+                    )),
+                  );
+                } else {
+                  saveBatch(batch: batchData);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                        content: Center(
+                      child: CustomText(
+                        text: "Batch Saved Successfuly",
+                        color: Colors.white,
+                        weight: FontWeight.w700,
+                      ),
+                    )),
+                  );
+                  ref.read(createBatchProvider.notifier).clearData();
+                  Navigator.pop(context);
+                }
               } else {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(

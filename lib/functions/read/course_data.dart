@@ -5,13 +5,13 @@ import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path_provider/path_provider.dart';
 
-import '../../model/course_data.dart';
-import '../../providers/certificate_data_provider.dart';
+import '../../model/course_content_data.dart';
+import '../../providers/course_data_provider.dart';
 
-class CertificateService {
+class CourseService {
   final WidgetRef ref;
 
-  CertificateService({required this.ref});
+  CourseService({required this.ref});
 
   Future<File?> downloadFile(String url, String fileName) async {
     try {
@@ -43,63 +43,63 @@ class CertificateService {
     return fileMap;
   }
 
-  void readCertificateData(
+  void readCourseData(
       {String? batchName,
-      required String certificateName,
+      required String courseName,
       required bool isFromBatch}) {
     Stream<DocumentSnapshot<Map<String, dynamic>>> snapshot = isFromBatch
         ? FirebaseFirestore.instance
-            .collection("certificates")
-            .doc(certificateName)
+            .collection("courses")
+            .doc(courseName)
             .collection("instances")
             .doc(batchName)
             .snapshots()
         : FirebaseFirestore.instance
-            .collection("certificates")
-            .doc(certificateName)
+            .collection("courses")
+            .doc(courseName)
             .snapshots();
 
     snapshot.listen((event) async {
-      Map<String, dynamic> certificateData = event.data()!;
-      String name = certificateData["name"];
-      String imageURL = certificateData["image"];
-      String description = certificateData["description"];
+      Map<String, dynamic> courseData = event.data()!;
+      String name = courseData["name"];
+      String imageURL = courseData["image"];
+      String description = courseData["description"];
 
       // Update basic information
-      ref.read(certificateDataProvider.notifier).updateName(newName: name);
+      ref.read(courseDataProvider.notifier).updateName(newName: name);
       ref
-          .read(certificateDataProvider.notifier)
+          .read(courseDataProvider.notifier)
           .updateImageURL(imageURL: imageURL);
       ref
-          .read(certificateDataProvider.notifier)
+          .read(courseDataProvider.notifier)
           .updateDescription(description: description);
 
       // Update course data length
-      ref.read(certificateDataProvider.notifier).updateCourseDataLength(
-          courseDataLength: Map.from(certificateData["courseContent"]).length);
+      ref.read(courseDataProvider.notifier).updateCourseDataLength(
+          courseDataLength: Map.from(courseData["courseContent"]).length);
 
       // Download the course PDF
       File? coursePDF = await downloadFile(
-          certificateData["coursePDF"], "${name}_coursePDF.pdf");
+          courseData["coursePDF"], "${name}_coursePDF.pdf");
       if (coursePDF != null) {
         ref
-            .read(certificateDataProvider.notifier)
+            .read(courseDataProvider.notifier)
             .updateCoursePDF(coursePDF: coursePDF);
       }
 
       // Process course content
       for (MapEntry courseDataEntry
-          in Map.from(certificateData["courseContent"]).entries) {
+          in Map.from(courseData["courseContent"]).entries) {
         Map<File, Map<String, dynamic>> courseFiles =
             await getFileMap(courseDataEntry.value["files"]);
 
-        CourseData courseData = CourseData(
+        CourseContentData courseData = CourseContentData(
             title: courseDataEntry.value["title"],
             topics: courseDataEntry.value["topics"],
             files: courseFiles);
 
         ref
-            .read(certificateDataProvider.notifier)
+            .read(courseDataProvider.notifier)
             .addOrUpdateCourseData(courseData: courseData);
       }
     });

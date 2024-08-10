@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'functions/firebase_auth.dart';
 
 import 'functions/update/push_userdata.dart';
+import 'layout/loading_page.dart';
 import 'layout/navigation.dart';
 import 'layout/auth.dart';
 import 'layout/no_internet.dart';
@@ -22,12 +23,13 @@ class AuthShifter extends ConsumerWidget {
             bool isConnected =
                 connectionState.data!.contains(ConnectivityResult.mobile) ||
                     connectionState.data!.contains(ConnectivityResult.wifi);
-
             if (isConnected) {
               return StreamBuilder(
                 stream: AuthFB().authStateChanges,
                 builder: (BuildContext context, AsyncSnapshot<User?> snapshot) {
-                  if (snapshot.hasData) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const LoadingPage();
+                  } else if (snapshot.hasData) {
                     pushUserData(ref: ref);
                     return const Navigation();
                   } else {
@@ -39,7 +41,7 @@ class AuthShifter extends ConsumerWidget {
               return const NoInternet();
             }
           } else {
-            return const SizedBox();
+            return const LoadingPage();
           }
         });
   }

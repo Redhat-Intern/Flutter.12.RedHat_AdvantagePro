@@ -1,22 +1,19 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:redhat_v1/components/common/network_image.dart';
-import 'package:redhat_v1/components/common/text.dart';
-import 'package:redhat_v1/functions/read/certificate_data.dart';
-import 'package:redhat_v1/pages/create_new_batch.dart';
-import 'package:redhat_v1/pages/create_saved_batch.dart';
-import 'package:redhat_v1/providers/certificate_data_provider.dart';
+import 'package:redhat_v1/utilities/static_data.dart';
 
-import '../components/common/icon.dart';
-import '../components/common/page_header.dart';
-import '../model/user.dart';
-import '../providers/create_batch_provider.dart';
-import '../providers/user_detail_provider.dart';
-import '../utilities/theme/color_data.dart';
-import '../utilities/theme/size_data.dart';
-import 'details/certificate_detail.dart';
+import '../../components/common/icon.dart';
+import '../../components/common/network_image.dart';
+import '../../components/common/page_header.dart';
+import '../../components/common/text.dart';
+import '../../model/user.dart';
+import '../../providers/create_batch_provider.dart';
+import '../../providers/user_detail_provider.dart';
+import '../../utilities/theme/color_data.dart';
+import '../../utilities/theme/size_data.dart';
+import 'create_new_batch.dart';
+import 'create_saved_batch.dart';
 
 class CreateBatch extends ConsumerStatefulWidget {
   const CreateBatch({super.key});
@@ -42,7 +39,7 @@ class _CreateBatchState extends ConsumerState<CreateBatch> {
 
   @override
   Widget build(BuildContext context) {
-    UserModel userData = ref.watch(userDataProvider);
+    UserModel userData = ref.watch(userDataProvider).key;
     CustomSizeData sizeData = CustomSizeData.from(context);
     CustomColorData colorData = CustomColorData.from(ref);
 
@@ -64,39 +61,40 @@ class _CreateBatchState extends ConsumerState<CreateBatch> {
               height: height * 0.02,
             ),
 
-            //   Add certificate
-            GestureDetector(
-              onTap: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const CreateNewBatch())),
-              child: Container(
-                margin: EdgeInsets.only(bottom: height * 0.03),
-                padding: EdgeInsets.symmetric(
-                  vertical: height * 0.01,
-                  horizontal: width * 0.1,
-                ),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8),
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [
-                      colorData.primaryColor(.6),
-                      colorData.primaryColor(1),
-                    ],
+            if (userData.userRole == UserRole.superAdmin)
+              //   Add course
+              GestureDetector(
+                onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const CreateNewBatch())),
+                child: Container(
+                  margin: EdgeInsets.only(bottom: height * 0.03),
+                  padding: EdgeInsets.symmetric(
+                    vertical: height * 0.01,
+                    horizontal: width * 0.1,
+                  ),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8),
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        colorData.primaryColor(.6),
+                        colorData.primaryColor(1),
+                      ],
+                    ),
+                  ),
+                  child: CustomText(
+                    text: "Create/Save New Batch",
+                    size: sizeData.medium,
+                    color: colorData.secondaryColor(1),
+                    weight: FontWeight.w800,
                   ),
                 ),
-                child: CustomText(
-                  text: "Create/Save New Batch",
-                  size: sizeData.medium,
-                  color: colorData.secondaryColor(1),
-                  weight: FontWeight.w800,
-                ),
               ),
-            ),
 
-            // Certificate List
+            // Course List
 
             Align(
               alignment: Alignment.centerLeft,
@@ -149,7 +147,7 @@ class _CreateBatchState extends ConsumerState<CreateBatch> {
               ),
             ),
 
-            // List of Certificates
+            // List of Courses
 
             Expanded(
               child: StreamBuilder(
@@ -203,8 +201,8 @@ class _CreateBatchState extends ConsumerState<CreateBatch> {
                                       context,
                                       MaterialPageRoute(
                                         builder: (context) => CreateSavedBatch(
-                                          certificateID: batchDataList[index]
-                                              ["certificateID"],
+                                          courseID: batchDataList[index]
+                                              ["courseID"],
                                           name: batchDataList[index]["name"],
                                           selectDates: List.from(
                                             batchDataList[index]["dates"],
@@ -245,8 +243,8 @@ class _CreateBatchState extends ConsumerState<CreateBatch> {
                                     child: Row(
                                       children: [
                                         ImageLoader(
-                                            certificateID: batchDataList[index]
-                                                ["certificateID"]),
+                                            courseID: batchDataList[index]
+                                                ["courseID"]),
                                         Expanded(
                                             child: Column(
                                           crossAxisAlignment:
@@ -286,7 +284,7 @@ class _CreateBatchState extends ConsumerState<CreateBatch> {
                                               text: TextSpan(
                                                 children: [
                                                   TextSpan(
-                                                    text: "Certificate ID: ",
+                                                    text: "Course ID: ",
                                                     style: TextStyle(
                                                       fontSize: sizeData.small,
                                                       color: colorData
@@ -297,7 +295,7 @@ class _CreateBatchState extends ConsumerState<CreateBatch> {
                                                   ),
                                                   TextSpan(
                                                     text: batchDataList[index]
-                                                        ["certificateID"],
+                                                        ["courseID"],
                                                     style: TextStyle(
                                                       fontSize: sizeData.medium,
                                                       color: colorData
@@ -438,8 +436,8 @@ class _CreateBatchState extends ConsumerState<CreateBatch> {
 }
 
 class ImageLoader extends ConsumerStatefulWidget {
-  const ImageLoader({super.key, required this.certificateID});
-  final String certificateID;
+  const ImageLoader({super.key, required this.courseID});
+  final String courseID;
 
   @override
   ConsumerState<ImageLoader> createState() => _ImageLoaderState();
@@ -451,8 +449,8 @@ class _ImageLoaderState extends ConsumerState<ImageLoader> {
   fetchImagePath() async {
     DocumentSnapshot<Map<String, dynamic>> data = await FirebaseFirestore
         .instance
-        .collection("certificates")
-        .doc(widget.certificateID)
+        .collection("courses")
+        .doc(widget.courseID)
         .get();
     setState(() {
       imagePath = data.data()!["image"];

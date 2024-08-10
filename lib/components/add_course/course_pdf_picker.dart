@@ -12,12 +12,12 @@ import '../../utilities/theme/size_data.dart';
 import '../common/icon.dart';
 import '../common/text.dart';
 
-class CertificatePDF extends ConsumerStatefulWidget {
+class CoursePDF extends ConsumerStatefulWidget {
   final Function? setter;
   final From from;
   final File? file;
 
-  const CertificatePDF({
+  const CoursePDF({
     super.key,
     this.setter,
     required this.from,
@@ -25,10 +25,10 @@ class CertificatePDF extends ConsumerStatefulWidget {
   });
 
   @override
-  ConsumerState<CertificatePDF> createState() => _CertificatePDFState();
+  ConsumerState<CoursePDF> createState() => _CoursePDFState();
 }
 
-class _CertificatePDFState extends ConsumerState<CertificatePDF> {
+class _CoursePDFState extends ConsumerState<CoursePDF> {
   String? imageName;
 
   @override

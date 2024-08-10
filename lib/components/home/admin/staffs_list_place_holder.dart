@@ -16,7 +16,7 @@ class StaffsListPlaceHolder extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     CustomSizeData sizeData = CustomSizeData.from(context);
     CustomColorData colorData = CustomColorData.from(ref);
-    UserModel userData = ref.watch(userDataProvider);
+    UserModel userData = ref.watch(userDataProvider).key;
 
     double width = sizeData.width;
     double height = sizeData.height;

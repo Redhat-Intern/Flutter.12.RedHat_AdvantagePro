@@ -4,20 +4,20 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 
-import '../../model/course_data.dart';
+import '../../model/course_content_data.dart';
 
-Stream<Map<int, String>> createCertificate({
+Stream<Map<int, String>> createCourse({
   required Map<File, String> image,
   required Map<File, String> pdf,
   required TextEditingController nameController,
   required TextEditingController discriptionController,
-  required Map<int, CourseData> courseContent,
+  required Map<int, CourseContentData> courseContent,
 }) async* {
   String name = nameController.text;
   String disciption = discriptionController.text;
 
   Reference storageRef = FirebaseStorage.instance.ref();
-  String commonPath = "certificate/$name";
+  String commonPath = "course/$name";
 
   String imageURL =
       await uploadImage(ref: storageRef, image: image, commonPath: commonPath);
@@ -27,12 +27,12 @@ Stream<Map<int, String>> createCertificate({
       await uploadPDF(ref: storageRef, pdf: pdf, commonPath: commonPath);
   yield {2: coursePDFURL};
 
-  Map<int, CourseDataUpload> contentMap = await uploadCourseContent(
+  Map<int, CourseContentDataUpload> contentMap = await uploadCourseContent(
       ref: storageRef, courseContent: courseContent, commonPath: commonPath);
 
   yield {3: "Uploading the processed data"};
 
-  Map<String, dynamic> certificateData = {
+  Map<String, dynamic> courseData = {
     "name": name,
     "description": disciption,
     "image": imageURL,
@@ -46,10 +46,7 @@ Stream<Map<int, String>> createCertificate({
     },
   };
 
-  FirebaseFirestore.instance
-      .collection("certificates")
-      .doc(name)
-      .set(certificateData);
+  FirebaseFirestore.instance.collection("courses").doc(name).set(courseData);
   yield {4: "Successfully Uploaded Data to firebase"};
 }
 
@@ -79,26 +76,26 @@ Future<String> uploadPDF({
   return url;
 }
 
-Future<Map<int, CourseDataUpload>> uploadCourseContent({
+Future<Map<int, CourseContentDataUpload>> uploadCourseContent({
   required Reference ref,
   required String commonPath,
-  required Map<int, CourseData> courseContent,
+  required Map<int, CourseContentData> courseContent,
 }) async {
   String path = "$commonPath/courseData";
-  Map<int, CourseDataUpload> contentMap = {};
+  Map<int, CourseContentDataUpload> contentMap = {};
 
-  for (MapEntry<int, CourseData> i in courseContent.entries) {
+  for (MapEntry<int, CourseContentData> i in courseContent.entries) {
     int key = i.key;
-    CourseData value = i.value;
+    CourseContentData value = i.value;
     Map<String, Map<String, dynamic>> filesData = await uploadFiles(
       files: value.files,
       path: "$path/$key",
       ref: ref,
     );
 
-    MapEntry<int, CourseDataUpload> currentContentMapData = MapEntry(
+    MapEntry<int, CourseContentDataUpload> currentContentMapData = MapEntry(
       key,
-      CourseDataUpload(
+      CourseContentDataUpload(
         title: value.title,
         topics: value.topics,
         files: filesData,

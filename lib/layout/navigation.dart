@@ -3,6 +3,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_symbols_icons/material_symbols_icons.dart';
+import 'package:redhat_v1/layout/user_notfound.dart';
+import 'package:redhat_v1/utilities/console_logger.dart';
 
 import '../components/common/shimmer_box.dart';
 import '../components/common/waiting_widgets/header_waiting.dart';
@@ -10,7 +12,7 @@ import '../components/common/waiting_widgets/recent_waiting.dart';
 import '../components/common/waiting_widgets/search_field_waiting.dart';
 import '../components/common/waiting_widgets/staffs_list_waiting.dart';
 import '../model/user.dart';
-import '../pages/certificates.dart';
+import '../pages/courses.dart';
 import '../pages/home/admin_home.dart';
 import '../pages/home/staff_home.dart';
 import '../pages/home/student_home.dart';
@@ -50,7 +52,8 @@ class _NavigationState extends ConsumerState<Navigation> {
     GlobalKey<ScaffoldState> scaffoldKey = ref.watch(drawerKeyProvider);
     index = ref.watch(navigationIndexProvider);
 
-    UserModel userData = ref.watch(userDataProvider);
+    MapEntry<UserModel, String?> userProviderData = ref.watch(userDataProvider);
+    UserModel userData = userProviderData.key;
 
     CustomSizeData sizeData = CustomSizeData.from(context);
     CustomColorData colorData = CustomColorData.from(ref);
@@ -74,7 +77,7 @@ class _NavigationState extends ConsumerState<Navigation> {
         const AdminHome(),
         const Report(),
         const Forum(),
-        const Certificates(),
+        const Courses(),
       ];
       iconNameList = [
         {Symbols.home_app_logo_rounded: "Home"},
@@ -102,41 +105,46 @@ class _NavigationState extends ConsumerState<Navigation> {
       ];
     }
 
-    return Scaffold(
-      key: scaffoldKey,
-      drawerEnableOpenDragGesture: true,
-      resizeToAvoidBottomInset: false,
-      body: SafeArea(
-        child: Container(
-          margin: EdgeInsets.only(
-            left: width * 0.04,
-            right: width * 0.04,
-            top: height * 0.02,
-          ),
-          child: userData.userRole == null
-              ? Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: loadingList)
-              : PopScope(
-                  canPop: ref.read(navigationIndexProvider) == 0,
-                  onPopInvoked: (didPop) {
-                    if (didPop) {
-                      exit(1);
-                    } else {
-                      ref.read(navigationIndexProvider.notifier).jumpTo(0);
-                    }
-                  },
-                  child: IndexedStack(
-                    index: index,
-                    children: widgetList,
+    if (userProviderData.value == null) {
+      return Scaffold(
+        key: scaffoldKey,
+        drawerEnableOpenDragGesture: true,
+        resizeToAvoidBottomInset: false,
+        body: SafeArea(
+          child: Container(
+            margin: EdgeInsets.only(
+              left: width * 0.04,
+              right: width * 0.04,
+              top: height * 0.02,
+            ),
+            child: userData.userRole == null
+                ? Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: loadingList)
+                : PopScope(
+                    canPop: ref.read(navigationIndexProvider) == 0,
+                    onPopInvoked: (didPop) {
+                      if (didPop) {
+                        exit(1);
+                      } else {
+                        ref.read(navigationIndexProvider.notifier).jumpTo(0);
+                      }
+                    },
+                    child: IndexedStack(
+                      index: index,
+                      children: widgetList,
+                    ),
                   ),
-                ),
+          ),
         ),
-      ),
-      drawer: SideBar(
-        iconNameList: iconNameList,
-      ),
-      drawerScrimColor: colorData.secondaryColor(.4),
-    );
+        drawer: SideBar(
+          iconNameList: iconNameList,
+        ),
+        drawerScrimColor: colorData.secondaryColor(.4),
+      );
+    } else {
+      ConsoleLogger.message("I AM", from: "navigator");
+      return const UserNotfound();
+    }
   }
 }

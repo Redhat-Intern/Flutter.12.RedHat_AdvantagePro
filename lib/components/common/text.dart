@@ -15,6 +15,7 @@ class CustomText extends ConsumerWidget {
   final int maxLine;
   final bool loadingState;
   final double length;
+  final String? fontFamily;
 
   const CustomText({
     super.key,
@@ -27,6 +28,7 @@ class CustomText extends ConsumerWidget {
     this.maxLine = 1,
     this.loadingState = false,
     this.length = 0.1,
+    this.fontFamily,
   });
 
   @override
@@ -46,6 +48,7 @@ class CustomText extends ConsumerWidget {
               fontWeight: weight,
               color: color ?? colorData.fontColor(.8),
               height: height,
+              fontFamily: fontFamily,
             ),
           )
         : Shimmer.fromColors(

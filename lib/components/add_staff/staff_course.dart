@@ -12,23 +12,23 @@ import '../../utilities/theme/size_data.dart';
 import '../common/text.dart';
 import '../home/student/file_tile.dart';
 
-class StaffCertificates extends ConsumerStatefulWidget {
-  final Map<String, dynamic> staffCertificates;
+class StaffCourses extends ConsumerStatefulWidget {
+  final Map<String, dynamic> staffCourses;
   final Map<File, Map<String, dynamic>>? directFileData;
   final double? height;
-  const StaffCertificates({
+  const StaffCourses({
     super.key,
-    required this.staffCertificates,
+    required this.staffCourses,
     this.height,
     this.directFileData,
   });
 
   @override
-  ConsumerState<StaffCertificates> createState() => _StaffCertificatesState();
+  ConsumerState<StaffCourses> createState() => _StaffCoursesState();
 }
 
-class _StaffCertificatesState extends ConsumerState<StaffCertificates> {
-  Map<File, Map<String, dynamic>> dynamicStaffCertificates = {};
+class _StaffCoursesState extends ConsumerState<StaffCourses> {
+  Map<File, Map<String, dynamic>> dynamicStaffCourses = {};
 
   Future<File?> downloadFile(String path, String name) async {
     try {
@@ -44,33 +44,33 @@ class _StaffCertificatesState extends ConsumerState<StaffCertificates> {
     }
   }
 
-  void updateStaffCertificates() {
+  void updateStaffCourses() {
     setState(() {
-      dynamicStaffCertificates.clear();
+      dynamicStaffCourses.clear();
     });
-    widget.staffCertificates.forEach((key, value) async {
+    widget.staffCourses.forEach((key, value) async {
       File? file = await downloadFile(key, value["name"]);
       if (file != null) {
         setState(() {
-          dynamicStaffCertificates.addAll({file: value});
+          dynamicStaffCourses.addAll({file: value});
         });
       }
     });
   }
 
   @override
-  void didUpdateWidget(StaffCertificates oldWidget) {
+  void didUpdateWidget(StaffCourses oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.staffCertificates.keys.first !=
-        oldWidget.staffCertificates.keys.first) {
-      updateStaffCertificates();
+    if (widget.staffCourses.keys.first !=
+        oldWidget.staffCourses.keys.first) {
+      updateStaffCourses();
     }
   }
 
   @override
   void initState() {
     super.initState();
-    updateStaffCertificates();
+    updateStaffCourses();
   }
 
   @override
@@ -107,7 +107,7 @@ class _StaffCertificatesState extends ConsumerState<StaffCertificates> {
                 dashPattern: const [14, 4, 6, 4],
                 borderType: BorderType.RRect,
                 radius: const Radius.circular(8),
-                child: widget.staffCertificates.isEmpty
+                child: widget.staffCourses.isEmpty
                     ? Center(
                         child: CustomText(
                           text: "The course files have not been uploaded yet",
@@ -120,7 +120,7 @@ class _StaffCertificatesState extends ConsumerState<StaffCertificates> {
                       )
                     : ListView.builder(
                         scrollDirection: Axis.vertical,
-                        itemCount: widget.staffCertificates.length,
+                        itemCount: widget.staffCourses.length,
                         physics: const BouncingScrollPhysics(),
                         padding: EdgeInsets.symmetric(
                           vertical: height * 0.01,
@@ -128,10 +128,10 @@ class _StaffCertificatesState extends ConsumerState<StaffCertificates> {
                         ),
                         itemBuilder: (BuildContext context, int index) {
                           bool canShow =
-                              index < dynamicStaffCertificates.length;
+                              index < dynamicStaffCourses.length;
                           if (canShow) {
                             MapEntry<File, Map<String, dynamic>> thisFileMap =
-                                dynamicStaffCertificates.entries
+                                dynamicStaffCourses.entries
                                     .toList()[index];
                             File fileData = thisFileMap.key;
                             String extension = thisFileMap.value["extension"];
@@ -224,7 +224,7 @@ class _StaffCertificatesState extends ConsumerState<StaffCertificates> {
                         },
                       ),
               ),
-              dynamicStaffCertificates.isNotEmpty
+              dynamicStaffCourses.isNotEmpty
                   ? Positioned(
                       top: -15,
                       right: 0,
@@ -235,7 +235,7 @@ class _StaffCertificatesState extends ConsumerState<StaffCertificates> {
                           color: colorData.primaryColor(1),
                         ),
                         child: CustomText(
-                          text: dynamicStaffCertificates.length.toString(),
+                          text: dynamicStaffCourses.length.toString(),
                           size: sizeData.regular,
                           color: colorData.sideBarTextColor(1),
                           weight: FontWeight.bold,

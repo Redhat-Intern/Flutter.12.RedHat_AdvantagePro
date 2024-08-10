@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:redhat_v1/components/common/text.dart';
 
-import '../../../pages/create_batch.dart';
+import '../../../pages/batch/create_batch.dart';
 import '../../../utilities/theme/size_data.dart';
 
 class CreateBatchButton extends StatelessWidget {
@@ -23,24 +24,20 @@ class CreateBatchButton extends StatelessWidget {
         margin: EdgeInsets.symmetric(
             horizontal: width * 0.2, vertical: height * 0.02),
         padding: EdgeInsets.symmetric(vertical: height * 0.01),
+        height: height * .1,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),
           image: const DecorationImage(
             fit: BoxFit.fill,
-            image: AssetImage("assets/images/create_bath.png"),
+            image: AssetImage("assets/images/create_batch.png"),
           ),
         ),
-        child: Center(
-          child: Text(
-            "Create \n a Certification\n Batch",
-            maxLines: 3,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontWeight: FontWeight.w600,
-              fontSize: sizeData.subHeader,
-              color: Colors.white,
-            ),
-          ),
+        alignment: Alignment.center,
+        child: CustomText(
+          text: "CREATE BATCH",
+          color: Colors.white,
+          size: sizeData.subHeader,
+          fontFamily: "Merriweather",
         ),
       ),
     );

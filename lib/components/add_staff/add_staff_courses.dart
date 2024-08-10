@@ -11,23 +11,22 @@ import '../../utilities/theme/size_data.dart';
 
 import '../common/icon.dart';
 import '../common/text.dart';
-import 'staff_certificates_tile.dart';
+import 'staff_course_tile.dart';
 
-class AddStaffCertificates extends ConsumerStatefulWidget {
-  final Function handleCertificate;
-  const AddStaffCertificates({super.key, required this.handleCertificate});
+class AddStaffCourses extends ConsumerStatefulWidget {
+  final Function handleCourse;
+  const AddStaffCourses({super.key, required this.handleCourse});
 
   @override
-  ConsumerState<AddStaffCertificates> createState() =>
-      _AddStaffCertificatesState();
+  ConsumerState<AddStaffCourses> createState() => _AddStaffCoursesState();
 }
 
-class _AddStaffCertificatesState extends ConsumerState<AddStaffCertificates> {
-  List<Map<File, Map<String, dynamic>>> certificates = [];
+class _AddStaffCoursesState extends ConsumerState<AddStaffCourses> {
+  List<Map<File, Map<String, dynamic>>> courses = [];
 
-  bool hasDuplicate({required Map<File, Map<String, dynamic>> certificate}) {
-    for (var element in certificates) {
-      if (element.values.first["name"] == certificate.values.first["name"]) {
+  bool hasDuplicate({required Map<File, Map<String, dynamic>> course}) {
+    for (var element in courses) {
+      if (element.values.first["name"] == course.values.first["name"]) {
         return false;
       }
     }
@@ -50,7 +49,7 @@ class _AddStaffCertificatesState extends ConsumerState<AddStaffCertificates> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             CustomText(
-              text: "Certifications",
+              text: "Courses",
               size: sizeData.medium,
               color: colorData.fontColor(.8),
               weight: FontWeight.w600,
@@ -72,12 +71,12 @@ class _AddStaffCertificatesState extends ConsumerState<AddStaffCertificates> {
                       fileData: {
                         "name": name,
                         "extension": extension,
-                        "size": size
+                        "size": size,
                       }
                     };
-                    if (hasDuplicate(certificate: file)) {
-                      certificates.add(file);
-                      widget.handleCertificate(certificate: file, set: true);
+                    if (hasDuplicate(course: file)) {
+                      courses.add(file);
+                      widget.handleCourse(course: file, set: true);
                     }
                   }
                 });
@@ -92,7 +91,7 @@ class _AddStaffCertificatesState extends ConsumerState<AddStaffCertificates> {
                   color: colorData.secondaryColor(0.4),
                 ),
                 child: CustomText(
-                  text: "Add Certificate",
+                  text: "Add Course",
                   size: sizeData.regular,
                   color: colorData.primaryColor(1),
                   weight: FontWeight.w600,
@@ -120,34 +119,34 @@ class _AddStaffCertificatesState extends ConsumerState<AddStaffCertificates> {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: certificates.isEmpty
+                child: courses.isEmpty
                     ? Center(
                         child: CustomText(
                           text:
-                              "Upload Certificates as PDF or Image\nby clicking add certificate\n\nChoose file of size below 5 MB",
+                              "Upload Course certificate as PDF or Image\nby clicking add course\n\nChoose file of size below 5 MB",
                           align: TextAlign.center,
                           size: sizeData.medium,
-                          color: colorData.secondaryColor(.4),
+                          color: colorData.secondaryColor(.5),
                           weight: FontWeight.w600,
                           maxLine: 6,
                         ),
                       )
                     : ListView.builder(
                         scrollDirection: Axis.vertical,
-                        itemCount: certificates.length,
+                        itemCount: courses.length,
                         physics: const BouncingScrollPhysics(),
                         padding: EdgeInsets.symmetric(
                           vertical: height * 0.01,
                           horizontal: width * 0.02,
                         ),
                         itemBuilder: (BuildContext context, int index) {
-                          File fileData = certificates[index].keys.first;
+                          File fileData = courses[index].keys.first;
                           String extension =
-                              certificates[index][fileData]!["extension"];
+                              courses[index][fileData]!["extension"];
                           bool isImage =
                               extension == "png" || extension == "jpg";
-                          String name = certificates[index][fileData]!["name"];
-                          int size = certificates[index][fileData]!["size"];
+                          String name = courses[index][fileData]!["name"];
+                          int size = courses[index][fileData]!["size"];
 
                           double kb = size / 1024;
                           double mb = kb / 1024;
@@ -223,9 +222,9 @@ class _AddStaffCertificatesState extends ConsumerState<AddStaffCertificates> {
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: [
-                                          StaffCertificatesTile(
+                                          StaffCourseTile(
                                               value: name, field: "Name: "),
-                                          StaffCertificatesTile(
+                                          StaffCourseTile(
                                               value: fileSize, field: "Size: "),
                                         ],
                                       ),
@@ -239,10 +238,9 @@ class _AddStaffCertificatesState extends ConsumerState<AddStaffCertificates> {
                                 child: GestureDetector(
                                   onTap: () {
                                     setState(() {
-                                      widget.handleCertificate(
-                                          certificate: certificates[index],
-                                          set: false);
-                                      certificates.removeAt(index);
+                                      widget.handleCourse(
+                                          course: courses[index], set: false);
+                                      courses.removeAt(index);
                                     });
                                   },
                                   child: CustomIcon(
@@ -258,7 +256,7 @@ class _AddStaffCertificatesState extends ConsumerState<AddStaffCertificates> {
                       ),
               ),
             ),
-            certificates.isNotEmpty
+            courses.isNotEmpty
                 ? Positioned(
                     top: -10,
                     right: -5,
@@ -269,7 +267,7 @@ class _AddStaffCertificatesState extends ConsumerState<AddStaffCertificates> {
                         color: colorData.primaryColor(1),
                       ),
                       child: CustomText(
-                        text: certificates.length.toString(),
+                        text: courses.length.toString(),
                         size: sizeData.regular,
                         color: colorData.sideBarTextColor(1),
                         weight: FontWeight.bold,

@@ -24,7 +24,7 @@ Stream<Map<int, String>> addStaff({
   required String phoneNo,
   required String staffId,
   required bool isAdmin,
-  required List<Map<File, Map<String, dynamic>>> certificates,
+  required List<Map<File, Map<String, dynamic>>> courses,
 }) async* {
   Reference storageRef = FirebaseStorage.instance.ref();
 
@@ -32,8 +32,8 @@ Stream<Map<int, String>> addStaff({
       await uploadPhoto(ref: storageRef, photo: photo, email: email);
   yield {1: staffId};
 
-  Map<String, Map<String, dynamic>> certificatesURL = await uploadCertificates(
-      ref: storageRef, certificates: certificates, email: email);
+  Map<String, Map<String, dynamic>> coursesURL =
+      await uploadCourses(ref: storageRef, courses: courses, email: email);
   yield {2: "Uploading Data to firebase"};
 
   Map<String, dynamic> staffData = {
@@ -43,7 +43,7 @@ Stream<Map<int, String>> addStaff({
     "imagePath": photoURL,
     "userRole": isAdmin ? "admin" : "staff",
     "phoneNo": phoneNo,
-    "certificates": certificatesURL,
+    "courses": coursesURL,
   };
 
   FirebaseFirestore.instance.collection("requests").doc(email).set(staffData);
@@ -63,23 +63,26 @@ Future<String> uploadPhoto(
   return url;
 }
 
-Future<Map<String, Map<String, dynamic>>> uploadCertificates(
-    {required List<Map<File, Map<String, dynamic>>> certificates,
+Future<Map<String, Map<String, dynamic>>> uploadCourses(
+    {required List<Map<File, Map<String, dynamic>>> courses,
     required String email,
     required Reference ref}) async {
-  String path = "staff/$email/certificates";
+  String path = "staff/$email/courses";
   Map<String, Map<String, dynamic>> downloadableURL = {};
 
-  for (var certificate in certificates) {
-    File file = certificate.keys.first;
-    String fileName =
-        certificates[certificates.indexOf(certificate)][file]?["name"];
+  for (var course in courses) {
+    File file = course.keys.first;
+    String fileName = courses[courses.indexOf(course)][file]?["name"];
     UploadTask fileUploadTask = ref.child("$path/$fileName").putFile(file);
     TaskSnapshot onCompleted = await fileUploadTask.whenComplete(() {});
     String url = await onCompleted.ref.getDownloadURL();
     // url
     downloadableURL.addAll({
-      url: {"name": fileName, "extension": fileName.split(".").last}
+      url: {
+        "name": fileName.split(".").first,
+        "extension": fileName.split(".").last,
+        "size": courses[courses.indexOf(course)][file]?["size"]
+      }
     });
 
     fileUploadTask.snapshotEvents.listen((TaskSnapshot taskSnapshot) {

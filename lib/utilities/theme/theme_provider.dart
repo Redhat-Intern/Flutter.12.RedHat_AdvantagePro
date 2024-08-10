@@ -21,7 +21,7 @@ final themeProvider =
 
 mixin CustomThemeDataMixin {
   final lightTheme = ThemeData(
-    fontFamily: "Nato",
+    // fontFamily: FontFamilyENUM.IstokWeb.name,
     scaffoldBackgroundColor: const Color(0xffDADEEC),
     colorScheme: const ColorScheme.light(),
     iconTheme: const IconThemeData(
@@ -30,7 +30,7 @@ mixin CustomThemeDataMixin {
   );
 
   final darkTheme = ThemeData(
-    fontFamily: "Nato",
+    // fontFamily: FontFamilyENUM.IstokWeb.name,
     scaffoldBackgroundColor: const Color(0XFF22223D),
     colorScheme: const ColorScheme.dark(),
     iconTheme: const IconThemeData(color: Colors.white),

@@ -20,7 +20,8 @@ class Student {
 
   Map<String, dynamic> toMap() {
     return {
-      'registrationID': registrationID,
+      "id" : registrationID,
+      'userRole': 'student',
       'name': name,
       'email': email,
       'phoneNo': phoneNo,

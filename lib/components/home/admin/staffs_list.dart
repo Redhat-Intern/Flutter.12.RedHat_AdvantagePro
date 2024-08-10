@@ -31,21 +31,22 @@ class StaffsListState extends ConsumerState<StaffsList> {
   Widget build(BuildContext context) {
     CustomSizeData sizeData = CustomSizeData.from(context);
     CustomColorData colorData = CustomColorData.from(ref);
-    UserModel userData = ref.watch(userDataProvider);
+    UserModel userData = ref.watch(userDataProvider).key;
 
-    double width = sizeData.width;
-    double height = sizeData.height;
-
-    return StreamBuilder(
-        stream: userData.userRole == UserRole.superAdmin
+    Stream<QuerySnapshot<Map<String, dynamic>>> queryStream =
+        userData.userRole == UserRole.superAdmin
             ? FirebaseFirestore.instance
                 .collection("users")
                 .where("userRole", whereIn: ["staff", "admin"]).snapshots()
             : FirebaseFirestore.instance
                 .collection("users")
-                .where("userRole", whereIn: ["staff", "admin"])
-                .where("id", isNotEqualTo: userData.staffId)
-                .snapshots(),
+                .where("userRole", whereIn: ["staff"]).snapshots();
+
+    double width = sizeData.width;
+    double height = sizeData.height;
+
+    return StreamBuilder(
+        stream: queryStream,
         builder: (context, snapshot) {
           if (needToLoad &&
               snapshot.connectionState == ConnectionState.waiting &&
@@ -59,7 +60,6 @@ class StaffsListState extends ConsumerState<StaffsList> {
               UserModel staffData = UserModel.fromJson(element.data());
               staffsList.add(staffData);
             }
-
             return Column(
               children: [
                 // Header Text
@@ -128,11 +128,30 @@ class StaffsListState extends ConsumerState<StaffsList> {
                                   ),
                                 );
                               },
-                              child: CustomNetworkImage(
-                                url: staffsList[index].imagePath,
-                                size: height * 0.075,
-                                radius: 8,
-                                rightMargin: width * .03,
+                              child: Stack(
+                                clipBehavior: Clip.none,
+                                children: [
+                                  CustomNetworkImage(
+                                    url: staffsList[index].imagePath,
+                                    size: height * 0.075,
+                                    radius: 8,
+                                    rightMargin: width * .03,
+                                  ),
+                                  Positioned(
+                                    bottom: -(height * 0.02),
+                                    left: -4,
+                                    child: SizedBox(
+                                      width: height * .085,
+                                      child: CustomText(
+                                        text: staffsList[index]
+                                            .name
+                                            .toUpperCase(),
+                                        size: sizeData.tooSmall,
+                                        align: TextAlign.center,
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
                             );
                           },

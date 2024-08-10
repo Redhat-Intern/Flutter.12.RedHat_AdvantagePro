@@ -171,7 +171,7 @@ class _DailyTestAttenderState extends ConsumerState<DailyTestAttender>
 
   @override
   Widget build(BuildContext context) {
-    UserModel userData = ref.watch(userDataProvider);
+    UserModel userData = ref.watch(userDataProvider).key;
     CustomSizeData sizeData = CustomSizeData.from(context);
     CustomColorData colorData = CustomColorData.from(ref);
 

@@ -10,11 +10,11 @@ import '../../utilities/theme/color_data.dart';
 import '../../utilities/theme/size_data.dart';
 import '../common/text.dart';
 
-class CertificateImagePicker extends ConsumerStatefulWidget {
+class CourseImagePicker extends ConsumerStatefulWidget {
   final From from;
   final Function setter;
   final String imageURL;
-  const CertificateImagePicker({
+  const CourseImagePicker({
     super.key,
     required this.from,
     required this.imageURL,
@@ -22,12 +22,12 @@ class CertificateImagePicker extends ConsumerStatefulWidget {
   });
 
   @override
-  ConsumerState<CertificateImagePicker> createState() =>
-      _CertificateImagePickerState();
+  ConsumerState<CourseImagePicker> createState() =>
+      _CourseImagePickerState();
 }
 
-class _CertificateImagePickerState
-    extends ConsumerState<CertificateImagePicker> {
+class _CourseImagePickerState
+    extends ConsumerState<CourseImagePicker> {
   File? image;
   String? imageName;
 

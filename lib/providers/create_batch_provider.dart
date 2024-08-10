@@ -26,9 +26,9 @@ class CreateBatchNotifier extends StateNotifier<Batch> {
     state = state.copyWith(name: newName);
   }
 
-  void updateCertificate({required Map<String, dynamic> newCertificateData}) {
+  void updateCourse({required Map<String, dynamic> newCourseData}) {
     state = state.copyWith(
-      certificateData: newCertificateData,
+      courseData: newCourseData,
     );
   }
 
