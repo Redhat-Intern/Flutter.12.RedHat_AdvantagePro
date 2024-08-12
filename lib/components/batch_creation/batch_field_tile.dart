@@ -23,7 +23,7 @@ class BatchFieldTile extends ConsumerWidget {
     double height = sizeData.height;
 
     return Container(
-      margin: EdgeInsets.only(bottom: height * 0.005),
+      margin: EdgeInsets.only(bottom: height * 0.0065),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.end,

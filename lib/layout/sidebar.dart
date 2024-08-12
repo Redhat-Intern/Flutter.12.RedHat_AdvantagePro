@@ -50,19 +50,27 @@ class _SideBarState extends ConsumerState<SideBar> {
                     SizedBox(
                       width: width * 0.02,
                     ),
-                    const Icon(Icons.access_alarm_outlined),
+                    Image.asset(
+                      "assets/images/logo.png",
+                      height: aspectRatio * 100,
+                      width: aspectRatio * 100,
+                    ),
                     SizedBox(
                       width: width * 0.02,
                     ),
                     CustomText(
-                        text: "Vectra PRO",
-                        weight: FontWeight.bold,
-                        color: colorData.sideBarTextColor(1),
-                        size: sizeData.header),
+                      text: "Vectra\nTechnosoft".toUpperCase(),
+                      weight: FontWeight.bold,
+                      color: colorData.sideBarTextColor(1),
+                      size: sizeData.header,
+                      fontFamily: "Merriweather",
+                      maxLine: 2,
+                      align: TextAlign.center,
+                    ),
                   ],
                 ),
                 SizedBox(
-                  height: height * 0.05,
+                  height: height * 0.04,
                 ),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -110,7 +118,7 @@ class _SideBarState extends ConsumerState<SideBar> {
                                     color: index == currentListIndex
                                         ? colorData.sideBarTextColor(1)
                                         : colorData.sideBarTextColor(.7),
-                                    size: aspectRatio * 48),
+                                    size: aspectRatio * 50),
                                 SizedBox(
                                   width: width * 0.02,
                                 ),

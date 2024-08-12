@@ -32,8 +32,8 @@ class _StaffBatches extends ConsumerState<StaffBatches> {
       for (var element in widget.batches) {
         Map<String, dynamic> data = element;
         FirebaseFirestore.instance
-            .collection("certificates")
-            .doc(element["certificateID"])
+            .collection("courses")
+            .doc(element["courseID"])
             .get()
             .then((value) {
           setState(() {

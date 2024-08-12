@@ -3,20 +3,26 @@ import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:redhat_v1/components/common/icon.dart';
+import 'package:redhat_v1/components/common/network_image.dart';
 import 'package:redhat_v1/providers/create_batch_provider.dart';
 import 'package:shimmer/shimmer.dart';
 
+import '../../model/user.dart';
+import '../../utilities/static_data.dart';
 import '../../utilities/theme/color_data.dart';
 import '../../utilities/theme/size_data.dart';
 
 import '../../components/common/text.dart';
 
 class AssignStaff extends ConsumerStatefulWidget {
-  final List<QueryDocumentSnapshot<Map<String, dynamic>>> docs;
   const AssignStaff({
     super.key,
-    required this.docs,
+    this.docs,
+    this.from = From.edit,
   });
+
+  final List<QueryDocumentSnapshot<Map<String, dynamic>>>? docs;
+  final From? from;
 
   @override
   ConsumerState<AssignStaff> createState() => _AssignStaffState();
@@ -24,24 +30,41 @@ class AssignStaff extends ConsumerStatefulWidget {
 
 class _AssignStaffState extends ConsumerState<AssignStaff> {
   bool movedOver = false;
-  Map<String, dynamic> batchAdmin = {};
-  List<Map<String, dynamic>> selectedStaffs = [];
-  List<Map<String, dynamic>> availableStaffs = [];
+  List<UserModel> selectedStaffs = [];
+  List<UserModel> availableStaffs = [];
 
   @override
   void initState() {
     super.initState();
-    List<Map<String, dynamic>> availableStaffsList = [];
-    if (widget.docs.isNotEmpty) {
-      for (var element in widget.docs) {
-        Map<String, dynamic> value =
-            Map.fromEntries(element.data().entries.toSet());
-        availableStaffsList.add(value);
+    if (widget.from == From.edit) {
+      List<UserModel> availableStaffsList = [];
+      if (widget.docs!.isNotEmpty) {
+        for (var element in widget.docs!) {
+          UserModel value = UserModel.fromJson(element.data());
+          availableStaffsList.add(value);
+        }
       }
+      setState(() {
+        availableStaffs = availableStaffsList;
+      });
+    } else {
+      List<UserModel> selectedStaffsList = [];
+
+      if (widget.docs!.isNotEmpty) {
+        for (var element in widget.docs!) {
+          UserModel value = UserModel.fromJson(element.data());
+          selectedStaffsList.add(value);
+        }
+      }
+      setState(() {
+        selectedStaffs = selectedStaffsList;
+      });
+      Future(() {
+        ref
+            .read(createBatchProvider.notifier)
+            .updateStaffs(staffsList: selectedStaffsList);
+      });
     }
-    setState(() {
-      availableStaffs = availableStaffsList;
-    });
   }
 
   @override
@@ -53,8 +76,8 @@ class _AssignStaffState extends ConsumerState<AssignStaff> {
     double height = sizeData.height;
     double aspectRatio = sizeData.aspectRatio;
 
-    return Container(
-      child: Column(
+    if (widget.from == From.edit) {
+      return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           CustomText(
@@ -106,7 +129,7 @@ class _AssignStaffState extends ConsumerState<AssignStaff> {
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(8),
                                 child: Image.network(
-                                  availableStaffs[index]["photo"],
+                                  availableStaffs[index].imagePath,
                                   width: aspectRatio * 120,
                                   height: aspectRatio * 120,
                                   fit: BoxFit.cover,
@@ -114,7 +137,7 @@ class _AssignStaffState extends ConsumerState<AssignStaff> {
                               ),
                             ),
                             CustomText(
-                              text: availableStaffs[index]["name"],
+                              text: availableStaffs[index].name,
                               size: sizeData.regular,
                               color: colorData.fontColor(.8),
                               weight: FontWeight.bold,
@@ -137,7 +160,7 @@ class _AssignStaffState extends ConsumerState<AssignStaff> {
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(8),
                               child: Image.network(
-                                availableStaffs[index]["photo"],
+                                availableStaffs[index].imagePath,
                                 width: height * 0.068,
                                 height: double.infinity,
                                 fit: BoxFit.cover,
@@ -158,7 +181,7 @@ class _AssignStaffState extends ConsumerState<AssignStaff> {
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(8),
                             child: Image.network(
-                              availableStaffs[index]["photo"],
+                              availableStaffs[index].imagePath,
                               width: height * 0.07,
                               fit: BoxFit.cover,
                               loadingBuilder: (BuildContext context,
@@ -233,7 +256,8 @@ class _AssignStaffState extends ConsumerState<AssignStaff> {
                 weight: FontWeight.w600,
               ),
               Tooltip(
-                message: "Long Press a staff\n to make him as Batch Admin",
+                message: "Double tap a staff\n to unselect",
+                triggerMode: TooltipTriggerMode.tap,
                 textAlign: TextAlign.center,
                 textStyle: TextStyle(
                   fontWeight: FontWeight.w600,
@@ -241,7 +265,7 @@ class _AssignStaffState extends ConsumerState<AssignStaff> {
                   fontSize: sizeData.small,
                 ),
                 waitDuration: const Duration(microseconds: 1),
-                showDuration: const Duration(milliseconds: 800),
+                showDuration: const Duration(seconds: 2),
                 padding: EdgeInsets.symmetric(
                     horizontal: width * 0.02, vertical: height * 0.005),
                 decoration: BoxDecoration(
@@ -295,18 +319,12 @@ class _AssignStaffState extends ConsumerState<AssignStaff> {
                         )
                       : const SizedBox(),
                   DragTarget(
-                    onAccept: (Map<String, dynamic> data) {
+                    onAcceptWithDetails: (DragTargetDetails<UserModel?> data) {
                       setState(() {
-                        selectedStaffs.add(data);
-                        Map<String, dynamic> result = selectedStaffs.fold({},
-                            (Map<String, dynamic> previousValue, element) {
-                          previousValue[element["id"].toString()] =
-                              element["email"];
-                          return previousValue;
-                        });
+                        selectedStaffs.add(data.data!);
                         ref
                             .read(createBatchProvider.notifier)
-                            .updateStaffs(newStaffs: result);
+                            .updateStaffs(staffsList: selectedStaffs);
                         movedOver = false;
                       });
                     },
@@ -330,41 +348,16 @@ class _AssignStaffState extends ConsumerState<AssignStaff> {
                           onDoubleTap: () {
                             setState(() {
                               availableStaffs.add(selectedStaffs[index]);
-                              if (selectedStaffs[index]["name"] ==
-                                  batchAdmin["name"]) {
-                                batchAdmin = {};
-                                ref
-                                    .read(createBatchProvider.notifier)
-                                    .updateAdminStaff(adminStaff: {});
-                              }
+
                               selectedStaffs.removeAt(index);
                               ref
                                   .read(createBatchProvider.notifier)
-                                  .updateStaffs(
-                                      newStaffs: Map.fromIterable(
-                                          selectedStaffs.map((e) => {
-                                                e["id"].toString():
-                                                    e["email"].toString()
-                                              })));
-                            });
-                          },
-                          onLongPress: () {
-                            setState(() {
-                              batchAdmin = selectedStaffs[index];
-                              ref
-                                  .read(createBatchProvider.notifier)
-                                  .updateAdminStaff(adminStaff: {
-                                selectedStaffs[index]["id"].toString():
-                                    selectedStaffs[index]["email"].toString()
-                              });
+                                  .updateStaffs(staffsList: selectedStaffs);
                             });
                           },
                           child: Container(
-                            padding: EdgeInsets.all(
-                              batchAdmin["name"] ==
-                                      selectedStaffs[index]["name"]
-                                  ? 1
-                                  : 3,
+                            padding: const EdgeInsets.all(
+                              3,
                             ),
                             margin: EdgeInsets.only(
                               right: width * 0.04,
@@ -372,20 +365,13 @@ class _AssignStaffState extends ConsumerState<AssignStaff> {
                             decoration: BoxDecoration(
                               color: colorData.secondaryColor(1),
                               borderRadius: BorderRadius.circular(8),
-                              border: batchAdmin["name"] ==
-                                      selectedStaffs[index]["name"]
-                                  ? Border.all(
-                                      color: colorData.primaryColor(1),
-                                      strokeAlign: BorderSide.strokeAlignCenter,
-                                      width: 2,
-                                    )
-                                  : Border.all(
-                                      color: Colors.transparent, width: 0),
+                              border: Border.all(
+                                  color: Colors.transparent, width: 0),
                             ),
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(8),
                               child: Image.network(
-                                selectedStaffs[index]["photo"],
+                                selectedStaffs[index].imagePath,
                                 width: height * 0.068,
                                 fit: BoxFit.cover,
                               ),
@@ -402,35 +388,38 @@ class _AssignStaffState extends ConsumerState<AssignStaff> {
           SizedBox(
             height: height * 0.015,
           ),
-          batchAdmin.isNotEmpty
-              ? Row(
-                  children: [
-                    CustomText(
-                      text: "Admin staff:",
-                      size: sizeData.verySmall,
-                      color: colorData.fontColor(.6),
-                    ),
-                    SizedBox(
-                      width: width * 0.01,
-                    ),
-                    CustomText(
-                      text: batchAdmin["name"].toString().trim(),
-                      color: colorData.fontColor(.8),
-                      weight: FontWeight.w700,
-                    ),
-                    SizedBox(
-                      width: width * 0.02,
-                    ),
-                    CustomText(
-                      text: "(ID: ${batchAdmin["id"]})",
-                      size: sizeData.small,
-                      color: colorData.fontColor(.8),
-                    )
-                  ],
-                )
-              : const SizedBox()
         ],
-      ),
-    );
+      );
+    } else {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          CustomText(
+            text: "Selected Staff",
+            size: sizeData.medium,
+            color: colorData.fontColor(.8),
+            weight: FontWeight.w600,
+          ),
+          Container(
+            margin: EdgeInsets.only(top: height * 0.02),
+            height: height * 0.07,
+            child: ListView.builder(
+              physics: const BouncingScrollPhysics(),
+              scrollDirection: Axis.horizontal,
+              padding: EdgeInsets.symmetric(horizontal: width * 0.02),
+              itemCount: selectedStaffs.length,
+              itemBuilder: (BuildContext context, int index) {
+                return CustomNetworkImage(
+                  size: height * 0.07,
+                  radius: 8,
+                  url: selectedStaffs[index].imagePath,
+                  rightMargin: width * 0.02,
+                );
+              },
+            ),
+          )
+        ],
+      );
+    }
   }
 }

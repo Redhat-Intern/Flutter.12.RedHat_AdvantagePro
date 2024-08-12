@@ -21,7 +21,7 @@ class CertifcatesPlaceHolder extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         CustomText(
-          text: "Available Certificates",
+          text: "Available Courses",
           size: sizeData.subHeader,
           color: colorData.fontColor(.8),
           weight: FontWeight.w600,
@@ -54,7 +54,7 @@ class CertifcatesPlaceHolder extends ConsumerWidget {
               ),
               Expanded(
                 child: CustomText(
-                  text: "No Certificates have been created till NOW!",
+                  text: "No Courses have been created till NOW!",
                   maxLine: 2,
                   weight: FontWeight.bold,
                   color: colorData.fontColor(.6),

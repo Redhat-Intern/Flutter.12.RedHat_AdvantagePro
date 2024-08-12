@@ -12,7 +12,12 @@
           "package_name": "com.example.redhat_v1"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "741151910832-9krdlo4g9832iet0b548kjc22b9a1kch.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyA3GlplrD-2lV6AWbrAqFlmVfgKOo-bvs0"
@@ -20,7 +25,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "741151910832-9krdlo4g9832iet0b548kjc22b9a1kch.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "741151910832-79454s196b28secc78orq6n96nrv22aq.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.redhatV1"
+              }
+            }
+          ]
         }
       }
     }

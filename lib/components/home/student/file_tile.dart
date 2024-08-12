@@ -6,7 +6,7 @@ import 'package:open_file/open_file.dart';
 
 import '../../../utilities/theme/color_data.dart';
 import '../../../utilities/theme/size_data.dart';
-import '../../add_certificate/course_file_tile.dart';
+import '../../add_course/course_file_tile.dart';
 import '../../common/text.dart';
 
 class FileTile extends ConsumerWidget {

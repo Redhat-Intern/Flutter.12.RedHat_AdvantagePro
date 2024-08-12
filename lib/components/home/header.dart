@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:redhat_v1/utilities/console_logger.dart';
 
 import '../../functions/update/update_notification_data.dart';
 import '../../model/user.dart';
@@ -12,6 +13,7 @@ import '../../utilities/theme/size_data.dart';
 import '../../pages/notification.dart';
 import '../common/icon.dart';
 import '../common/menu_button.dart';
+import '../common/network_image.dart';
 import '../common/text.dart';
 import '../common/waiting_widgets/notification_waiting.dart';
 
@@ -29,7 +31,7 @@ class _HeaderState extends ConsumerState<Header>
     CustomSizeData sizeData = CustomSizeData.from(context);
     CustomColorData colorData = CustomColorData.from(ref);
 
-    UserModel userData = ref.watch(userDataProvider);
+    UserModel userData = ref.watch(userDataProvider).key;
     String name = userData.name;
     String role = userData.userRole!.displayName;
 
@@ -74,17 +76,23 @@ class _HeaderState extends ConsumerState<Header>
                             icon: Icons.notifications_outlined,
                             color: colorData.fontColor(.8),
                           ),
-                          Container(
-                            padding: EdgeInsets.all(aspectRatio * 10),
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: colorData.primaryColor(1),
-                            ),
-                            child: CustomText(
-                              text: messageCount.toString(),
-                              size: aspectRatio * 22,
-                              color: colorData.sideBarTextColor(1),
-                              weight: FontWeight.bold,
+                          Positioned(
+                            top: -10,
+                            left: -2,
+                            child: Container(
+                              padding: EdgeInsets.all(aspectRatio * 10),
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: colorData.primaryColor(1),
+                              ),
+                              alignment: Alignment.center,
+                              child: CustomText(
+                                text: messageCount.toString(),
+                                size: aspectRatio * 22,
+                                color: colorData.sideBarTextColor(1),
+                                weight: FontWeight.bold,
+                                align: TextAlign.center,
+                              ),
                             ),
                           )
                         ],
@@ -103,20 +111,10 @@ class _HeaderState extends ConsumerState<Header>
                   ),
                 );
               },
-              child: Container(
-                padding: EdgeInsets.all(aspectRatio * 6),
-                margin: EdgeInsets.only(left: width * 0.02),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8),
-                  color: colorData.secondaryColor(1),
-                ),
-                child: Image(
-                  height: aspectRatio * 70,
-                  width: aspectRatio * 70,
-                  image: const AssetImage(
-                    "assets/images/redhat.png",
-                  ),
-                ),
+              child: CustomNetworkImage(
+                size: aspectRatio * 70,
+                radius: 8,
+                url: userData.imagePath == '' ? null : userData.imagePath,
               ),
             )
           ],
@@ -140,13 +138,16 @@ class _HeaderState extends ConsumerState<Header>
                 SizedBox(
                   height: height * 0.002,
                 ),
-                CustomText(
-                  text: name.isEmpty
-                      ? name
-                      : name[0].toUpperCase() + name.substring(1),
-                  size: sizeData.header,
-                  color: colorData.fontColor(.8),
-                  weight: FontWeight.bold,
+                SizedBox(
+                  width: width * .6,
+                  child: CustomText(
+                    text: name.isEmpty
+                        ? name
+                        : name[0].toUpperCase() + name.substring(1),
+                    size: sizeData.header,
+                    color: colorData.fontColor(.8),
+                    weight: FontWeight.bold,
+                  ),
                 ),
               ],
             ),

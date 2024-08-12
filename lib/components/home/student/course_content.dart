@@ -3,12 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
-import '../../../model/certificate.dart';
+import '../../../model/course.dart';
 import '../../../model/user.dart';
 import '../../../pages/test_page/daily_test_attender.dart';
 import '../../../pages/test_page/live_test_result.dart';
 import '../../../pages/test_page/live_test_waiting_page.dart';
-import '../../../providers/certificate_data_provider.dart';
+import '../../../providers/course_data_provider.dart';
 import '../../../providers/user_detail_provider.dart';
 import '../../../utilities/theme/color_data.dart';
 import '../../../utilities/theme/size_data.dart';
@@ -69,8 +69,9 @@ class _CourseContentState extends ConsumerState<CourseContent> {
 
   @override
   Widget build(BuildContext context) {
-    UserModel userData = ref.watch(userDataProvider);
-    CertificateData certificateData = ref.watch(certificateDataProvider);
+    UserModel userData = ref.watch(userDataProvider).key;
+    CourseData courseData = ref.watch(courseDataProvider);
+
     CustomSizeData sizeData = CustomSizeData.from(context);
     CustomColorData colorData = CustomColorData.from(ref);
     double width = sizeData.width;
@@ -81,13 +82,14 @@ class _CourseContentState extends ConsumerState<CourseContent> {
 
       Map<String, dynamic> data = toadd
           ? {
-              userData.id![widget.batchData["name"]]!: {
+              userData.studentId![widget.batchData["name"]]!: {
                 "name": userData.name,
                 "photo": userData.imagePath
               }
             }
           : {
-              userData.id![widget.batchData["name"]]!: FieldValue.delete(),
+              userData.studentId![widget.batchData["name"]]!:
+                  FieldValue.delete(),
             };
       try {
         await FirebaseFirestore.instance
@@ -103,8 +105,7 @@ class _CourseContentState extends ConsumerState<CourseContent> {
       }
     }
 
-    if (!certificateData.isEmpty() &&
-        certificateData.courseDataList.isNotEmpty) {
+    if (!courseData.isEmpty() && courseData.courseDataList.isNotEmpty) {
       List<String> batchDates = List.from(widget.batchData["dates"]);
       String? liveTest;
       if (widget.batchData["liveTest"] != null) {
@@ -163,7 +164,7 @@ class _CourseContentState extends ConsumerState<CourseContent> {
                 scrollDirection: Axis.horizontal,
                 itemCount: batchDates.length,
                 itemBuilder: (context, index) {
-                  bool toShow = index < certificateData.courseDataList.length;
+                  bool toShow = index < courseData.courseDataList.length;
                   return GestureDetector(
                     onTap: toShow
                         ? () => setState(() {
@@ -222,7 +223,8 @@ class _CourseContentState extends ConsumerState<CourseContent> {
                     children: [
                       dailyTest != null
                           ? DailyTestTile(
-                              userId: userData.id![widget.batchData["name"]]!,
+                              userId: userData
+                                  .studentId![widget.batchData["name"]]!,
                               dayIndex: firstIndex.toString(),
                               batchName: widget.batchData["name"],
                               timeEnd: dailyTestResult,
@@ -233,7 +235,8 @@ class _CourseContentState extends ConsumerState<CourseContent> {
                                 documentRef: FirebaseFirestore.instance
                                     .collection("dailyTest")
                                     .doc(widget.batchData["name"]),
-                                userID: userData.id![widget.batchData["name"]]!,
+                                userID: userData
+                                    .studentId![widget.batchData["name"]]!,
                               ),
                             )
                           : const SizedBox(),
@@ -321,8 +324,8 @@ class _CourseContentState extends ConsumerState<CourseContent> {
                                 ),
                               ),
                               child: CustomText(
-                                text: certificateData
-                                    .courseDataList[firstIndex].title,
+                                text:
+                                    courseData.courseDataList[firstIndex].title,
                                 size: sizeData.regular,
                                 color: colorData.fontColor(.8),
                                 weight: FontWeight.w800,
@@ -365,7 +368,7 @@ class _CourseContentState extends ConsumerState<CourseContent> {
                               child: SingleChildScrollView(
                                 scrollDirection: Axis.vertical,
                                 child: CustomText(
-                                  text: certificateData
+                                  text: courseData
                                       .courseDataList[firstIndex].topics,
                                   size: sizeData.regular,
                                   color: colorData.fontColor(.8),
@@ -383,7 +386,7 @@ class _CourseContentState extends ConsumerState<CourseContent> {
                       ),
                       CourseFiles(
                         courseFiles:
-                            certificateData.courseDataList[firstIndex].files,
+                            courseData.courseDataList[firstIndex].files,
                       ),
                     ],
                   ),
@@ -446,8 +449,7 @@ class _CourseContentState extends ConsumerState<CourseContent> {
         ),
       );
     } else {
-      return CourseContentWaitingWidget(
-          count: certificateData.courseDataLength);
+      return CourseContentWaitingWidget(count: courseData.courseDataLength);
     }
   }
 }

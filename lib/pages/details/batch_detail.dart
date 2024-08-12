@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:redhat_v1/components/common/network_image.dart';
 import 'package:redhat_v1/components/common/shimmer_box.dart';
 import 'package:redhat_v1/components/common/text_list.dart';
+import 'package:redhat_v1/model/user.dart';
 import 'package:redhat_v1/pages/show_all/batches.dart';
 
 import '../../components/common/page_header.dart';
@@ -22,31 +23,30 @@ class BatchDetail extends ConsumerStatefulWidget {
 }
 
 class BatchDeatilState extends ConsumerState<BatchDetail> {
-  Map<String, dynamic> studentsData = {};
-  Map<String, dynamic> staffsData = {};
+  List<UserModel> studentsData = [];
+  List<UserModel> staffsData = [];
 
   getStudentData() async {
-    QuerySnapshot<Map<String, dynamic>> studentsQueryData =
-        await FirebaseFirestore.instance.collection("students").get();
+    QuerySnapshot<Map<String, dynamic>> userDataQuery =
+        await FirebaseFirestore.instance.collection("users").get();
 
-    QuerySnapshot<Map<String, dynamic>> staffsQueryData =
-        await FirebaseFirestore.instance.collection("staffs").get();
-
-    for (var element in studentsQueryData.docs) {
-      if (Map.fromEntries(List.from(widget.batchData["students"])
-              .map((e) => MapEntry(e.keys.first, e.values.first)))
-          .values
-          .contains(element.id)) {
+    for (var element in userDataQuery.docs) {
+      UserModel userData = UserModel.fromJson(element.data());
+      if (List.from(widget.batchData["staffs"])
+          .where((data) =>
+              Map<String, String>.from(data).values.first.toLowerCase() ==
+              userData.email.toLowerCase())
+          .isNotEmpty) {
         setState(() {
-          studentsData.addAll({element.id: element.data()});
+          staffsData.add(userData);
         });
-      }
-    }
-
-    for (var element in staffsQueryData.docs) {
-      if (Map.from(widget.batchData["staffs"]).values.contains(element.id)) {
+      } else if (List.from(widget.batchData["students"])
+          .where((data) =>
+              Map<String, String>.from(data).values.first.toLowerCase() ==
+              userData.email.toLowerCase())
+          .isNotEmpty) {
         setState(() {
-          staffsData.addAll({element.id: element.data()});
+          studentsData.add(userData);
         });
       }
     }
@@ -66,13 +66,9 @@ class BatchDeatilState extends ConsumerState<BatchDetail> {
     double height = sizeData.height;
     double width = sizeData.width;
     double aspectRatio = sizeData.aspectRatio;
-
-    Map<String, dynamic>? adminStaffData =
-        staffsData[Map.from(widget.batchData["admin"]).values.first];
-
-    String? adminStaffName =
-        adminStaffData != null ? adminStaffData["name"] : null;
     bool status = !(widget.batchData["completed"] == true);
+
+    print(staffsData);
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -86,7 +82,10 @@ class BatchDeatilState extends ConsumerState<BatchDetail> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              PageHeader(tittle: widget.batchData["name"]),
+              PageHeader(
+                tittle: widget.batchData["name"],
+                isMenuButton: false,
+              ),
               SizedBox(height: height * 0.03),
               Row(
                 children: [
@@ -97,8 +96,8 @@ class BatchDeatilState extends ConsumerState<BatchDetail> {
                       color: colorData.primaryColor(1),
                     ),
                     child: NetworkImageRender(
-                      certificateID: widget.batchData["certificateID"],
-                      size: width * .3,
+                      courseID: widget.batchData["courseID"],
+                      size: width * .25,
                       radius: 10,
                     ),
                   ),
@@ -107,20 +106,13 @@ class BatchDeatilState extends ConsumerState<BatchDetail> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       BatchDetailTile(
-                        title: "Certificate ID",
-                        value: widget.batchData["certificateID"],
+                        title: "Course ID",
+                        value: widget.batchData["courseID"],
                       ),
                       BatchDetailTile(
                         title: "Created Date",
                         value: widget.batchData["time"],
                       ),
-                      adminStaffName == null
-                          ? ShimmerBox(
-                              height: sizeData.subHeader, width: width * .2)
-                          : BatchDetailTile(
-                              title: "Admin Staff",
-                              value: adminStaffName,
-                            ),
                       BatchDetailTile(
                         title: "Status",
                         value: status ? "LIVE" : "COMPLETED",
@@ -234,7 +226,7 @@ class BatchStaffDetail extends ConsumerStatefulWidget {
     required this.staffsData,
   });
 
-  final Map<String, dynamic> staffsData;
+  final List<UserModel> staffsData;
 
   @override
   ConsumerState<BatchStaffDetail> createState() => _BatchStaffDetailState();
@@ -258,10 +250,8 @@ class _BatchStaffDetailState extends ConsumerState<BatchStaffDetail> {
     double width = sizeData.width;
     double aspectRatio = sizeData.aspectRatio;
 
-    List<MapEntry<String, dynamic>> staffsData =
-        widget.staffsData.entries.toList();
     List<String> staffNames =
-        staffsData.map((e) => e.value["name"].toString()).toList();
+        widget.staffsData.map((e) => e.name.toString()).toList();
 
     return Expanded(
       child: Column(
@@ -313,7 +303,7 @@ class _BatchStaffDetailState extends ConsumerState<BatchStaffDetail> {
                               size: height * 0.125,
                               padding: aspectRatio * 6,
                               radius: 8,
-                              url: staffsData[currentIndex].value["photo"],
+                              url: widget.staffsData[currentIndex].imagePath,
                             ),
                             SizedBox(
                               height: height * 0.01,
@@ -354,8 +344,7 @@ class _BatchStaffDetailState extends ConsumerState<BatchStaffDetail> {
                                   width: width * .02,
                                 ),
                                 CustomText(
-                                  text: staffsData[currentIndex]
-                                      .value["id"]
+                                  text: widget.staffsData[currentIndex].staffId
                                       .toString()
                                       .toUpperCase(),
                                   weight: FontWeight.w800,
@@ -402,7 +391,7 @@ class _BatchStaffDetailState extends ConsumerState<BatchStaffDetail> {
 class BatchStudentDetail extends ConsumerStatefulWidget {
   const BatchStudentDetail({super.key, required this.studentsData});
 
-  final Map<String, dynamic> studentsData;
+  final List<UserModel> studentsData;
 
   @override
   ConsumerState<BatchStudentDetail> createState() => _BatchStudentDetailState();
@@ -426,10 +415,8 @@ class _BatchStudentDetailState extends ConsumerState<BatchStudentDetail> {
     double width = sizeData.width;
     double aspectRatio = sizeData.aspectRatio;
 
-    List<MapEntry<String, dynamic>> studentsData =
-        widget.studentsData.entries.toList();
     List<String> studetnsName =
-        studentsData.map((e) => e.value["name"].toString()).toList();
+        widget.studentsData.map((e) => e.name.toString()).toList();
 
     return Expanded(
       child: Column(
@@ -481,7 +468,7 @@ class _BatchStudentDetailState extends ConsumerState<BatchStudentDetail> {
                               size: height * 0.125,
                               padding: aspectRatio * 6,
                               radius: 8,
-                              url: studentsData[currentIndex].value["photo"],
+                              url: widget.studentsData[currentIndex].imagePath,
                             ),
                             SizedBox(
                               height: height * 0.01,
@@ -508,9 +495,11 @@ class _BatchStudentDetailState extends ConsumerState<BatchStudentDetail> {
                                   width: width * .02,
                                 ),
                                 CustomText(
-                                  text: studentsData[currentIndex]
-                                      .value["id"][studentsData[currentIndex]
-                                          .value["currentBatch"]
+                                  text: widget
+                                      .studentsData[currentIndex]
+                                      .studentId![widget
+                                          .studentsData[currentIndex]
+                                          .currentBatch!
                                           .keys
                                           .first]
                                       .toString()

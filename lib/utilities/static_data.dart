@@ -4,6 +4,8 @@ enum From { detail, add, edit }
 
 enum CourseContentShifter { Title, Topics }
 
+enum FontFamilyENUM { IstokWeb, Lato, Nunito, Merriweather }
+
 enum UserRole {
   student,
   staff,
@@ -24,7 +26,7 @@ enum UserRole {
   }
 
   static UserRole fromString(String role) {
-    switch (role) {
+    switch (role.trim()) {
       case 'superAdmin':
         return UserRole.superAdmin;
       case 'admin':

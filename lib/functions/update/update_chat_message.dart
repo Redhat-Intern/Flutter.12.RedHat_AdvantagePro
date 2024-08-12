@@ -18,7 +18,7 @@ void uploadChat(
     required MessageType type,
     required WidgetRef ref,
     required int index}) async {
-  UserModel userData = ref.watch(userDataProvider);
+  UserModel userData = ref.watch(userDataProvider).key;
   List<ChatForum> chatForums = ref.watch(forumDataProvider);
   String currentTime = DateTime.now().toIso8601String();
   Map<String, dynamic> data = {};

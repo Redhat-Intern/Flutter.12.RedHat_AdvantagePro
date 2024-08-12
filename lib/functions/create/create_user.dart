@@ -1,6 +1,10 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:redhat_v1/functions/create/add_staff.dart';
 
 import '../../components/common/text.dart';
 import '../../model/user.dart';
@@ -12,6 +16,7 @@ Future createUser({
   required String password,
   required UserModel generatedData,
   required BuildContext context,
+  Map<File, String>? photo,
 }) async {
   AuthFB()
       .createUserWithEmailAndPassword(
@@ -19,12 +24,19 @@ Future createUser({
     password: password,
   )
       .then((value) async {
+    if (photo != null) {
+      Reference storageRef = FirebaseStorage.instance.ref();
+      String imagePath = await uploadPhoto(
+          ref: storageRef, photo: photo, email: email, collName: "student");
+      generatedData = generatedData.copyWith(imagePath: imagePath);
+    }
+
     await FirebaseFirestore.instance
         .collection('users')
         .doc(email)
         .set(generatedData.toJson());
-    await FirebaseFirestore.instance.collection("requests").doc(email).delete();
 
+    await FirebaseFirestore.instance.collection("requests").doc(email).delete();
     Navigator.pop(context);
   }).catchError((error) {
     Color secondaryColor(double opacity) => Colors.white.withOpacity(opacity);

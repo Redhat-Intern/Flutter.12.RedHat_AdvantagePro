@@ -37,6 +37,7 @@ class Batches extends ConsumerWidget {
             children: [
               const PageHeader(
                 tittle: "all batches",
+                isMenuButton: false,
               ),
               SizedBox(
                 height: height * 0.02,
@@ -137,8 +138,8 @@ class Batches extends ConsumerWidget {
                                               height: height * 0.006,
                                             ),
                                             NetworkImageRender(
-                                              certificateID:
-                                                  batchData["certificateID"],
+                                              courseID:
+                                                  batchData["courseID"],
                                               size: aspectRatio * 180,
                                               radius: 8,
                                               border: Border.all(
@@ -160,19 +161,12 @@ class Batches extends ConsumerWidget {
                                               CrossAxisAlignment.start,
                                           children: [
                                             BatchTileText(
-                                              header: "Certificate:",
-                                              value: batchData["certificateID"],
+                                              header: "Course:",
+                                              value: batchData["courseID"],
                                             ),
                                             BatchTileText(
                                               header: "Created Time:",
                                               value: batchData["time"],
-                                            ),
-                                            BatchTileText(
-                                              header: "Admin Staff:",
-                                              value:
-                                                  Map.from(batchData["admin"])
-                                                      .keys
-                                                      .first,
                                             ),
                                             BatchTileText(
                                               header: "Students Count:",
@@ -233,12 +227,12 @@ class Batches extends ConsumerWidget {
 class NetworkImageRender extends StatefulWidget {
   const NetworkImageRender(
       {super.key,
-      required this.certificateID,
+      required this.courseID,
       required this.size,
       required this.radius,
       this.border,
       this.rightMargin});
-  final String certificateID;
+  final String courseID;
   final double size;
   final double radius;
   final Border? border;
@@ -253,8 +247,8 @@ class _NetworkImageRenderState extends State<NetworkImageRender> {
 
   fetchImageURL() {
     FirebaseFirestore.instance
-        .collection("certificates")
-        .doc(widget.certificateID)
+        .collection("courses")
+        .doc(widget.courseID)
         .get()
         .then(
       (snapshot) {
@@ -270,7 +264,7 @@ class _NetworkImageRenderState extends State<NetworkImageRender> {
   @override
   void didUpdateWidget(covariant NetworkImageRender oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.certificateID != widget.certificateID) {
+    if (oldWidget.courseID != widget.courseID) {
       fetchImageURL();
     }
   }

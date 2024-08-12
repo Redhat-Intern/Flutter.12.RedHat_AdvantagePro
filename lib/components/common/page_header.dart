@@ -4,17 +4,20 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../utilities/theme/color_data.dart';
 import '../../utilities/theme/size_data.dart';
 import 'back_button.dart';
+import 'menu_button.dart';
 import 'text.dart';
 
 class PageHeader extends ConsumerWidget {
   const PageHeader({
     super.key,
     required this.tittle,
+    required this.isMenuButton,
     this.secondaryWidget,
     this.otherMethod,
   });
 
   final String tittle;
+  final bool isMenuButton;
   final Widget? secondaryWidget;
   final Function? otherMethod;
 
@@ -39,7 +42,9 @@ class PageHeader extends ConsumerWidget {
         Positioned(
           top: 0,
           left: 0,
-          child: CustomBackButton(otherMethod: otherMethod),
+          child: isMenuButton
+              ? const MenuButton()
+              : CustomBackButton(otherMethod: otherMethod),
         ),
         secondaryWidget != null
             ? Positioned(right: 0, child: secondaryWidget!)

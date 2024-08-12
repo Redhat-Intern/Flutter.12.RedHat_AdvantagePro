@@ -1,4 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:redhat_v1/providers/user_detail_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthFB {
@@ -34,9 +36,10 @@ class AuthFB {
     );
   }
 
-  Future<void> signOut() async {
+  Future<void> signOut({required WidgetRef ref}) async {
     await _firebaseAuth.signOut();
 
+    ref.read(userDataProvider.notifier).clearData();
     SharedPreferences preference = await SharedPreferences.getInstance();
     preference.remove("role");
   }

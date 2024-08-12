@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:redhat_v1/providers/navigation_index_provider.dart';
 
 import '../../../utilities/theme/color_data.dart';
 import '../../../utilities/theme/size_data.dart';
@@ -29,41 +30,50 @@ class CertificationsPlaceHolder extends ConsumerWidget {
         SizedBox(
           height: height * 0.0125,
         ),
-        Container(
-          padding: EdgeInsets.only(
-            top: height * 0.015,
-            bottom: height * 0.01,
-            left: width * 0.02,
-          ),
-          decoration: BoxDecoration(
-            color: colorData.secondaryColor(.4),
-            borderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(8),
-              bottomLeft: Radius.circular(8),
-            ),
-          ),
-          child: Row(
-            children: [
-              Expanded(
-                child: CustomText(
-                  text: "You have not been enroled in any certified courses till NOW!",
-                  maxLine: 2,
-                  weight: FontWeight.bold,
-                  color: colorData.fontColor(.6),
-                  size: sizeData.regular,
-                  align: TextAlign.center,
-                ),
-              ),
-              Image.asset(
-                "assets/icons/DNF1.png",
-                height: height * 0.1,
-                fit: BoxFit.fitHeight,
-              ),
-              SizedBox(
-                width: width * 0.02,
-              ),
+        GestureDetector(
+          onTap: () {
+            Navigator.pop(context);
+            Navigator.pop(context);
 
-            ],
+            ref.read(navigationIndexProvider.notifier).jumpTo(3);
+          },
+          child: Container(
+            padding: EdgeInsets.only(
+              top: height * 0.015,
+              bottom: height * 0.01,
+              left: width * 0.02,
+            ),
+            decoration: BoxDecoration(
+              color: colorData.secondaryColor(.4),
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(8),
+                bottomLeft: Radius.circular(8),
+              ),
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: CustomText(
+                    text:
+                        "You have not been enroled in any certified courses till NOW!\nTAP TO CREATE",
+                    maxLine: 3,
+                    height: 1.5,
+                    weight: FontWeight.bold,
+                    color: colorData.fontColor(.6),
+                    size: sizeData.regular,
+                    align: TextAlign.center,
+                  ),
+                ),
+                Image.asset(
+                  "assets/icons/DNF1.png",
+                  height: height * 0.1,
+                  fit: BoxFit.fitHeight,
+                ),
+                SizedBox(
+                  width: width * 0.02,
+                ),
+              ],
+            ),
           ),
         ),
       ],

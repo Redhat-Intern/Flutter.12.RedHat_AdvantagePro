@@ -2,16 +2,17 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:material_symbols_icons/material_symbols_icons.dart';
+import 'package:redhat_v1/layout/user_notfound.dart';
+import 'package:redhat_v1/utilities/console_logger.dart';
 
 import '../components/common/shimmer_box.dart';
-import '../components/common/waiting_widgets/certification_waiting.dart';
-import '../components/common/waiting_widgets/course_waiting.dart';
 import '../components/common/waiting_widgets/header_waiting.dart';
 import '../components/common/waiting_widgets/recent_waiting.dart';
 import '../components/common/waiting_widgets/search_field_waiting.dart';
 import '../components/common/waiting_widgets/staffs_list_waiting.dart';
 import '../model/user.dart';
-import '../pages/add_pages/add_certification.dart';
+import '../pages/courses.dart';
 import '../pages/home/admin_home.dart';
 import '../pages/home/staff_home.dart';
 import '../pages/home/student_home.dart';
@@ -51,7 +52,8 @@ class _NavigationState extends ConsumerState<Navigation> {
     GlobalKey<ScaffoldState> scaffoldKey = ref.watch(drawerKeyProvider);
     index = ref.watch(navigationIndexProvider);
 
-    UserModel userData = ref.watch(userDataProvider);
+    MapEntry<UserModel, String?> userProviderData = ref.watch(userDataProvider);
+    UserModel userData = userProviderData.key;
 
     CustomSizeData sizeData = CustomSizeData.from(context);
     CustomColorData colorData = CustomColorData.from(ref);
@@ -75,59 +77,36 @@ class _NavigationState extends ConsumerState<Navigation> {
         const AdminHome(),
         const Report(),
         const Forum(),
-        const AddCertification(),
+        const Courses(),
       ];
-      // loadingList.addAll([
-      //   const SearchFieldWaitingWidget(),
-      //   const RecentWaitingWidget(),
-      //   const StaffsListWaiting(),
-      //   ShimmerBox(height: height * 0.1, width: width * 0.45),
-      //   const SizedBox(),
-      // ]);
       iconNameList = [
-        {Icons.home_outlined: "Home"},
-        {Icons.report: "Report"},
-        {Icons.forest_outlined: "Forum"},
-        {Icons.add_moderator_rounded: "Certification"},
+        {Symbols.home_app_logo_rounded: "Home"},
+        {Symbols.crisis_alert_rounded: "Report"},
+        {Symbols.forum_rounded: "Forum"},
+        {Symbols.developer_guide_rounded: "Certification"},
       ];
     } else if (userData.userRole == UserRole.staff) {
       widgetList = [
         const StaffHome(),
         const Forum(),
       ];
-      // loadingList.addAll([
-      //   SizedBox(height: height * 0.03),
-      //   const CertificationWaitingWidget(),
-      //   // need to do
-      //   const Spacer(),
-      // ]);
       iconNameList = [
-        {Icons.home_outlined: "Home"},
-        {Icons.forest_outlined: "Forum"},
+        {Symbols.home_app_logo_rounded: "Home"},
+        {Symbols.forum_rounded: "Forum"},
       ];
     } else if (userData.userRole == UserRole.student) {
       widgetList = [
         const StudentHome(),
         const Forum(),
       ];
-      // loadingList.addAll([
-      //   SizedBox(height: height * 0.03),
-      //   const CertificationWaitingWidget(),
-      //   SizedBox(height: height * 0.02),
-      //   const CourseContentWaitingWidget(count: 3),
-      // ]);
       iconNameList = [
-        {Icons.home_outlined: "Home"},
-        {Icons.forest_outlined: "Forum"},
+        {Symbols.home_app_logo_rounded: "Home"},
+        {Symbols.forum_rounded: "Forum"},
       ];
     }
 
-    return PopScope(
-      canPop: true,
-      onPopInvoked: (didPop) {
-        didPop ? exit(1) : exit(0);
-      },
-      child: Scaffold(
+    if (userProviderData.value == null) {
+      return Scaffold(
         key: scaffoldKey,
         drawerEnableOpenDragGesture: true,
         resizeToAvoidBottomInset: false,
@@ -142,13 +121,16 @@ class _NavigationState extends ConsumerState<Navigation> {
                 ? Column(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: loadingList)
-                : WillPopScope(
-                    onWillPop: () {
-                      return popFunction(ref);
+                : PopScope(
+                    canPop: ref.read(navigationIndexProvider) == 0,
+                    onPopInvoked: (didPop) {
+                      if (didPop) {
+                        exit(1);
+                      } else {
+                        ref.read(navigationIndexProvider.notifier).jumpTo(0);
+                      }
                     },
-                    child:
-                        //  widgetList[index],
-                        IndexedStack(
+                    child: IndexedStack(
                       index: index,
                       children: widgetList,
                     ),
@@ -159,7 +141,10 @@ class _NavigationState extends ConsumerState<Navigation> {
           iconNameList: iconNameList,
         ),
         drawerScrimColor: colorData.secondaryColor(.4),
-      ),
-    );
+      );
+    } else {
+      ConsoleLogger.message("I AM", from: "navigator");
+      return const UserNotfound();
+    }
   }
 }

@@ -83,10 +83,10 @@ class _LoginState extends ConsumerState<Login> {
         .signInWithEmailAndPassword(
       email: emailController.text.trim(),
       password: passwordController.text.trim(),
-    ).then((v){
+    )
+        .then((v) {
       Navigator.pop(context);
-    })
-        .catchError((error) {
+    }).catchError((error) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           backgroundColor: backgroundColor,

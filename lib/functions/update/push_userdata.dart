@@ -9,14 +9,22 @@ import '../firebase_auth.dart';
 void pushUserData({required WidgetRef ref}) {
   String? email = AuthFB().currentUser?.email.toString();
 
-  FirebaseFirestore.instance
-      .collection('users')
-      .doc(email)
-      .snapshots()
-      .listen((event) {
-    UserModel userModel = UserModel.fromJson(event.data()!);
-    ref.read(userDataProvider.notifier).addUserData(userModel);
-  }).onError((obj) {
-    ConsoleLogger.error(obj.message, from: "pushUserData");
-  });
+  if (email != null) {
+    FirebaseFirestore.instance
+        .collection('users')
+        .doc(email)
+        .snapshots()
+        .listen((event) {
+      if (event.data() != null) {
+        UserModel userModel = UserModel.fromJson(event.data()!);
+        ref.read(userDataProvider.notifier).addUserData(userModel);
+      } else {
+        ref
+            .read(userDataProvider.notifier)
+            .setUserNotFound(value: "UserData not found");
+      }
+    }).onError((obj) {
+      ConsoleLogger.error(obj.message, from: "pushUserData");
+    });
+  }
 }

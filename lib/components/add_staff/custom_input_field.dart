@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:redhat_v1/utilities/static_data.dart';
 
 import '../../utilities/theme/color_data.dart';
 import '../../utilities/theme/size_data.dart';
@@ -8,21 +9,25 @@ import '../common/icon.dart';
 class CustomInputField extends ConsumerWidget {
   const CustomInputField({
     super.key,
-    required this.controller,
+    this.controller,
     required this.hintText,
     required this.icon,
     required this.inputType,
     this.readOnly = false,
     this.bottomMar,
     this.visibleText = true,
+    this.listener,
+    this.initialValue,
   });
-  final TextEditingController controller;
+  final TextEditingController? controller;
   final String hintText;
   final IconData icon;
   final TextInputType inputType;
   final bool readOnly;
   final double? bottomMar;
   final bool visibleText;
+  final Function? listener;
+  final String? initialValue;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -70,15 +75,21 @@ class CustomInputField extends ConsumerWidget {
             ),
           ),
           Expanded(
-            child: TextField(
+            child: TextFormField(
               readOnly: readOnly,
+              initialValue: initialValue,
               controller: controller,
               keyboardType: inputType,
+              onChanged: (value) {
+                if (listener != null) {
+                  listener!(value);
+                }
+              },
               style: TextStyle(
                 fontWeight: FontWeight.w800,
                 fontSize: sizeData.regular,
                 color: colorData.fontColor(.8),
-                height: 1,
+                // height: 1,
               ),
               cursorColor: colorData.primaryColor(1),
               cursorWidth: 2,
@@ -89,7 +100,7 @@ class CustomInputField extends ConsumerWidget {
                   fontWeight: FontWeight.w600,
                   fontSize: sizeData.regular,
                   color: colorData.fontColor(.5),
-                  height: 1,
+                  // height: 1,
                 ),
                 border: InputBorder.none,
                 contentPadding: EdgeInsets.only(

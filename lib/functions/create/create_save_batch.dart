@@ -10,76 +10,75 @@ Future<bool> createBatch({
   required WidgetRef ref,
 }) async {
   Map<String, dynamic> batchData = batch.toMap();
-  // Map<String, dynamic> userData = ref.watch(userDataProvider)!;
 
   try {
     await FirebaseFirestore.instance
         .collection("batches")
-        .doc(batch.name)
+        .doc(batch.name.toUpperCase())
         .set(batchData);
 
     await FirebaseFirestore.instance
-        .collection("certificates")
-        .doc(batch.certificateData["name"])
+        .collection("courses")
+        .doc(batch.courseData["name"].toString().toUpperCase())
         .collection("instances")
-        .doc(batch.name)
-        .set(batch.certificateData);
+        .doc(batch.name.toUpperCase())
+        .set(batch.courseData);
+
+    await FirebaseFirestore.instance
+        .collection("savedBatches")
+        .doc(batch.name.toUpperCase())
+        .delete();
 
     List<String> members = ['admin'];
 
-    for (var element in batch.staffs.entries) {
-      bool isAdmin = batch.adminStaff.keys.first.toString().toLowerCase() ==
-          element.key.toString().toLowerCase();
-      String role = (isAdmin ? "admin" : "staff").toUpperCase();
-      await FirebaseFirestore.instance
-          .collection("notifications")
-          .doc("invitations")
-          .set({
-        element.value: {
-          batch.name: {
-            'message': 'You have been invited to join this batch as $role',
-          }
-        }
-      }, SetOptions(merge: true));
+    for (var element in batch.staffs) {
+      // String role = (isAdmin ? "admin" : "staff").toUpperCase();
+      // await FirebaseFirestore.instance
+      //     .collection("notifications")
+      //     .doc("invitations")
+      //     .set({
+      //   element.email: {
+      //     batch.name: {
+      //       'message': 'You have been invited to join this batch as $role',
+      //     }
+      //   }
+      // }, SetOptions(merge: true));
 
       await FirebaseFirestore.instance
-          .collection("staffs")
-          .doc(element.value.toString().trim())
+          .collection("users")
+          .doc(element.email.toString().trim())
           .set({
-        "batches": FieldValue.arrayUnion([batch.name])
+        "batches": FieldValue.arrayUnion([batch.name.toUpperCase()])
       }, SetOptions(merge: true));
 
-      await FirebaseFirestore.instance
-          .collection("forum")
-          .doc("${element.value.toString().trim()}|admin")
-          .set({
-        "members": ["admin", element.value.toString().trim()],
-        "details": {
-          "name": 'admin',
-        },
-        "admin|${DateTime.now().toIso8601String()}": {
-          "text":
-              "Welcome aboard to our dedicated staff joining the new batch ${batch.name} at Vectra Advantage Pro! Wishing you an enriching teaching experience filled with passion and dedication. Let's inspire our students to embrace and love every aspect of this certification course journey!",
-          "from": "admin",
-          "time": DateTime.now().toIso8601String(),
-        }
-      }, SetOptions(merge: true));
+      // await FirebaseFirestore.instance
+      //     .collection("forum")
+      //     .doc("${element.email.toString().trim()}|admin")
+      //     .set({
+      //   "members": ["admin", element.email.toString().trim()],
+      //   "details": {
+      //     "name": 'admin',
+      //   },
+      //   "admin|${DateTime.now().toIso8601String()}": {
+      //     "text":
+      //         "Welcome aboard to our dedicated staff joining the new batch ${batch.name} at Vectra Advantage Pro! Wishing you an enriching teaching experience filled with passion and dedication. Let's inspire our students to embrace and love every aspect of this certification course journey!",
+      //     "from": "admin",
+      //     "time": DateTime.now().toIso8601String(),
+      //   }
+      // }, SetOptions(merge: true));
 
-      members.add(element.value);
+      members.add(element.email);
     }
 
     for (var element in batch.students) {
-      String regID =
-          "${batch.name}STU${(batch.students.indexOf(element) + 1).toString().padLeft(3, '0')}";
       Map<String, dynamic> studentData = element.toMap();
       studentData.addEntries([
-        MapEntry("id", regID),
         MapEntry("batchName", batch.name),
-        MapEntry("certificateID", batch.certificateData["name"]),
+        MapEntry("courseID", batch.courseData["name"].toString().toUpperCase()),
       ]);
 
       await FirebaseFirestore.instance
-          .collection("studentRequest")
+          .collection("requests")
           .doc(element.email)
           .set(studentData);
 
@@ -89,53 +88,68 @@ Future<bool> createBatch({
           .where("email", isEqualTo: element.email)
           .get();
 
-      Future sendInvitation() async => await FirebaseFirestore.instance
-              .collection("notifications")
-              .doc("invitations")
-              .set({
-            element.email: {
-              batch.name: {
-                'message':
-                    'Welcome to the cretification course of ${batch.certificateData["name"]}',
-                'id': regID,
-              }
-            }
-          }, SetOptions(merge: true));
+      // Future sendInvitation() async => await FirebaseFirestore.instance
+      //         .collection("notifications")
+      //         .doc("invitations")
+      //         .set({
+      //       element.email: {
+      //         batch.name: {
+      //           'message':
+      //               'Welcome to the cretification course of ${batch.courseData["name"]}',
+      //           'id': regID,
+      //         }
+      //       }
+      //     }, SetOptions(merge: true));
 
       if (studentList.docs.isEmpty) {
         await sendStudentEmail(
           receiverEmail: element.email,
           name: element.name,
           batchID: batch.name,
-          registrationNo: regID,
+          registrationNo: element.registrationID,
         );
       } else {
-        sendInvitation();
+        // sendInvitation();
       }
 
       members.add(element.email);
     }
 
-    await FirebaseFirestore.instance
-        .collection("forum")
-        .doc(batch.name.trim())
-        .set({
-      "members": members,
-      "details": {
-        "name": batch.name,
-        "image": batch.certificateData["image"],
-      },
-      "admin|${DateTime.now().toIso8601String()}": {
-        "text":
-            "A heartfelt welcome to all our students at Vectra Advantage Pro - where learning meets excellence, and success is a shared journey!",
-        "from": "admin",
-        "time": DateTime.now().toIso8601String()
-      }
-    }, SetOptions(merge: true));
+    // await FirebaseFirestore.instance
+    //     .collection("forum")
+    //     .doc(batch.name.trim())
+    //     .set({
+    //   "members": members,
+    //   "details": {
+    //     "name": batch.name,
+    //     "image": batch.courseData["image"],
+    //   },
+    //   "admin|${DateTime.now().toIso8601String()}": {
+    //     "text":
+    //         "A heartfelt welcome to all our students at Vectra Advantage Pro - where learning meets excellence, and success is a shared journey!",
+    //     "from": "admin",
+    //     "time": DateTime.now().toIso8601String()
+    //   }
+    // }, SetOptions(merge: true));
 
     return true;
   } catch (exception) {
     return false;
+  }
+}
+
+Future<bool> uniqueIDCheck({
+  required String batchID,
+  required String collName,
+}) async {
+  try {
+    var data = await FirebaseFirestore.instance
+        .collection(collName)
+        .doc(batchID)
+        .get();
+    return data.exists;
+  } catch (error) {
+    return true;
   }
 }
 
@@ -146,7 +160,7 @@ Future<bool> saveBatch({
   try {
     await FirebaseFirestore.instance
         .collection("savedBatches")
-        .doc(batch.name)
+        .doc(batch.name.toUpperCase())
         .set(batchData)
         .onError((error, stackTrace) => error = error);
     return true;

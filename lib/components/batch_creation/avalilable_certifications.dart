@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:redhat_v1/components/common/network_image.dart';
 import 'package:redhat_v1/providers/create_batch_provider.dart';
 
+import '../../utilities/static_data.dart';
 import '../../utilities/theme/color_data.dart';
 import '../../utilities/theme/size_data.dart';
 
@@ -13,11 +14,17 @@ import '../common/text.dart';
 import 'batch_field_tile.dart';
 
 class AvailableCertifications extends ConsumerStatefulWidget {
-  final List<QueryDocumentSnapshot<Map<String, dynamic>>> docs;
   const AvailableCertifications({
     super.key,
-    required this.docs,
+    this.docs,
+    this.from = From.edit,
+    this.doc,
+    this.dates,
   });
+  final List<QueryDocumentSnapshot<Map<String, dynamic>>>? docs;
+  final From? from;
+  final QueryDocumentSnapshot<Map<String, dynamic>>? doc;
+  final List<String>? dates;
 
   @override
   ConsumerState<AvailableCertifications> createState() =>
@@ -29,7 +36,7 @@ class _AvailableCertificationsState
   final ScrollController _controller = ScrollController();
 
   List<Map<String, dynamic>> certifications = [];
-  Map<String, dynamic> selectedCertificate = {};
+  Map<String, dynamic> selectedCourse = {};
   List<String> selectedDates = [];
 
   DateTime? startDate;
@@ -71,8 +78,8 @@ class _AvailableCertificationsState
         selectedDates =
             dates.map((e) => DateFormat('dd-MM-yyyy').format(e!)).toList();
 
-        ref.read(createBatchProvider.notifier).updateCertificate(
-              newCertificateData: selectedCertificate,
+        ref.read(createBatchProvider.notifier).updateCourse(
+              newCourseData: selectedCourse,
             );
 
         ref
@@ -82,36 +89,37 @@ class _AvailableCertificationsState
     }
   }
 
-  setBatchName() async {
-    String batchName = selectedCertificate["name"] + "001";
-    QuerySnapshot<Map<String, dynamic>> docList = await FirebaseFirestore
-        .instance
-        .collection("certificates")
-        .doc(selectedCertificate["name"])
-        .collection("instances")
-        .get();
-
-    if (docList.docs.isNotEmpty) {
-      int batchesCount = docList.docs.length + 1;
-      batchName =
-          selectedCertificate["name"] + batchesCount.toString().padLeft(3, '0');
-    }
-    ref.read(createBatchProvider.notifier).updateName(newName: batchName);
-  }
-
   @override
   void initState() {
     super.initState();
-    List<Map<String, dynamic>> certificationsData = [];
-    for (var element in widget.docs) {
-      Map<String, dynamic> value =
-          Map.fromEntries(element.data().entries.toSet());
-      value.addAll({"id": element.id.toString()});
-      certificationsData.add(value);
+    if (widget.from == From.edit) {
+      List<Map<String, dynamic>> certificationsData = [];
+      for (var element in widget.docs!) {
+        Map<String, dynamic> value =
+            Map.fromEntries(element.data().entries.toSet());
+        value.addAll({"id": element.id.toString()});
+        certificationsData.add(value);
+      }
+      setState(() {
+        certifications = certificationsData;
+      });
+    } else {
+      setState(() {
+        selectedCourse = widget.doc!.data();
+        selectedDates = widget.dates!;
+        startDate = DateFormat('dd-MM-yyyy').parse(widget.dates!.first);
+        endDate = DateFormat('dd-MM-yyyy').parse(widget.dates!.last);
+      });
+      Future(() {
+        ref
+            .read(createBatchProvider.notifier)
+            .updateDates(newDates: widget.dates!);
+
+        ref
+            .read(createBatchProvider.notifier)
+            .updateCourse(newCourseData: widget.doc!.data());
+      });
     }
-    setState(() {
-      certifications = certificationsData;
-    });
   }
 
   int firstIndex = 0;
@@ -131,8 +139,6 @@ class _AvailableCertificationsState
     double height = sizeData.height;
     double aspectRatio = sizeData.aspectRatio;
 
-    String batchName = ref.watch(createBatchProvider).name;
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -142,16 +148,16 @@ class _AvailableCertificationsState
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             CustomText(
-              text: "Available Certificates",
+              text: "Available Courses",
               size: sizeData.medium,
               color: colorData.fontColor(.8),
               weight: FontWeight.w600,
             ),
-            selectedCertificate.isNotEmpty
+            widget.from == From.edit && selectedCourse.isNotEmpty
                 ? GestureDetector(
                     onTap: () {
                       setState(() {
-                        selectedCertificate = {};
+                        selectedCourse = {};
                         selectedDates = [];
                         startDate = null;
                         endDate = null;
@@ -170,7 +176,7 @@ class _AvailableCertificationsState
         SizedBox(
           height: height * 0.0125,
         ),
-        selectedCertificate.isEmpty
+        selectedCourse.isEmpty
             ? Container(
                 padding: EdgeInsets.only(
                   top: height * 0.01,
@@ -220,9 +226,8 @@ class _AvailableCertificationsState
                         return GestureDetector(
                           onTap: () async {
                             setState(() {
-                              selectedCertificate = certifications[index];
+                              selectedCourse = certifications[index];
                             });
-                            await setBatchName();
                           },
                           child: Column(
                             children: [
@@ -288,7 +293,7 @@ class _AvailableCertificationsState
                         ClipRRect(
                           borderRadius: BorderRadius.circular(8),
                           child: Image.network(
-                            selectedCertificate["image"],
+                            selectedCourse["image"],
                             height: height * 0.125,
                             width: height * 0.125,
                             fit: BoxFit.cover,
@@ -302,12 +307,12 @@ class _AvailableCertificationsState
                           children: [
                             BatchFieldTile(
                               field: "NAME",
-                              value: selectedCertificate["name"],
+                              value: selectedCourse["name"],
                             ),
                             BatchFieldTile(
                               field: "duration",
                               value: selectedDates.isEmpty
-                                  ? "${Map.from(selectedCertificate["courseContent"]).length} Days"
+                                  ? "${Map.from(selectedCourse["courseContent"]).length} Days"
                                   : "${selectedDates.length} Days",
                             ),
                             BatchFieldTile(
@@ -327,69 +332,37 @@ class _AvailableCertificationsState
                       ],
                     ),
                   ),
-                  batchName != ""
-                      ? Positioned(
-                          right: width * 0.02,
-                          top: height * 0.01,
-                          child: GestureDetector(
-                            onTap: () => selectDate(
-                              context: context,
-                              days:
-                                  Map.from(selectedCertificate["courseContent"])
-                                      .length,
-                              size: Size(width * .8, height * 0.3),
-                              colorData: colorData,
-                              sizeData: sizeData,
-                            ),
-                            child: Container(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: width * 0.02,
-                                vertical: 4,
-                              ),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(6),
-                                color: colorData.backgroundColor(.8),
-                              ),
-                              child: CustomText(
-                                text: batchName,
-                                size: sizeData.small,
-                                color: colorData.primaryColor(1),
-                                weight: FontWeight.w800,
-                              ),
-                            ),
+                  if (widget.from == From.edit)
+                    Positioned(
+                      right: width * 0.02,
+                      bottom: height * 0.01,
+                      child: GestureDetector(
+                        onTap: () => selectDate(
+                          context: context,
+                          days: Map.from(selectedCourse["courseContent"])
+                              .length,
+                          size: Size(width * .8, height * 0.3),
+                          colorData: colorData,
+                          sizeData: sizeData,
+                        ),
+                        child: Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: width * 0.02,
+                            vertical: 4,
                           ),
-                        )
-                      : const SizedBox(),
-                  Positioned(
-                    right: width * 0.02,
-                    bottom: height * 0.01,
-                    child: GestureDetector(
-                      onTap: () => selectDate(
-                        context: context,
-                        days: Map.from(selectedCertificate["courseContent"])
-                            .length,
-                        size: Size(width * .8, height * 0.3),
-                        colorData: colorData,
-                        sizeData: sizeData,
-                      ),
-                      child: Container(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: width * 0.02,
-                          vertical: 4,
-                        ),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(6),
-                          color: colorData.primaryColor(.8),
-                        ),
-                        child: CustomText(
-                          text: "SET DATE",
-                          size: sizeData.small,
-                          color: colorData.secondaryColor(1),
-                          weight: FontWeight.w600,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(6),
+                            color: colorData.primaryColor(.8),
+                          ),
+                          child: CustomText(
+                            text: "SET DATE",
+                            size: sizeData.small,
+                            color: colorData.secondaryColor(1),
+                            weight: FontWeight.w600,
+                          ),
                         ),
                       ),
-                    ),
-                  )
+                    )
                 ],
               ),
         SizedBox(

@@ -1,29 +1,29 @@
 import 'dart:io';
 
-import 'course_data.dart';
+import 'package:redhat_v1/model/course_content_data.dart';
 
-class CertificateData {
+class CourseData {
   String name;
-  File cousePDF;
+  File coursePDF;
   String description;
   String imageURL;
   int courseDataLength;
-  List<CourseData> courseDataList;
+  List<CourseContentData> courseDataList;
 
-  CertificateData({
+  CourseData({
     required this.name,
     required this.courseDataList,
-    required this.cousePDF,
+    required this.coursePDF,
     required this.description,
     required this.imageURL,
     required this.courseDataLength,
   });
 
-  factory CertificateData.empty() {
-    return CertificateData(
+  factory CourseData.empty() {
+    return CourseData(
       name: '',
       courseDataList: [],
-      cousePDF: File(''),
+      coursePDF: File(''),
       description: '',
       imageURL: '',
       courseDataLength: 0,
@@ -38,21 +38,26 @@ class CertificateData {
         courseDataLength == 0;
   }
 
-  CertificateData copyWith({
+  CourseData copyWith({
     String? name,
-    File? cousePDF,
+    File? coursePDF,
     String? description,
     String? imageURL,
     int? courseDataLength,
-    List<CourseData>? courseDataList,
+    List<CourseContentData>? courseDataList,
   }) {
-    return CertificateData(
+    return CourseData(
       name: name ?? this.name,
       courseDataList: courseDataList ?? this.courseDataList,
-      cousePDF: cousePDF ?? this.cousePDF,
+      coursePDF: coursePDF ?? this.coursePDF,
       description: description ?? this.description,
       imageURL: imageURL ?? this.imageURL,
       courseDataLength: courseDataLength ?? this.courseDataLength,
     );
+  }
+
+  @override
+  String toString() {
+    return 'CourseData{name: $name, coursePDF: ${coursePDF.path}, description: $description, imageURL: $imageURL, courseDataLength: $courseDataLength, courseDataList: $courseDataList}';
   }
 }

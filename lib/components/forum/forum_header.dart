@@ -60,7 +60,7 @@ class _ForumHeaderState extends ConsumerState<ForumHeader> {
   @override
   Widget build(BuildContext context) {
     ForumCategory category = ref.watch(forumCategoryProvider);
-    UserRole userRole = ref.watch(userDataProvider).userRole!;
+    UserRole userRole = ref.watch(userDataProvider).key.userRole!;
     CustomSizeData sizeData = CustomSizeData.from(context);
     CustomColorData colorData = CustomColorData.from(ref);
 

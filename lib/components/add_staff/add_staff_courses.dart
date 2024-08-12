@@ -9,42 +9,32 @@ import 'package:open_file/open_file.dart';
 import '../../utilities/theme/color_data.dart';
 import '../../utilities/theme/size_data.dart';
 
-import 'course_file_tile.dart';
 import '../common/icon.dart';
 import '../common/text.dart';
+import 'staff_course_tile.dart';
 
-class CourseFilePicker extends ConsumerStatefulWidget {
-  final Function handleFile;
-  final Map<File, Map<String, dynamic>> content;
-  final double? containerHeight;
-  const CourseFilePicker(
-      {super.key,
-      required this.handleFile,
-      required this.content,
-      this.containerHeight});
+class AddStaffCourses extends ConsumerStatefulWidget {
+  final Function handleCourse;
+  const AddStaffCourses({super.key, required this.handleCourse});
 
   @override
-  ConsumerState<CourseFilePicker> createState() => _CourseFilePickerState();
+  ConsumerState<AddStaffCourses> createState() => _AddStaffCoursesState();
 }
 
-class _CourseFilePickerState extends ConsumerState<CourseFilePicker> {
-  Map<File, Map<String, dynamic>> courseFiles = {};
+class _AddStaffCoursesState extends ConsumerState<AddStaffCourses> {
+  List<Map<File, Map<String, dynamic>>> courses = [];
 
-  bool hasDuplicate(
-      {required MapEntry<File, Map<String, dynamic>> courseFile}) {
-    bool isDuplicate = false;
-    courseFiles.forEach((key, value) {
-      if (value["name"] == courseFile.value["name"]) {
-        isDuplicate = true;
+  bool hasDuplicate({required Map<File, Map<String, dynamic>> course}) {
+    for (var element in courses) {
+      if (element.values.first["name"] == course.values.first["name"]) {
+        return false;
       }
-    });
-    return !isDuplicate;
+    }
+    return true;
   }
 
   @override
   Widget build(BuildContext context) {
-    courseFiles = widget.content;
-
     CustomSizeData sizeData = CustomSizeData.from(context);
     CustomColorData colorData = CustomColorData.from(ref);
 
@@ -59,60 +49,49 @@ class _CourseFilePickerState extends ConsumerState<CourseFilePicker> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             CustomText(
-              text: "Files",
-              size: sizeData.regular,
-              color: colorData.fontColor(.6),
-              weight: FontWeight.w800,
+              text: "Courses",
+              size: sizeData.medium,
+              color: colorData.fontColor(.8),
+              weight: FontWeight.w600,
             ),
             GestureDetector(
               onTap: () async {
-                try {
-                  var files = await FilePicker.platform.pickFiles(
-                      allowMultiple: true,
-                      allowedExtensions: ["pdf"],
-                      type: FileType.custom,
-                      allowCompression: true);
-
-                  setState(() {
-                    for (var e in files!.files) {
-                      File fileData = File(e.path.toString());
-                      String name = e.name.toString();
-                      String extension = e.extension.toString();
-                      int size = e.size;
-                      MapEntry<File, Map<String, dynamic>> file = MapEntry(
-                          fileData,
-                          {"name": name, "extension": extension, "size": size});
-
-                      if (hasDuplicate(courseFile: file)) {
-                        courseFiles[file.key] = file.value;
-                        widget.handleFile(file: file, set: true);
+                var files = await FilePicker.platform.pickFiles(
+                    allowMultiple: true,
+                    allowedExtensions: ["pdf", "png", "jpg"],
+                    type: FileType.custom,
+                    allowCompression: true);
+                setState(() {
+                  for (var e in files!.files) {
+                    File fileData = File(e.path.toString());
+                    String name = e.name.toString();
+                    String extension = e.extension.toString();
+                    int size = e.size;
+                    Map<File, Map<String, dynamic>> file = {
+                      fileData: {
+                        "name": name,
+                        "extension": extension,
+                        "size": size,
                       }
+                    };
+                    if (hasDuplicate(course: file)) {
+                      courses.add(file);
+                      widget.handleCourse(course: file, set: true);
                     }
-                  });
-                } catch (e) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                        content: Center(
-                      child: CustomText(
-                        text: "File not found",
-                        color: Colors.white,
-                        weight: FontWeight.w700,
-                      ),
-                    )),
-                  );
-                }
+                  }
+                });
               },
               child: Container(
                 padding: EdgeInsets.symmetric(
-                  horizontal: width * 0.025,
-                  vertical: height * 0.005,
+                  horizontal: width * 0.02,
+                  vertical: height * 0.008,
                 ),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(8),
                   color: colorData.secondaryColor(0.4),
                 ),
                 child: CustomText(
-                  text: "Add CourseFile",
+                  text: "Add Course",
                   size: sizeData.regular,
                   color: colorData.primaryColor(1),
                   weight: FontWeight.w600,
@@ -136,38 +115,39 @@ class _CourseFilePickerState extends ConsumerState<CourseFilePicker> {
               borderType: BorderType.RRect,
               radius: const Radius.circular(8),
               child: Container(
-                height: widget.containerHeight ?? height * 0.225,
+                height: height * 0.25,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: courseFiles.isEmpty
+                child: courses.isEmpty
                     ? Center(
                         child: CustomText(
                           text:
-                              "Upload courseFiles as PDF \nby clicking add courseFile\n\nChoose file of size below 10 MB",
+                              "Upload Course certificate as PDF or Image\nby clicking add course\n\nChoose file of size below 5 MB",
                           align: TextAlign.center,
                           size: sizeData.medium,
-                          color: colorData.secondaryColor(.4),
+                          color: colorData.secondaryColor(.5),
                           weight: FontWeight.w600,
                           maxLine: 6,
                         ),
                       )
                     : ListView.builder(
                         scrollDirection: Axis.vertical,
-                        itemCount: courseFiles.length,
+                        itemCount: courses.length,
                         physics: const BouncingScrollPhysics(),
                         padding: EdgeInsets.symmetric(
                           vertical: height * 0.01,
                           horizontal: width * 0.02,
                         ),
                         itemBuilder: (BuildContext context, int index) {
-                          MapEntry<File, Map<String, dynamic>> thisFileMap =
-                              courseFiles.entries.toList()[index];
-                          File fileData = thisFileMap.key;
-                          String extension = thisFileMap.value["extension"];
-                          String name = thisFileMap.value["name"];
-                          int size =
-                              int.parse(thisFileMap.value["size"].toString());
+                          File fileData = courses[index].keys.first;
+                          String extension =
+                              courses[index][fileData]!["extension"];
+                          bool isImage =
+                              extension == "png" || extension == "jpg";
+                          String name = courses[index][fileData]!["name"];
+                          int size = courses[index][fileData]!["size"];
+
                           double kb = size / 1024;
                           double mb = kb / 1024;
 
@@ -198,42 +178,53 @@ class _CourseFilePickerState extends ConsumerState<CourseFilePicker> {
                                   child: Row(
                                     children: [
                                       Container(
-                                        height: aspectRatio * 100,
-                                        width: aspectRatio * 100,
+                                        height: height * 0.085,
+                                        width: width * 0.2,
                                         margin: EdgeInsets.only(
                                           top: height * 0.005,
                                           bottom: height * 0.005,
                                           left: width * 0.01,
                                           right: width * 0.02,
                                         ),
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(6),
-                                          gradient: LinearGradient(
-                                            begin: Alignment.topLeft,
-                                            end: Alignment.bottomRight,
-                                            colors: [
-                                              colorData.primaryColor(.3),
-                                              colorData.primaryColor(.1),
-                                            ],
-                                          ),
-                                        ),
-                                        child: Center(
-                                          child: CustomText(
-                                            text: extension.toUpperCase(),
-                                            size: sizeData.regular,
-                                            color: colorData.fontColor(.8),
-                                            weight: FontWeight.w800,
-                                          ),
-                                        ),
+                                        decoration: isImage
+                                            ? BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(6),
+                                                image: DecorationImage(
+                                                    image: FileImage(fileData),
+                                                    fit: BoxFit.cover),
+                                              )
+                                            : BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(6),
+                                                gradient: LinearGradient(
+                                                  begin: Alignment.topLeft,
+                                                  end: Alignment.bottomRight,
+                                                  colors: [
+                                                    colorData.primaryColor(.3),
+                                                    colorData.primaryColor(.1),
+                                                  ],
+                                                ),
+                                              ),
+                                        child: isImage
+                                            ? const SizedBox()
+                                            : Center(
+                                                child: CustomText(
+                                                  text: extension.toUpperCase(),
+                                                  size: sizeData.medium,
+                                                  color:
+                                                      colorData.fontColor(.8),
+                                                  weight: FontWeight.w800,
+                                                ),
+                                              ),
                                       ),
                                       Column(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: [
-                                          CouseFileTile(
+                                          StaffCourseTile(
                                               value: name, field: "Name: "),
-                                          CouseFileTile(
+                                          StaffCourseTile(
                                               value: fileSize, field: "Size: "),
                                         ],
                                       ),
@@ -247,13 +238,13 @@ class _CourseFilePickerState extends ConsumerState<CourseFilePicker> {
                                 child: GestureDetector(
                                   onTap: () {
                                     setState(() {
-                                      widget.handleFile(
-                                          file: thisFileMap, set: false);
-                                      courseFiles.remove(fileData);
+                                      widget.handleCourse(
+                                          course: courses[index], set: false);
+                                      courses.removeAt(index);
                                     });
                                   },
                                   child: CustomIcon(
-                                    size: aspectRatio * 40,
+                                    size: aspectRatio * 45,
                                     icon: Icons.delete_forever_rounded,
                                     color: Colors.red.shade400,
                                   ),
@@ -265,7 +256,7 @@ class _CourseFilePickerState extends ConsumerState<CourseFilePicker> {
                       ),
               ),
             ),
-            courseFiles.isNotEmpty
+            courses.isNotEmpty
                 ? Positioned(
                     top: -10,
                     right: -5,
@@ -276,7 +267,7 @@ class _CourseFilePickerState extends ConsumerState<CourseFilePicker> {
                         color: colorData.primaryColor(1),
                       ),
                       child: CustomText(
-                        text: courseFiles.length.toString(),
+                        text: courses.length.toString(),
                         size: sizeData.regular,
                         color: colorData.sideBarTextColor(1),
                         weight: FontWeight.bold,

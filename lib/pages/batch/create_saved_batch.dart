@@ -2,23 +2,32 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../components/common/page_header.dart';
-import '../components/home/student/certifications_place_holder.dart';
-import '../utilities/theme/size_data.dart';
-import '../providers/create_batch_provider.dart';
+import '../../components/add_staff/custom_input_field.dart';
+import '../../components/common/page_header.dart';
+import '../../components/home/student/certifications_place_holder.dart';
+import '../../utilities/static_data.dart';
+import '../../utilities/theme/size_data.dart';
+import '../../providers/create_batch_provider.dart';
 
-import '../components/batch_creation/preview.dart';
-import '../components/batch_creation/add_students.dart';
-import '../components/batch_creation/assign_staff.dart';
-import '../components/batch_creation/avalilable_certifications.dart';
-import '../components/batch_creation/batch_button.dart';
+import '../../components/batch_creation/preview.dart';
+import '../../components/batch_creation/add_students.dart';
+import '../../components/batch_creation/assign_staff.dart';
+import '../../components/batch_creation/avalilable_certifications.dart';
+import '../../components/batch_creation/batch_button.dart';
 
-class CreateBatch extends ConsumerWidget {
-  const CreateBatch({super.key});
+class CreateSavedBatch extends ConsumerWidget {
+  const CreateSavedBatch({
+    super.key,
+    required this.courseID,
+    required this.name,
+    required this.selectDates,
+    required this.staffID,
+  });
 
-  void clearData(WidgetRef ref) {
-    ref.read(createBatchProvider.notifier).clearData();
-  }
+  final String name;
+  final String courseID;
+  final List<String> selectDates;
+  final List<String> staffID;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -40,7 +49,12 @@ class CreateBatch extends ConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const PageHeader(tittle: "create batch"),
+              PageHeader(
+                tittle: "create batch",
+                isMenuButton: false,
+                otherMethod: () =>
+                    ref.read(createBatchProvider.notifier).clearData(),
+              ),
               SizedBox(
                 height: height * 0.04,
               ),
@@ -49,17 +63,30 @@ class CreateBatch extends ConsumerWidget {
                   physics: const BouncingScrollPhysics(),
                   scrollDirection: Axis.vertical,
                   children: [
+                    CustomInputField(
+                      hintText: "Enter the Batch ID",
+                      icon: Icons.badge_rounded,
+                      inputType: TextInputType.text,
+                      readOnly: true,
+                      initialValue: name,
+                    ),
+                    SizedBox(
+                      height: height * 0.01,
+                    ),
                     StreamBuilder(
                         stream: FirebaseFirestore.instance
-                            .collection("certificates")
+                            .collection("courses")
                             .snapshots(),
                         builder: (context, snapshot) {
                           if (snapshot.hasData &&
                               snapshot.data!.docs.isNotEmpty) {
-                            List<QueryDocumentSnapshot<Map<String, dynamic>>>
-                                docs = snapshot.data!.docs;
+                            QueryDocumentSnapshot<Map<String, dynamic>> doc =
+                                snapshot.data!.docs.firstWhere(
+                                    (element) => element.id == courseID);
                             return AvailableCertifications(
-                              docs: docs,
+                              doc: doc,
+                              from: From.detail,
+                              dates: selectDates,
                             );
                           } else {
                             return const CertificationsPlaceHolder();
@@ -70,13 +97,18 @@ class CreateBatch extends ConsumerWidget {
                     ),
                     StreamBuilder(
                         stream: FirebaseFirestore.instance
-                            .collection("staffs")
+                            .collection("users")
+                            .where("userRole", isEqualTo: "staff")
                             .snapshots(),
                         builder: (context, snapshot) {
                           if (snapshot.hasData) {
                             List<QueryDocumentSnapshot<Map<String, dynamic>>>
-                                docs = snapshot.data!.docs;
+                                docs = snapshot.data!.docs
+                                    .where((element) =>
+                                        staffID.contains(element.data()["id"]))
+                                    .toList();
                             return AssignStaff(
+                              from: From.detail,
                               docs: docs,
                             );
                           } else {
@@ -98,9 +130,9 @@ class CreateBatch extends ConsumerWidget {
                     SizedBox(
                       height: height * 0.02,
                     ),
-                    const BatchButton(),
+                    const BatchButton(isSaveButton: false),
                     SizedBox(
-                      height: height * 0.02,
+                      height: height * 0.05,
                     ),
                   ],
                 ),

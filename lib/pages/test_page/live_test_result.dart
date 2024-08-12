@@ -124,6 +124,7 @@ class _LiveTestResultState extends ConsumerState<LiveTestResult>
                 children: [
                   PageHeader(
                     tittle: "LIVE TEST RESULT",
+                    isMenuButton: false,
                     secondaryWidget: widget.day != null
                         ? CustomText(
                             text: widget.day!,

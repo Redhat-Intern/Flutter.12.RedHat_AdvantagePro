@@ -1,18 +1,21 @@
 import 'dart:io';
 
 import 'package:excel/excel.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:redhat_v1/components/common/text.dart';
 
 import '../model/batch.dart';
 import '../model/student.dart';
+import '../model/user.dart';
 
 class CreateBatchNotifier extends StateNotifier<Batch> {
   CreateBatchNotifier() : super(Batch.empty());
 
   void clearData() {
     state = Batch.empty();
+  }
+
+  void setBatchName(String name) {
+    state = state.copyWith(name: name);
   }
 
   void updateTime() {
@@ -23,9 +26,9 @@ class CreateBatchNotifier extends StateNotifier<Batch> {
     state = state.copyWith(name: newName);
   }
 
-  void updateCertificate({required Map<String, dynamic> newCertificateData}) {
+  void updateCourse({required Map<String, dynamic> newCourseData}) {
     state = state.copyWith(
-      certificateData: newCertificateData,
+      courseData: newCourseData,
     );
   }
 
@@ -33,12 +36,8 @@ class CreateBatchNotifier extends StateNotifier<Batch> {
     state = state.copyWith(dates: newDates);
   }
 
-  void updateStaffs({required Map<String, dynamic> newStaffs}) {
-    state = state.copyWith(staffs: newStaffs);
-  }
-
-  void updateAdminStaff({required Map<String, dynamic> adminStaff}) {
-    state = state.copyWith(adminStaff: adminStaff);
+  void updateStaffs({required List<UserModel> staffsList}) {
+    state = state.copyWith(staffs: staffsList);
   }
 
   void addDataToSheet(List<List<String>> data) {
@@ -58,14 +57,15 @@ class CreateBatchNotifier extends StateNotifier<Batch> {
         uniqueEmails.add(email);
 
         Student student = Student(
-          name: row[0],
-          email: row[1],
-          phoneNo: row[2],
+          registrationID: row[0],
+          name: row[1],
+          email: row[2],
+          phoneNo: row[3].toString(),
           occupation: StudentOcc.college.name.toLowerCase() ==
-                  row[3].toString().toLowerCase()
+                  row[4].toString().toLowerCase()
               ? StudentOcc.college
               : StudentOcc.professional,
-          occDetail: row[4],
+          occDetail: row[5],
         );
 
         uniqueStudents.add(student);
@@ -82,27 +82,34 @@ class CreateBatchNotifier extends StateNotifier<Batch> {
     var bytes = file.readAsBytesSync();
     var excel = Excel.decodeBytes(bytes);
 
-    String fileName = name.split('.')[0];
-
-    List<List<Data?>> sheet = excel[fileName].rows;
+    List<List<Data?>> sheet = excel[excel.getDefaultSheet()!].rows;
     List<List<String>> excelData = [];
 
-    print(sheet);
     if (sheet.isNotEmpty) {
       for (var row in sheet) {
         List<String> rowStrings = [];
-        for (var index = 0; index < 5; index++) {
-          rowStrings.add(row[index]?.value?.toString() ?? '');
+        for (var index = 0; index < 6; index++) {
+          if (index == 3) {
+            rowStrings.add(row[index]?.value != null
+                ? row[index]!
+                    .value
+                    .toString()
+                    .substring(0, row[index]!.value.toString().length - 2)
+                : '');
+          } else {
+            rowStrings.add(row[index]?.value?.toString() ?? '');
+          }
         }
         excelData.add(rowStrings);
       }
 
       List<List<String>> existingData = state.students.map((student) {
         return [
+          student.registrationID,
           student.name,
           student.email,
-          student.phoneNo.toString(),
-          student.occupation.name.toString(),
+          student.phoneNo,
+          student.occupation.name,
           student.occDetail,
         ];
       }).toList();
@@ -115,12 +122,20 @@ class CreateBatchNotifier extends StateNotifier<Batch> {
     }
   }
 
-  void addStudent({required Student student}) {
+  bool addStudent({required Student student}) {
     List<Student> students = state.students;
-    students.add(student);
-    state = state.copyWith(
-      students: students,
-    );
+    bool checkMatch = students
+        .where((data) => data.registrationID == student.registrationID)
+        .isNotEmpty;
+    if (checkMatch) {
+      return false;
+    } else {
+      students.add(student);
+      state = state.copyWith(
+        students: students,
+      );
+      return true;
+    }
   }
 
   void removeStudent({required Student student}) {
@@ -132,7 +147,7 @@ class CreateBatchNotifier extends StateNotifier<Batch> {
   void modifyStudent({required Student student}) {
     state = state.copyWith(
       students: state.students.map((s) {
-        return s.email == student.email ? student : s;
+        return s.registrationID == student.registrationID ? student : s;
       }).toList(),
     );
   }

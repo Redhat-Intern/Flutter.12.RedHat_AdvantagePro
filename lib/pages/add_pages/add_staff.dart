@@ -2,15 +2,17 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:redhat_v1/functions/create/send_email.dart';
-import 'package:redhat_v1/components/common/page_header.dart';
+import 'package:lottie/lottie.dart';
+import 'package:redhat_v1/utilities/console_logger.dart';
 
+import '../../components/add_staff/add_staff_courses.dart';
+import '../../components/common/page_header.dart';
+import '../../functions/create/send_email.dart';
 import '../../utilities/static_data.dart';
 import '../../functions/create/add_staff.dart';
 import '../../utilities/theme/color_data.dart';
 import '../../utilities/theme/size_data.dart';
 
-import '../../components/add_staff/add_staff_certificate.dart';
 import '../../components/add_staff/custom_input_field.dart';
 import '../../components/add_staff/photo_picker.dart';
 import '../../components/common/text.dart';
@@ -24,11 +26,12 @@ class AddStaff extends ConsumerStatefulWidget {
 
 class _AddStaffState extends ConsumerState<AddStaff> {
   Map<File, String> photo = {};
+  bool isAdmin = false;
   TextEditingController nameController = TextEditingController();
   TextEditingController emailController = TextEditingController();
   TextEditingController phoneNoController = TextEditingController();
-  TextEditingController experienceController = TextEditingController();
-  List<Map<File, Map<String, dynamic>>> certificates = [];
+  TextEditingController staffIDController = TextEditingController();
+  List<Map<File, Map<String, dynamic>>> courses = [];
 
   Map<int, String> completionCount = {};
 
@@ -38,25 +41,24 @@ class _AddStaffState extends ConsumerState<AddStaff> {
     });
   }
 
-  bool hasDuplicate({required Map<File, Map<String, dynamic>> certificate}) {
-    for (var element in certificates) {
-      if (element.values.first["name"] == certificate.values.first["name"]) {
+  bool hasDuplicate({required Map<File, Map<String, dynamic>> course}) {
+    for (var element in courses) {
+      if (element.values.first["name"] == course.values.first["name"]) {
         return false;
       }
     }
     return true;
   }
 
-  void handleCertificate(
-      {required Map<File, Map<String, dynamic>> certificate,
-      required bool set}) {
+  void handleCourse(
+      {required Map<File, Map<String, dynamic>> course, required bool set}) {
     setState(() {
       if (set) {
-        if (hasDuplicate(certificate: certificate)) {
-          certificates.add(certificate);
+        if (hasDuplicate(course: course)) {
+          courses.add(course);
         }
       } else {
-        certificates.remove(certificate);
+        courses.remove(course);
       }
     });
   }
@@ -65,23 +67,27 @@ class _AddStaffState extends ConsumerState<AddStaff> {
     if (nameController.text.isEmpty ||
         emailController.text.isEmpty ||
         phoneNoController.text.isEmpty ||
-        experienceController.text.isEmpty ||
+        staffIDController.text.isEmpty ||
         photo.isEmpty ||
-        certificates.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Kindly enter all the data")));
+        courses.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Center(child: Text("Kindly enter all the data"))));
+    } else if (await checkIdMatch(staffIDController.text)) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Center(child: Text("Staff ID already exits"))));
     } else {
       setState(() {
-        completionCount = {0: "Started"};
+        completionCount = {0: "Started uploading basic details"};
       });
       addStaff(
-              photo: photo,
-              nameController: nameController,
-              emailController: emailController,
-              phoneNoController: phoneNoController,
-              experienceController: experienceController,
-              certificates: certificates)
-          .listen((event) {
+        photo: photo,
+        name: nameController.text.trim(),
+        email: emailController.text.trim(),
+        phoneNo: phoneNoController.text.trim(),
+        staffId: staffIDController.text.trim(),
+        isAdmin: isAdmin,
+        courses: courses,
+      ).listen((event) {
         setState(() {
           if (event.keys.first == 1) {
             sendStaffEmail(
@@ -89,7 +95,7 @@ class _AddStaffState extends ConsumerState<AddStaff> {
                 receiverEmail: emailController.text,
                 name: nameController.text,
                 registrationNo: event.values.first.toString());
-            completionCount = {1: "Photo uploaded"};
+            completionCount = {1: "Uploading courses"};
           } else if (event.keys.first == 3) {
             completionCount = event;
             Navigator.pop(context);
@@ -105,7 +111,7 @@ class _AddStaffState extends ConsumerState<AddStaff> {
     nameController.dispose();
     emailController.dispose();
     phoneNoController.dispose();
-    experienceController.dispose();
+    staffIDController.dispose();
   }
 
   @override
@@ -132,7 +138,7 @@ class _AddStaffState extends ConsumerState<AddStaff> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const PageHeader(tittle: "add staff"),
+                  const PageHeader(tittle: "add staff", isMenuButton: false),
                   SizedBox(
                     height: height * 0.04,
                   ),
@@ -142,6 +148,12 @@ class _AddStaffState extends ConsumerState<AddStaff> {
                   ),
                   SizedBox(
                     height: height * 0.02,
+                  ),
+                  CustomInputField(
+                    controller: staffIDController,
+                    hintText: "Enter the Staff ID",
+                    icon: Icons.badge_rounded,
+                    inputType: TextInputType.text,
                   ),
                   CustomInputField(
                     controller: nameController,
@@ -161,17 +173,36 @@ class _AddStaffState extends ConsumerState<AddStaff> {
                     icon: Icons.numbers_rounded,
                     inputType: TextInputType.phone,
                   ),
-                  CustomInputField(
-                    controller: experienceController,
-                    hintText: "Enter the Year of Experience",
-                    icon: Icons.grade_rounded,
-                    inputType: TextInputType.number,
+                  Center(
+                    child: GestureDetector(
+                      onTap: () => setState(() => isAdmin = !isAdmin),
+                      child: Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: width * 0.02,
+                          vertical: height * 0.008,
+                        ),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(8),
+                          color: isAdmin
+                              ? colorData.primaryColor(.8)
+                              : colorData.secondaryColor(0.4),
+                        ),
+                        child: CustomText(
+                          text: "SET ADMIN ACCESS",
+                          size: sizeData.regular,
+                          color: isAdmin
+                              ? Colors.white
+                              : colorData.primaryColor(1),
+                          weight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
                   ),
                   SizedBox(
-                    height: height * 0.01,
+                    height: height * 0.02,
                   ),
-                  AddStaffCertificates(
-                    handleCertificate: handleCertificate,
+                  AddStaffCourses(
+                    handleCourse: handleCourse,
                   ),
                   const Spacer(),
                   GestureDetector(
@@ -207,54 +238,40 @@ class _AddStaffState extends ConsumerState<AddStaff> {
                         width: width,
                         decoration: BoxDecoration(boxShadow: [
                           BoxShadow(
-                            color: colorData.secondaryColor(.5),
+                            color: colorData.secondaryColor(.8),
                             blurRadius: 400,
                             spreadRadius: 400,
                           ),
                         ]),
-                        child: Center(
-                          child: Container(
-                            // width: width * .5,
-                            height: height * .23,
-                            padding:
-                                EdgeInsets.symmetric(horizontal: width * 0.05),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(8),
-                              gradient: LinearGradient(
-                                  begin: Alignment.topLeft,
-                                  end: Alignment.bottomRight,
-                                  colors: [
-                                    colorData.primaryColor(.2),
-                                    colorData.primaryColor(.6)
-                                  ]),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Lottie.asset(
+                              "assets/json/uploading.json",
+                              width: width * .7,
                             ),
-                            child: Column(
-                              children: [
-                                SizedBox(
-                                  height: height * 0.06,
-                                ),
-                                CircularProgressIndicator.adaptive(
-                                  strokeWidth: 8,
-                                  strokeAlign: 5,
-                                  strokeCap: StrokeCap.round,
-                                  backgroundColor: Colors.white,
-                                  valueColor: AlwaysStoppedAnimation(
-                                    colorData.primaryColor(1),
-                                  ),
-                                  value: completionCount.keys.first * 0.33,
-                                ),
-                                SizedBox(
-                                  height: height * 0.06,
-                                ),
-                                CustomText(
-                                  text: completionCount.values.first,
-                                  size: sizeData.medium,
-                                  color: colorData.secondaryColor(1),
-                                  weight: FontWeight.w600,
-                                )
-                              ],
+                            Lottie.asset(
+                              "assets/json/loadingProgress.json",
+                              width: width * .5,
                             ),
-                          ),
+                            SizedBox(
+                              height: height * 0.06,
+                            ),
+                            SizedBox(
+                              width: width * .7,
+                              child: CustomText(
+                                text: completionCount.values.first,
+                                size: sizeData.medium,
+                                color: colorData.primaryColor(1),
+                                weight: FontWeight.w600,
+                                maxLine: 3,
+                                align: TextAlign.center,
+                              ),
+                            ),
+                            SizedBox(
+                              height: height * 0.1,
+                            ),
+                          ],
                         ),
                       ),
                     ),

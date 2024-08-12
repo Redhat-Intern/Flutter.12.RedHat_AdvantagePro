@@ -43,17 +43,18 @@ class _SearchState extends ConsumerState<Search> {
         });
       }
     } else if (selectedItem == "staffs") {
-      var document =
-          await FirebaseFirestore.instance.collection(selectedItem).get();
+      var document = await FirebaseFirestore.instance.collection("users").get();
 
       var dataSnapShot = document.docs.where((value) =>
-          value.data()["id"].toString().toUpperCase() == searchString);
+          value.data()["id"].toString().toUpperCase() ==
+          searchString.toUpperCase());
       setState(() {
         if (dataSnapShot.isNotEmpty) {
           var data = dataSnapShot.first.data();
           searchResult = {
             "header": data["name"],
-            "value": "Year of experience ${data["experience"]}"
+            "value":
+                "${data["userRole"] == "admin" ? "Admin Staff" : "Staff"} with ID: ${searchString.toUpperCase()}"
           };
         } else {
           searchResult = {"error": "Staff ID not found"};
@@ -164,6 +165,7 @@ class _SearchState extends ConsumerState<Search> {
               ),
               Expanded(
                 child: Container(
+                  height: height * 0.045,
                   margin: EdgeInsets.only(left: width * 0.03),
                   alignment: Alignment.center,
                   child: TextField(
@@ -179,12 +181,15 @@ class _SearchState extends ConsumerState<Search> {
                       }
                     },
                     style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: aspectRatio * 33,
-                      color: colorData.fontColor(.8),
-                      height: 0
-                    ),
+                        fontWeight: FontWeight.bold,
+                        fontSize: aspectRatio * 33,
+                        color: colorData.fontColor(.8),
+                        height: .75),
+                    scrollPadding: EdgeInsets.zero,
                     decoration: InputDecoration(
+                      contentPadding: EdgeInsets.only(
+                        bottom: height * 0.02,
+                      ),
                       hintText: "Enter the ID",
                       hintStyle: TextStyle(
                         fontWeight: FontWeight.w600,
@@ -246,7 +251,7 @@ class _SearchState extends ConsumerState<Search> {
                                   end: Alignment.bottomRight,
                                   colors: [
                                     colorData.primaryColor(.2),
-                                    colorData.primaryColor(1)
+                                    colorData.primaryColor(1),
                                   ],
                                 ),
                               ),

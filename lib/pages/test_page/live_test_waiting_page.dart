@@ -35,7 +35,7 @@ class LiveTestWaitingRoom extends ConsumerStatefulWidget {
 class _LiveTestWaitingRoomState extends ConsumerState<LiveTestWaitingRoom> {
   @override
   Widget build(BuildContext context) {
-    UserModel userData = ref.watch(userDataProvider);
+    UserModel userData = ref.watch(userDataProvider).key;
     CustomSizeData sizeData = CustomSizeData.from(context);
     CustomColorData colorData = CustomColorData.from(ref);
 
@@ -133,7 +133,7 @@ class _LiveTestWaitingRoomState extends ConsumerState<LiveTestWaitingRoom> {
                 testData: testData,
                 documentRef: documentRef,
                 dayIndex: widget.dayIndex.toString(),
-                userID: userData.id![widget.batchData["name"]]!,
+                userID: userData.studentId![widget.batchData["name"]]!,
                 batchName: widget.batchData["name"],
               );
             }

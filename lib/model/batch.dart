@@ -1,23 +1,22 @@
 import 'package:intl/intl.dart';
 
 import 'student.dart';
+import 'user.dart';
 
 class Batch {
   DateTime creationTime;
   String name;
-  Map<String, dynamic> certificateData;
+  Map<String, dynamic> courseData;
   List<String> dates;
-  Map<String, dynamic> staffs;
-  Map<String, dynamic> adminStaff;
+  List<UserModel> staffs;
   List<Student> students;
 
   Batch({
     required this.creationTime,
     required this.name,
-    required this.certificateData,
+    required this.courseData,
     required this.dates,
     required this.staffs,
-    required this.adminStaff,
     required this.students,
   });
 
@@ -25,10 +24,9 @@ class Batch {
     return Batch(
       creationTime: DateTime.now(),
       name: '',
-      certificateData: {},
-      adminStaff: {},
+      courseData: {},
       dates: [],
-      staffs: {},
+      staffs: [],
       students: [],
     );
   }
@@ -36,45 +34,42 @@ class Batch {
   Batch copyWith({
     DateTime? creationTime,
     String? name,
-    Map<String, dynamic>? certificateData,
+    Map<String, dynamic>? courseData,
     List<String>? dates,
-    Map<String, dynamic>? staffs,
-    Map<String, dynamic>? adminStaff,
+    List<UserModel>? staffs,
+    UserModel? adminStaff,
     List<Student>? students,
   }) {
     return Batch(
       creationTime: creationTime ?? this.creationTime,
       name: name ?? this.name,
-      certificateData: certificateData ?? this.certificateData,
+      courseData: courseData ?? this.courseData,
       dates: dates ?? this.dates,
       staffs: staffs ?? this.staffs,
-      adminStaff: adminStaff ?? this.adminStaff,
       students: students ?? this.students,
     );
   }
 
-  bool isNotEmpty() {
+  bool isNotEmpty({required bool needStudentCheck}) {
     return name.isNotEmpty &&
         name != "" &&
-        certificateData.isNotEmpty &&
+        courseData.isNotEmpty &&
         dates.isNotEmpty &&
         staffs.isNotEmpty &&
-        adminStaff.isNotEmpty &&
-        students.isNotEmpty;
+        (needStudentCheck ? students.isNotEmpty : true);
   }
 
   Map<String, dynamic> toMap() {
     return {
       'time': DateFormat("dd-MM-yyyy").format(creationTime),
-      'name': name,
-      'certificateID': certificateData["name"],
+      'name': name.toUpperCase(),
+      'courseID': courseData["name"],
       'dates': dates,
-      'staffs': staffs,
-      "admin": adminStaff,
-      'students': students.map((student) => {
-            "${name}STU${(students.indexOf(student) + 1).toString().padLeft(3, '0')}":
-                student.email
-          }),
+      'staffs': staffs.map((data) => {data.staffId!.toUpperCase(): data.email}),
+      'students': students.isNotEmpty
+          ? students.map((student) =>
+              {student.registrationID.toUpperCase(): student.email})
+          : {},
     };
   }
 }
