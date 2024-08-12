@@ -53,9 +53,12 @@ class _SignupState extends ConsumerState<Signup> {
     setState(() {
       generatedData["name"] = nameCtr.text.trim();
       generatedData["password"] = passwordCtr.text.trim();
+      generatedData["email"] = emailCtr.text.trim();
     });
+    print(generatedData);
+
     await createUser(
-      ref: ref,
+      // ref: ref,
       email: emailCtr.text.trim(),
       password: passwordCtr.text.trim(),
       generatedData: UserModel.fromJson(generatedData),

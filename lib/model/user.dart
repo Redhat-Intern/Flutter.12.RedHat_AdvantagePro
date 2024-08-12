@@ -74,13 +74,16 @@ class UserModel {
 
   // fromJson method
   factory UserModel.fromJson(Map<String, dynamic> json) {
+    var a = List<String>.from(json['certificates']);
+    print(a);
+    print("Dscd");
     final userRole = UserRole.fromString(json['userRole'].toString());
     return UserModel(
       name: json['name'],
       email: json['email'],
       password: json['password'],
-      phoneNumber: int.parse(json['phoneNumber'].toString()),
-      imagePath: json['imagePath'],
+      phoneNumber: int.parse(json['phoneNo']),
+      imagePath: json['photo'],
       userRole: userRole,
       occupation: userRole == UserRole.student ? json['occupation'] : null,
       occupationDetail:
@@ -97,7 +100,8 @@ class UserModel {
           ? (json['currentBatch'] as Map<String, dynamic>)
               .map((key, value) => MapEntry(key, value.toString()))
           : null,
-      experience: userRole == UserRole.staff ? json['experience'] : null,
+      experience:
+          userRole == UserRole.staff ? int.parse(json['experience']) : null,
       certificates: userRole == UserRole.staff
           ? List<String>.from(json['certificates'])
           : null,

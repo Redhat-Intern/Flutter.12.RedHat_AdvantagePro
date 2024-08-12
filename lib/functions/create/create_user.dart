@@ -7,12 +7,13 @@ import '../../model/user.dart';
 import '../firebase_auth.dart';
 
 Future createUser({
-  required WidgetRef ref,
+  // required WidgetRef ref,
   required String email,
   required String password,
   required UserModel generatedData,
   required BuildContext context,
 }) async {
+  print(email + password);
   AuthFB()
       .createUserWithEmailAndPassword(
     email: email,

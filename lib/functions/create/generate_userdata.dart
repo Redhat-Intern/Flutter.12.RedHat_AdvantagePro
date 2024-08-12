@@ -9,7 +9,7 @@ Future<Map<String, dynamic>?> generateUserData({
 }) async {
   QuerySnapshot<Map<String, dynamic>> queryData = await FirebaseFirestore
       .instance
-      .collection("requests")
+      .collection("staffRequest")
       .where("id", isEqualTo: id.toUpperCase())
       .get();
   if (queryData.docs.isNotEmpty) {
@@ -24,8 +24,7 @@ Future<Map<String, dynamic>?> generateUserData({
       SnackBar(
         backgroundColor: secondaryColor(1),
         content: const CustomText(
-          text:
-              "The Provided ID is not available!",
+          text: "The Provided ID is not available!",
           maxLine: 3,
           align: TextAlign.center,
         ),
