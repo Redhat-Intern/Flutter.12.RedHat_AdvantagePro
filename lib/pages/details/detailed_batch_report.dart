@@ -60,12 +60,11 @@ class _DetailedBatchReportState extends ConsumerState<DetailedBatchReport> {
     double height = sizeData.height;
     double width = sizeData.width;
 
-    Map<String, dynamic> adminStaff = widget.searchData["admin"];
     List<MapEntry> staffList =
-        Map.from(widget.searchData["staffs"]).entries.toList();
-    staffList.removeWhere(
-      (element) => element.key == adminStaff.keys.first,
-    );
+        List.from(widget.searchData["staffs"]).map((element) {
+          Map<String,String> data = Map<String,String>.from(element);
+      return MapEntry(data.keys.first, data.values.first);
+    }).toList();
 
     List<Map> studentsList = List.from(widget.searchData["students"])
         .map((e) => Map.from(e))
@@ -114,7 +113,6 @@ class _DetailedBatchReportState extends ConsumerState<DetailedBatchReport> {
               SizedBox(height: height * 0.03),
               StaffsReportList(
                 staffsListData: staffList,
-                adminStaffData: widget.searchData["admin"],
               ),
               SizedBox(height: height * 0.03),
               StudentReportTable(studentsData: studentsList, streams: streams),

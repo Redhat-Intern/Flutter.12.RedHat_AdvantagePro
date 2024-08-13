@@ -1,9 +1,11 @@
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_symbols_icons/material_symbols_icons.dart';
 import 'package:redhat_v1/layout/user_notfound.dart';
+import 'package:redhat_v1/providers/applifecycle_state.dart';
 import 'package:redhat_v1/utilities/console_logger.dart';
 
 import '../components/common/shimmer_box.dart';
@@ -34,9 +36,50 @@ class Navigation extends ConsumerStatefulWidget {
   ConsumerState<Navigation> createState() => _NavigationState();
 }
 
-class _NavigationState extends ConsumerState<Navigation> {
+class _NavigationState extends ConsumerState<Navigation>
+    with WidgetsBindingObserver {
   bool canPop = false;
   int index = 0;
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    AppStateNotifier appStateNotifier =
+        ref.read(appLifecycleStateProvider.notifier);
+
+    switch (state) {
+      case AppLifecycleState.resumed:
+        appStateNotifier.setAppState(lifecycle: AppLifecycleState.resumed);
+        ConsoleLogger.message("App is in the foreground (resumed)");
+        break;
+      case AppLifecycleState.inactive:
+        appStateNotifier.setAppState(lifecycle: AppLifecycleState.inactive);
+        ConsoleLogger.message("App is inactive");
+        break;
+      case AppLifecycleState.paused:
+        appStateNotifier.setAppState(lifecycle: AppLifecycleState.paused);
+        ConsoleLogger.message("App is in the background (paused)");
+        break;
+      case AppLifecycleState.detached:
+        appStateNotifier.setAppState(lifecycle: AppLifecycleState.detached);
+        ConsoleLogger.message("App is detached");
+        break;
+      case AppLifecycleState.hidden:
+        appStateNotifier.setAppState(lifecycle: AppLifecycleState.hidden);
+        ConsoleLogger.message("App is hidden");
+    }
+  }
 
   popFunction(WidgetRef ref) async {
     if (ref.read(navigationIndexProvider) == 0) {
@@ -59,6 +102,12 @@ class _NavigationState extends ConsumerState<Navigation> {
     CustomColorData colorData = CustomColorData.from(ref);
     double width = sizeData.width;
     double height = sizeData.height;
+
+    ref.listen(appLifecycleStateProvider, (prev, next) {
+      FirebaseFirestore.instance.collection("forum").doc("status").set(
+          {userData.email: next == AppLifecycleState.resumed},
+          SetOptions(merge: true));
+    });
 
     List<Widget> widgetList = [];
     List<Widget> loadingList = [

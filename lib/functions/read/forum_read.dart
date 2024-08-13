@@ -1,29 +1,40 @@
+import 'dart:ffi';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:redhat_v1/components/forum/chat.dart';
-import 'package:redhat_v1/providers/chat_scroll_provider.dart';
-import 'package:redhat_v1/utilities/static_data.dart';
 
 import '../../model/forum.dart';
+import '../../providers/chat_scroll_provider.dart';
 import '../../providers/forum_provider.dart';
+import '../../utilities/static_data.dart';
 
 List<ChatForum> fetchChatForums(
-    {required snapshotData, required userData, required WidgetRef ref}) {
+    {required snapshotData,
+    required QueryDocumentSnapshot<Map<String, dynamic>>? statusSnap,
+    required userData,
+    required WidgetRef ref}) {
   List<ChatForum> chatForums = [];
   for (var all in snapshotData) {
     Map<String, dynamic> forumData = all.data();
     Map<String, dynamic> chatData = forumData;
 
     String id = all.id;
-    List<String> members =
-        List.from(forumData["members"]).map((e) => e.toString()).toList();
+    Map<String, dynamic> members = Map.from(forumData["members"]);
 
     String name = forumData["details"]["name"];
-    String image;
+    String image = "";
 
-    if (members.length > 2) {
-      image = forumData["details"]["image"];
+    if (members.length == 2) {
+      String email =
+          userData.userRole == UserRole.superAdmin ? "admin" : userData.email;
+      members.forEach((key, value) {
+        if (key.toLowerCase() != email.toLowerCase()) {
+          name = value["name"];
+          image = value["imagePath"];
+        }
+      });
     } else {
-      image = forumData["details"]["name"][0];
+      image = forumData["details"]["image"];
     }
     chatData.remove("details");
     chatData.remove("members");
@@ -43,25 +54,46 @@ List<ChatForum> fetchChatForums(
                   text: value["text"],
                   viewedBy: [],
                 )
-              : value["image"] != null
+              : value["type"] != null && value["type"] == "image"
                   ? ChatMessage(
                       id: key,
                       name: value["name"] ?? "admin",
                       type: MessageType.image,
                       from: value["from"],
                       time: DateTime.parse(value["time"]),
-                      imageURL: value["image"],
+                      imageURL: value["file"],
                       viewedBy: [],
                     )
-                  : ChatMessage(
-                      id: key,
-                      name: value["name"] ?? "admin",
-                      type: MessageType.file,
-                      from: value["from"],
-                      time: DateTime.parse(value["time"]),
-                      fileURL: value["file"],
-                      viewedBy: [],
-                    ),
+                  : value["type"] != null && value["type"] == "audio"
+                      ? ChatMessage(
+                          id: key,
+                          name: value["name"] ?? "admin",
+                          type: MessageType.audio,
+                          from: value["from"],
+                          time: DateTime.parse(value["time"]),
+                          fileURL: value["file"],
+                          viewedBy: [],
+                        )
+                      : value["type"] != null && value["type"] == "video"
+                          ? ChatMessage(
+                              id: key,
+                              name: value["name"] ?? "admin",
+                              type: MessageType.video,
+                              from: value["from"],
+                              time: DateTime.parse(value["time"]),
+                              fileURL: value["file"],
+                              viewedBy: [],
+                            )
+                          : ChatMessage(
+                              id: key,
+                              name: value["name"] ?? "admin",
+                              type: MessageType.document,
+                              from: value["from"],
+                              specType: value["type"],
+                              time: DateTime.parse(value["time"]),
+                              fileURL: value["file"],
+                              viewedBy: [],
+                            ),
         );
       },
     );
@@ -87,6 +119,10 @@ List<ChatForum> fetchChatForums(
 
   Future(() {
     ref.read(forumDataProvider.notifier).updateChatForum(chatForums);
+    if (snapshotData != null) {
+      ref.read(forumDataProvider.notifier).updateStatus(
+          statusSnap!.data().map((key, value) => MapEntry(key, value as bool)));
+    }
     ref.read(chatScrollProvider.notifier).jump();
   });
 

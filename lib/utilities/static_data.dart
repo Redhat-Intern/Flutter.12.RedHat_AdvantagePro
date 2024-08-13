@@ -6,6 +6,59 @@ enum CourseContentShifter { Title, Topics }
 
 enum FontFamilyENUM { IstokWeb, Lato, Nunito, Merriweather }
 
+final Map<String, String> fileCategories = {
+  // Image extensions
+  '.jpg': 'image',
+  '.jpeg': 'image',
+  '.png': 'image',
+  '.gif': 'image',
+  '.bmp': 'image',
+  '.webp': 'image',
+  '.svg': 'image',
+
+  // Video extensions
+  '.mp4': 'video',
+  '.mov': 'video',
+  '.avi': 'video',
+  '.mkv': 'video',
+  '.flv': 'video',
+  '.wmv': 'video',
+  '.webm': 'video',
+
+  // Audio extensions
+  '.mp3': 'audio',
+  '.wav': 'audio',
+  '.aac': 'audio',
+  '.flac': 'audio',
+  '.ogg': 'audio',
+  '.m4a': 'audio',
+  '.opus': 'audio',
+
+  // Document extensions
+  '.pdf': 'document',
+  '.doc': 'document',
+  '.docx': 'document',
+  '.xls': 'document',
+  '.xlsx': 'document',
+  '.ppt': 'document',
+  '.pptx': 'document',
+  '.txt': 'document',
+  '.csv': 'document',
+  '.rtf': 'document',
+
+  // Archive extensions
+  '.zip': 'archive',
+  '.rar': 'archive',
+  '.7z': 'archive',
+  '.tar': 'archive',
+  '.gz': 'archive',
+
+  // Others
+  // '.exe': 'executable',
+  // '.apk': 'executable',
+  // '.iso': 'disk image',
+};
+
 enum UserRole {
   student,
   staff,
@@ -49,7 +102,7 @@ enum NotificationsCategory { invitations, admin, batches, students, staffs }
 
 enum Status { online, offline }
 
-enum MessageType { text, image, file }
+enum MessageType { text, image, video, audio, document }
 
 enum WorkStatus { completed, pending, not_Started }
 

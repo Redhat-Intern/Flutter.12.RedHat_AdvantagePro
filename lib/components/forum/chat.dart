@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-import 'package:shimmer/shimmer.dart';
+import 'package:redhat_v1/utilities/static_data.dart';
 
 import '../../model/forum.dart';
+import '../../model/user.dart';
+import '../../providers/user_detail_provider.dart';
 import '../../utilities/theme/color_data.dart';
 import '../../utilities/theme/size_data.dart';
+import '../common/network_image.dart';
 import '../common/text.dart';
 import 'chatting_page.dart';
 
@@ -21,12 +24,17 @@ class Chat extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    UserModel userData = ref.watch(userDataProvider).key;
     ChatMessage message = data.messages.last;
     String lastMessage = message.text != null
         ? message.text!
         : message.imageURL != null
             ? "Image is sent .."
-            : "File is sent ..";
+            : message.type == MessageType.audio
+                ? "Audio is sent .."
+                : message.type == MessageType.video
+                    ? "Video is sent .."
+                    : "${message.specType!.toUpperCase()} is sent ..";
     CustomSizeData sizeData = CustomSizeData.from(context);
     CustomColorData colorData = CustomColorData.from(ref);
 
@@ -34,11 +42,30 @@ class Chat extends ConsumerWidget {
     double width = sizeData.width;
     double aspectRatio = sizeData.aspectRatio;
 
+    String imagePath = data.imageURL;
+    String? senderID;
+
+    if (imagePath.isEmpty) {
+      String email =
+          userData.userRole == UserRole.superAdmin ? "admin" : userData.email;
+      data.members.forEach((key, value) {
+        if (key != email) {
+          imagePath = value["imagePath"];
+          senderID = key;
+        }
+      });
+    }
+
     return GestureDetector(
       onTap: () {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => ChattingPage(index: index)),
+          MaterialPageRoute(
+            builder: (context) => ChattingPage(
+              index: index,
+              senderID: senderID,
+            ),
+          ),
         );
       },
       child: Container(
@@ -48,62 +75,12 @@ class Chat extends ConsumerWidget {
           children: [
             Row(
               children: [
-                Container(
-                  margin: EdgeInsets.only(right: width * 0.02),
-                  padding: const EdgeInsets.all(3),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    color: colorData.secondaryColor(1),
-                  ),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(6),
-                    child: data.imageURL.length == 1
-                        ? Container(
-                            height: aspectRatio * 90,
-                            width: aspectRatio * 90,
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                colors: [
-                                  colorData.primaryColor(.4),
-                                  colorData.primaryColor(.9),
-                                ],
-                              ),
-                            ),
-                            child: Center(
-                              child: CustomText(
-                                text: data.imageURL.toUpperCase(),
-                                size: aspectRatio * 70,
-                                weight: FontWeight.bold,
-                                color: colorData.secondaryColor(1),
-                              ),
-                            ),
-                          )
-                        : Image.network(
-                            data.imageURL,
-                            height: aspectRatio * 90,
-                            width: aspectRatio * 90,
-                            fit: BoxFit.cover,
-                            loadingBuilder: (BuildContext context, Widget child,
-                                ImageChunkEvent? loadingProgress) {
-                              if (loadingProgress == null) {
-                                return child;
-                              } else {
-                                return Shimmer.fromColors(
-                                  baseColor: colorData.backgroundColor(.1),
-                                  highlightColor: colorData.secondaryColor(.1),
-                                  child: Container(
-                                    height: aspectRatio * 90,
-                                    width: aspectRatio * 90,
-                                    decoration: BoxDecoration(
-                                      color: colorData.secondaryColor(.5),
-                                      borderRadius: BorderRadius.circular(6),
-                                    ),
-                                  ),
-                                );
-                              }
-                            },
-                          ),
-                  ),
+                CustomNetworkImage(
+                  size: aspectRatio * 120,
+                  radius: 8,
+                  url: imagePath,
+                  rightMargin: width * 0.02,
+                  padding: 1.5,
                 ),
                 Expanded(
                   child: Column(

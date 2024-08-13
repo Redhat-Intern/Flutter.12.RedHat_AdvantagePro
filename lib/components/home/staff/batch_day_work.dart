@@ -40,13 +40,15 @@ class BatchDayWork extends ConsumerWidget {
         children: [
           GestureDetector(
             onTap: () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => CourseUpdate(
-                          batchName: batchData["name"],
-                          courseName: batchData["courseID"],
-                          dayIndex: dayIndex.toString(),
-                        ))),
+              context,
+              MaterialPageRoute(
+                builder: (context) => CourseUpdate(
+                  batchName: batchData["name"],
+                  courseName: batchData["courseID"],
+                  dayIndex: dayIndex.toString(),
+                ),
+              ),
+            ),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,

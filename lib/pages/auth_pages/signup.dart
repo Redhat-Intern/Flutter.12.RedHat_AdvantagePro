@@ -49,7 +49,7 @@ class _SignupState extends ConsumerState<Signup> {
 
   void _generateUserData() async {
     Map<String, dynamic>? userData =
-        await generateUserData(context: context, id: idCtr.text.trim());
+        await generateUserData(context: context, id: idCtr.text.trim().toUpperCase());
     if (userData != null) {
       if (userData["userRole"] == "student") {
         setState(() {

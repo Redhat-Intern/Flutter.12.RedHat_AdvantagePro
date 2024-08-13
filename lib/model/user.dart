@@ -59,12 +59,20 @@ class UserModel {
       userRole: userRole ?? this.userRole,
       occupation: occupation ?? this.occupation,
       occupationDetail: occupationDetail ?? this.occupationDetail,
-      studentId: studentId ?? this.studentId,
-      staffId: staffId ?? this.staffId,
-      batch: batch ?? this.batch,
-      currentBatch: currentBatch ?? this.currentBatch,
+      studentId: studentId?.map((key, value) =>
+              MapEntry(key.toUpperCase(), value.toUpperCase())) ??
+          this.studentId,
+      staffId: staffId?.toUpperCase() ?? this.staffId,
+      batch: batch?.map((key, value) =>
+              MapEntry(key.toUpperCase(), value.toUpperCase())) ??
+          this.batch,
+      currentBatch: currentBatch?.map((key, value) =>
+              MapEntry(key.toUpperCase(), value.toUpperCase())) ??
+          this.currentBatch,
       courses: courses ?? this.courses,
-      staffBatches: staffBatches ?? this.staffBatches,
+      staffBatches:
+          staffBatches?.map((value) => value.toUpperCase()).toList() ??
+              this.staffBatches,
     );
   }
 
@@ -111,6 +119,8 @@ class UserModel {
           : null,
       staffBatches: userRole == UserRole.staff && json["batches"] != null
           ? List.from(json["batches"])
+              .map((value) => value.toString().toUpperCase())
+              .toList()
           : null,
     );
   }
@@ -127,9 +137,13 @@ class UserModel {
     };
 
     if (userRole == UserRole.staff) {
+      if (staffBatches != null) {
+        json.addAll({
+          'batches': staffBatches!.map((value) => value.toUpperCase()).toList(),
+        });
+      }
       json.addAll({
         'id': staffId!.toUpperCase(),
-        'batches': staffBatches!.map((value) => value.toUpperCase()),
         'courses': courses,
       });
     } else if (userRole == UserRole.admin) {

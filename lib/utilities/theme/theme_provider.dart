@@ -22,7 +22,7 @@ final themeProvider =
 mixin CustomThemeDataMixin {
   final lightTheme = ThemeData(
     // fontFamily: FontFamilyENUM.IstokWeb.name,
-    scaffoldBackgroundColor: const Color(0xffDADEEC),
+    scaffoldBackgroundColor: const Color.fromARGB(255, 252, 252, 255),
     colorScheme: const ColorScheme.light(),
     iconTheme: const IconThemeData(
       color: Color(0XFF1C2136),

@@ -13,15 +13,13 @@ class CategorySelection extends ConsumerWidget {
     super.key,
     required this.category,
     required this.icon,
-    required this.onDone,
   });
   final ForumCategory category;
   final IconData icon;
-  final Function onDone;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    ForumCategory category = ref.watch(forumCategoryProvider);
+    ForumCategory category = ref.watch(forumCategoryProvider).key;
     bool isSelected = category == this.category;
     Function changeCategory =
         ref.read(forumCategoryProvider.notifier).changeCategory;
@@ -33,10 +31,7 @@ class CategorySelection extends ConsumerWidget {
     double aspectRatio = sizeData.aspectRatio;
 
     return GestureDetector(
-      onTap: () {
-        changeCategory(this.category);
-        onDone();
-      },
+      onTap: () => changeCategory(this.category),
       child: Container(
         color: Colors.transparent,
         child: Column(
