@@ -9,15 +9,19 @@ void pushUserData({required WidgetRef ref}) async {
   String? email = AuthFB().currentUser?.email.toString();
 
   if (email != null) {
-    DocumentSnapshot<Map<String, dynamic>> snapshot =
-        await FirebaseFirestore.instance.collection('users').doc(email).get();
-    if (snapshot.exists && snapshot.data() != null) {
-      UserModel userModel = UserModel.fromJson(snapshot.data()!);
-      ref.read(userDataProvider.notifier).addUserData(userModel);
-    } else {
-      ref
-          .read(userDataProvider.notifier)
-          .setUserNotFound(value: "UserData not found");
-    }
+    Stream<DocumentSnapshot<Map<String, dynamic>>> snapshot =
+        FirebaseFirestore.instance.collection('users').doc(email).snapshots();
+    snapshot.listen((data) {
+      if (data.exists) {
+        if (data.data() != null) {
+          UserModel userModel = UserModel.fromJson(data.data()!);
+          ref.read(userDataProvider.notifier).addUserData(userModel);
+        }
+      } else {
+        ref
+            .read(userDataProvider.notifier)
+            .setUserNotFound(value: "UserData not found");
+      }
+    });
   }
 }

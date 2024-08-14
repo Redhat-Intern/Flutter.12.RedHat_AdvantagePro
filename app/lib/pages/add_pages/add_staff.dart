@@ -7,7 +7,6 @@ import 'package:redhat_v1/utilities/console_logger.dart';
 
 import '../../components/add_staff/add_staff_courses.dart';
 import '../../components/common/page_header.dart';
-import '../../functions/create/send_email.dart';
 import '../../utilities/static_data.dart';
 import '../../functions/create/add_staff.dart';
 import '../../utilities/theme/color_data.dart';
@@ -90,11 +89,6 @@ class _AddStaffState extends ConsumerState<AddStaff> {
       ).listen((event) {
         setState(() {
           if (event.keys.first == 1) {
-            sendStaffEmail(
-                imageURL: event.values.first,
-                receiverEmail: emailController.text,
-                name: nameController.text,
-                registrationNo: event.values.first.toString());
             completionCount = {1: "Uploading courses"};
           } else if (event.keys.first == 3) {
             completionCount = event;

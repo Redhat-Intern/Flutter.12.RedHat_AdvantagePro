@@ -74,21 +74,28 @@ class ForumState extends ConsumerState<Forum> {
                         .toList();
                   } else if (forumCategory == ForumCategory.staffs) {
                     chatForums = chatForums
-                        .where((data) => data.members.values
-                            .where((data) =>
-                                Map<String, dynamic>.from(data)["userRole"] ==
-                                    "staff" ||
-                                Map<String, dynamic>.from(data)["userRole"] ==
-                                    "admin")
-                            .isNotEmpty)
+                        .where((data) =>
+                            data.members.length == 2 &&
+                            data.members.values
+                                .where((data) =>
+                                    Map<String, dynamic>.from(
+                                            data)["userRole"] ==
+                                        "staff" ||
+                                    Map<String, dynamic>.from(
+                                            data)["userRole"] ==
+                                        "admin")
+                                .isNotEmpty)
                         .toList();
                   } else if (forumCategory == ForumCategory.students) {
                     chatForums = chatForums
-                        .where((data) => data.members.values
-                            .where((data) =>
-                                Map<String, dynamic>.from(data)["userRole"] ==
-                                "student")
-                            .isNotEmpty)
+                        .where((data) =>
+                            data.members.length == 2 &&
+                            data.members.values
+                                .where((data) =>
+                                    Map<String, dynamic>.from(
+                                        data)["userRole"] ==
+                                    "student")
+                                .isNotEmpty)
                         .toList();
                   }
 

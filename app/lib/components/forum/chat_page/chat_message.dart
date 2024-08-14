@@ -159,7 +159,7 @@ class ChatTile extends ConsumerWidget {
       children: [
         SizedBox(
             height: height *
-                ((isGroup && previousSenderId != senderId) ? 0.04 : 0.01)),
+                ((isGroup && previousSenderId != senderId) ? 0.05 : 0.01)),
         Stack(
           clipBehavior: Clip.none,
           children: [

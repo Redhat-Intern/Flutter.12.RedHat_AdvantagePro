@@ -43,11 +43,12 @@ List<ChatForum> fetchChatForums(
 
     chatData.forEach(
       (key, value) {
+        String senderName = members[value["from"]]["name"];
         chatMessages.add(
           value["text"] != null
               ? ChatMessage(
                   id: key,
-                  name: value["name"] ?? "admin",
+                  name: senderName,
                   type: MessageType.text,
                   from: value["from"],
                   time: DateTime.parse(value["time"]),
@@ -57,7 +58,7 @@ List<ChatForum> fetchChatForums(
               : value["type"] != null && value["type"] == "image"
                   ? ChatMessage(
                       id: key,
-                      name: value["name"] ?? "admin",
+                      name: senderName,
                       type: MessageType.image,
                       from: value["from"],
                       time: DateTime.parse(value["time"]),
@@ -67,7 +68,7 @@ List<ChatForum> fetchChatForums(
                   : value["type"] != null && value["type"] == "audio"
                       ? ChatMessage(
                           id: key,
-                          name: value["name"] ?? "admin",
+                          name: senderName,
                           type: MessageType.audio,
                           from: value["from"],
                           time: DateTime.parse(value["time"]),
@@ -77,7 +78,7 @@ List<ChatForum> fetchChatForums(
                       : value["type"] != null && value["type"] == "video"
                           ? ChatMessage(
                               id: key,
-                              name: value["name"] ?? "admin",
+                              name: senderName,
                               type: MessageType.video,
                               from: value["from"],
                               time: DateTime.parse(value["time"]),
@@ -86,7 +87,7 @@ List<ChatForum> fetchChatForums(
                             )
                           : ChatMessage(
                               id: key,
-                              name: value["name"] ?? "admin",
+                              name: senderName,
                               type: MessageType.document,
                               from: value["from"],
                               specType: value["type"],
