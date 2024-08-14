@@ -10,9 +10,12 @@ admin.initializeApp();
 // Set up NodeMailer transporter (using Gmail as an example)
 const transporter = nodemailer.createTransport({
     service: 'gmail',
+    host: "smtp.gmail.com",
+    port: 587,
+    secure: false,
     auth: {
-        user: 'your-email@gmail.com',
-        pass: 'your-email-password',
+        user: 'advantage.redhat@gmail.com',
+        pass: 'tpvm xuft xnjf tbrl',
     },
 });
 
@@ -40,9 +43,10 @@ const onSignupRequest = functions.onDocumentCreated('/requests/{docId}', async (
     let replacements = { name, id };
 
     // Determine email content based on user role
-    if (userRole === 'staff') {
+    if (userRole === 'staff' || userRole === 'admin') {
         emailSubject = 'Staff Signup Request';
         emailTemplatePath = path.join(__dirname, 'emailTemplates', 'staffEmail.html');
+        replacements.imagePath = requestData.imagePath;
     } else if (userRole === 'student') {
         emailSubject = 'Student Signup Request';
         emailTemplatePath = path.join(__dirname, 'emailTemplates', 'studentEmail.html');
