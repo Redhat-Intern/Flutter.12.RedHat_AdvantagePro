@@ -45,7 +45,7 @@ class _CoursesState extends ConsumerState<Courses> {
     double aspectRatio = sizeData.aspectRatio;
 
     return Column(children: [
-      const PageHeader(tittle: "CERTIFICATES", isMenuButton: true),
+      const PageHeader(tittle: "courses", isMenuButton: true),
       SizedBox(
         height: height * 0.02,
       ),

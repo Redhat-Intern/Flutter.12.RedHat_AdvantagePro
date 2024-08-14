@@ -132,7 +132,7 @@ class _NavigationState extends ConsumerState<Navigation>
         {Symbols.home_app_logo_rounded: "Home"},
         {Symbols.crisis_alert_rounded: "Report"},
         {Symbols.forum_rounded: "Forum"},
-        {Symbols.developer_guide_rounded: "Certification"},
+        {Symbols.developer_guide_rounded: "Courses"},
       ];
     } else if (userData.userRole == UserRole.staff) {
       widgetList = [

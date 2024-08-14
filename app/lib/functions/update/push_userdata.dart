@@ -9,9 +9,11 @@ void pushUserData({required WidgetRef ref}) async {
   String? email = AuthFB().currentUser?.email.toString();
 
   if (email != null) {
-    Stream<DocumentSnapshot<Map<String, dynamic>>> snapshot =
-        FirebaseFirestore.instance.collection('users').doc(email).snapshots();
-    snapshot.listen((data) {
+    FirebaseFirestore.instance
+        .collection('users')
+        .doc(email)
+        .snapshots()
+        .listen((data) {
       if (data.exists) {
         if (data.data() != null) {
           UserModel userModel = UserModel.fromJson(data.data()!);
