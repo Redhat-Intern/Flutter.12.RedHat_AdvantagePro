@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:redhat_v1/components/common/network_image.dart';
 
 import '../../utilities/theme/color_data.dart';
 import '../../utilities/theme/size_data.dart';
@@ -28,28 +29,7 @@ class StudentReportTableNamer extends ConsumerWidget {
     return Container(
       padding: EdgeInsets.symmetric(vertical: height * 0.005),
       child: Row(children: [
-        Container(
-          width: height * 0.055,
-          height: double.infinity,
-          padding: const EdgeInsets.all(3),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
-            color: colorData.secondaryColor(1),
-          ),
-          alignment: Alignment.center,
-          child: imageUrl.length == 1
-              ? Center(
-                  child: CustomText(
-                    text: imageUrl.toUpperCase(),
-                    color: colorData.fontColor(1),
-                    weight: FontWeight.bold,
-                    size: height * 0.05,
-                  ),
-                )
-              : ClipRRect(
-                  borderRadius: BorderRadius.circular(8),
-                  child: Image.asset(imageUrl)),
-        ),
+        CustomNetworkImage(size: height * 0.055, radius: 10, url: imageUrl),
         SizedBox(
           width: width * 0.02,
         ),

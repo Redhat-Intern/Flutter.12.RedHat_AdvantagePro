@@ -11,6 +11,7 @@ class ChatMessage {
   String? fileURL;
   DateTime time;
   List<String> viewedBy;
+  String? specType;
 
   ChatMessage({
     required this.id,
@@ -23,6 +24,7 @@ class ChatMessage {
     this.text,
     this.imageURL,
     this.fileURL,
+    this.specType,
   });
 }
 
@@ -30,7 +32,7 @@ class ChatForum {
   String id;
   String name;
   String imageURL;
-  List<String> members;
+  Map<String, dynamic> members;
   List<ChatMessage> messages;
 
   ChatForum({

@@ -37,7 +37,7 @@ Stream<Map<int, String>> addStaff({
   yield {2: "Uploading Data to firebase"};
 
   Map<String, dynamic> staffData = {
-    "id": staffId,
+    "id": staffId.toUpperCase(),
     "email": email,
     "name": name,
     "imagePath": photoURL,

@@ -143,7 +143,9 @@ class AttendanceWorkTile extends ConsumerWidget {
                                 text: notSet > 0
                                     ? "Need to update $notSet students attendence"
                                     : "All students are present! 🥳",
-                                color: colorData.fontColor(.4),
+                                color: notSet > 0
+                                    ? colorData.fontColor(.4)
+                                    : Colors.green,
                               ),
                             ),
                     ),
@@ -174,10 +176,11 @@ class AttendanceWorkTile extends ConsumerWidget {
           );
         } else {
           return WorkTilePlaceHolder(
-              header: "attendence",
-              toGO: toGo,
-              value: "not created",
-              placeholder: "Tap to edit the student's attendence");
+            header: "attendence",
+            toGO: toGo,
+            value: "not created",
+            placeholder: "Tap to edit the student's attendence",
+          );
         }
       },
     );

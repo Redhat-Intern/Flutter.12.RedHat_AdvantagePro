@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:redhat_v1/model/user.dart';
 
 import '../../../utilities/theme/color_data.dart';
 import '../../../utilities/theme/size_data.dart';
@@ -12,38 +13,37 @@ class StaffsReportList extends ConsumerStatefulWidget {
   const StaffsReportList({
     super.key,
     required this.staffsListData,
-    required this.adminStaffData,
   });
 
   final List<MapEntry> staffsListData;
-  final Map<String, dynamic> adminStaffData;
 
   @override
   ConsumerState<StaffsReportList> createState() => _StaffsReportList();
 }
 
 class _StaffsReportList extends ConsumerState<StaffsReportList> {
-  Map<String, dynamic> adminStaffData = {};
-  List<Map<String, dynamic>> allStaffData = [];
+  UserModel? adminStaffData;
+  List<UserModel> allStaffData = [];
 
   @override
   void initState() {
     super.initState();
 
     FirebaseFirestore.instance
-        .collection("staffs")
+        .collection("users")
         .get()
         .then((QuerySnapshot<Map<String, dynamic>> value) {
       setState(() {
-        adminStaffData = value.docs
-            .firstWhere(
-                (element) => element.id == widget.adminStaffData.values.first)
-            .data();
+        adminStaffData = UserModel.fromJson(value.docs
+            .firstWhere((element) => element.data()["userRole"] == "admin")
+            .data());
 
         for (var element in value.docs) {
           if (widget.staffsListData
-              .contains({element.data()["id"]: element.id})) {
-            allStaffData.add(element.data());
+              .map((e) => e.key)
+              .toList()
+              .contains(element.data()["id"].toString().toUpperCase())) {
+            allStaffData.add(UserModel.fromJson(element.data()));
           }
         }
       });
@@ -75,16 +75,17 @@ class _StaffsReportList extends ConsumerState<StaffsReportList> {
         Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            adminStaffData.isNotEmpty
-                ? StaffImageButton(
-                    todo: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) =>
-                                StaffBatchDetail(data: adminStaffData))),
-                    imageUrl: adminStaffData["photo"],
-                  )
-                : const SizedBox(),
+            if (adminStaffData != null)
+              StaffImageButton(
+                todo: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            StaffBatchDetail(data: adminStaffData!))),
+                imageUrl: adminStaffData!.imagePath,
+                name: adminStaffData!.name,
+                isAdmin: true,
+              ),
             Expanded(
               child: Container(
                 height: height * 0.09,
@@ -109,12 +110,14 @@ class _StaffsReportList extends ConsumerState<StaffsReportList> {
                         itemCount: allStaffData.length,
                         itemBuilder: (BuildContext context, int index) {
                           return StaffImageButton(
-                              todo: () => Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => StaffBatchDetail(
-                                          data: allStaffData[index]))),
-                              imageUrl: allStaffData[index]["photo"]);
+                            todo: () => Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => StaffBatchDetail(
+                                        data: allStaffData[index]))),
+                            imageUrl: allStaffData[index].imagePath,
+                            name: allStaffData[index].name,
+                          );
                         },
                       )
                     : const CustomText(

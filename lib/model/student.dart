@@ -20,7 +20,7 @@ class Student {
 
   Map<String, dynamic> toMap() {
     return {
-      "id" : registrationID,
+      "id" : registrationID.toUpperCase(),
       'userRole': 'student',
       'name': name,
       'email': email,

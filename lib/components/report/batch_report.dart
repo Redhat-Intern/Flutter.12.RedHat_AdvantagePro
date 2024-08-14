@@ -33,7 +33,6 @@ class _BatchReport extends ConsumerState<BatchReport> {
 
     if (document.exists) {
       var data = document.data();
-      print(data);
       setState(() {
         searchResult = {
           "header": data!["name"],
@@ -98,6 +97,7 @@ class _BatchReport extends ConsumerState<BatchReport> {
                   setState(() {
                     controller.clear();
                     searchResult.clear();
+                    toShow.clear();
                   });
                 }
               },

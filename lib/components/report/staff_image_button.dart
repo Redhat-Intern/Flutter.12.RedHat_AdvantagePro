@@ -1,19 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:redhat_v1/components/common/network_image.dart';
 import 'package:shimmer/shimmer.dart';
 
 import '../../utilities/theme/color_data.dart';
 import '../../utilities/theme/size_data.dart';
+import '../common/text.dart';
 
 class StaffImageButton extends ConsumerWidget {
   const StaffImageButton({
     super.key,
     required this.todo,
     required this.imageUrl,
+    required this.name,
+    this.isAdmin = false,
   });
 
   final Function todo;
   final String imageUrl;
+  final String name;
+  final bool? isAdmin;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -25,43 +31,29 @@ class StaffImageButton extends ConsumerWidget {
     double aspectRatio = sizeData.aspectRatio;
 
     return GestureDetector(
-      onTap: () => todo(),
-      child: Container(
-        width: aspectRatio * 115,
-        height: aspectRatio * 115,
-        margin: EdgeInsets.only(
-          right: width * 0.04,
-        ),
-        padding: const EdgeInsets.all(2),
-        decoration: BoxDecoration(
-          color: colorData.secondaryColor(1),
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(8),
-          child: Image.network(
-            imageUrl,
-            fit: BoxFit.fill,
-            loadingBuilder: (BuildContext context, Widget child,
-                ImageChunkEvent? loadingProgress) {
-              if (loadingProgress == null) {
-                return child;
-              } else {
-                return Shimmer.fromColors(
-                  baseColor: colorData.backgroundColor(.1),
-                  highlightColor: colorData.secondaryColor(.1),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: colorData.secondaryColor(.5),
-                      borderRadius: BorderRadius.circular(8.0),
-                    ),
-                  ),
-                );
-              }
-            },
-          ),
-        ),
-      ),
-    );
+        onTap: () => todo(),
+        child: Stack(
+          clipBehavior: Clip.none,
+          children: [
+            CustomNetworkImage(
+              size: height * 0.065,
+              radius: 8,
+              url: imageUrl,
+              rightMargin: width * 0.03,
+            ),
+            Positioned(
+              bottom: -(height * (isAdmin! ? .015 : 0.008)),
+              left: -2,
+              child: SizedBox(
+                width: height * .07,
+                child: CustomText(
+                  text: name.toUpperCase(),
+                  size: aspectRatio * 16,
+                  align: TextAlign.center,
+                ),
+              ),
+            ),
+          ],
+        ));
   }
 }

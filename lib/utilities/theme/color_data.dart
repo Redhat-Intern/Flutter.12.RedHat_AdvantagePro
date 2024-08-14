@@ -26,7 +26,7 @@ class CustomColorData {
     Color statePrimaryColor = themeMap.values.first;
 
     Color fontColor(double opacity) => isDark
-        ? const Color(0XFFEFF1FF).withOpacity(opacity)
+        ? Colors.white.withOpacity(opacity)
         : const Color(0XFF1C2136).withOpacity(opacity);
 
     Color primaryColor(double opacity) =>
@@ -34,10 +34,11 @@ class CustomColorData {
 
     Color secondaryColor(double opacity) => isDark
         ? const Color(0XFF333354).withOpacity(opacity)
-        : Colors.white.withOpacity(opacity);
+        : const Color.fromARGB(255, 233, 233, 239).withOpacity(opacity);
 
-    Color backgroundColor(double opacity) =>
-        isDark ? const Color(0XFF22223D) : const Color(0xffDADEEC);
+    Color backgroundColor(double opacity) => isDark
+        ? const Color(0XFF22223D)
+        : const Color.fromARGB(255, 255, 255, 255);
 
     Color sideBarTextColor(double opacity) => Colors.white.withOpacity(opacity);
 

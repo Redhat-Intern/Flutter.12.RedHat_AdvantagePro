@@ -42,7 +42,7 @@ class Batch {
   }) {
     return Batch(
       creationTime: creationTime ?? this.creationTime,
-      name: name ?? this.name,
+      name: name?.toUpperCase() ?? this.name,
       courseData: courseData ?? this.courseData,
       dates: dates ?? this.dates,
       staffs: staffs ?? this.staffs,
@@ -63,7 +63,7 @@ class Batch {
     return {
       'time': DateFormat("dd-MM-yyyy").format(creationTime),
       'name': name.toUpperCase(),
-      'courseID': courseData["name"],
+      'courseID': courseData["name"].toString().toUpperCase(),
       'dates': dates,
       'staffs': staffs.map((data) => {data.staffId!.toUpperCase(): data.email}),
       'students': students.isNotEmpty

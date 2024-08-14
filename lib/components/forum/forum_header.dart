@@ -26,9 +26,9 @@ class _ForumHeaderState extends ConsumerState<ForumHeader> {
   bool showSearch = false;
   TextEditingController controller = TextEditingController();
   double opacity = 0.0;
-  double begin = 0.0;
-  double end = 1.0;
-  searchDataFun() {}
+  searchDataFun(String value) {
+    ref.read(forumCategoryProvider.notifier).setSearchString(value.trim());
+  }
 
   void toggleShowCategorySelection() {
     setState(() {
@@ -41,14 +41,8 @@ class _ForumHeaderState extends ConsumerState<ForumHeader> {
     setState(() {
       showCategorySelection = false;
       showSearch = !showSearch;
-      if (showSearch) {
-        begin = 0.0;
-        end = 1.0;
-      } else if (showSearch == false) {
-        begin = 1.0;
-        end = 0.0;
-      }
     });
+    searchDataFun('');
   }
 
   @override
@@ -59,7 +53,7 @@ class _ForumHeaderState extends ConsumerState<ForumHeader> {
 
   @override
   Widget build(BuildContext context) {
-    ForumCategory category = ref.watch(forumCategoryProvider);
+    ForumCategory category = ref.watch(forumCategoryProvider).key;
     UserRole userRole = ref.watch(userDataProvider).key.userRole!;
     CustomSizeData sizeData = CustomSizeData.from(context);
     CustomColorData colorData = CustomColorData.from(ref);
@@ -75,42 +69,41 @@ class _ForumHeaderState extends ConsumerState<ForumHeader> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              userRole == UserRole.admin
-                  ? Container(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: width * 0.04, vertical: height * 0.01),
-                      decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                            colors: [
-                              colorData.primaryColor(.3),
-                              colorData.primaryColor(1),
-                            ],
-                          ),
-                          borderRadius: BorderRadius.circular(8)),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          CustomIcon(
-                            size: aspectRatio * 40,
-                            icon: Icons.create_new_folder_rounded,
-                            color: Colors.white.withOpacity(.9),
-                          ),
-                          SizedBox(
-                            width: width * .02,
-                          ),
-                          CustomText(
-                            text: "New Group",
-                            size: sizeData.regular,
-                            weight: FontWeight.w800,
-                            color: Colors.white.withOpacity(.9),
-                          )
+              if (userRole == UserRole.superAdmin)
+                Container(
+                  padding: EdgeInsets.symmetric(
+                      horizontal: width * 0.04, vertical: height * 0.01),
+                  decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [
+                          colorData.primaryColor(.3),
+                          colorData.primaryColor(1),
                         ],
                       ),
-                    )
-                  : const SizedBox(),
+                      borderRadius: BorderRadius.circular(8)),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      CustomIcon(
+                        size: aspectRatio * 40,
+                        icon: Icons.create_new_folder_rounded,
+                        color: Colors.white.withOpacity(.9),
+                      ),
+                      SizedBox(
+                        width: width * .02,
+                      ),
+                      CustomText(
+                        text: "New Group",
+                        size: sizeData.regular,
+                        weight: FontWeight.w800,
+                        color: Colors.white.withOpacity(.9),
+                      )
+                    ],
+                  ),
+                ),
               const Spacer(),
               CustomText(
                 text: category.name.toUpperCase(),
@@ -153,131 +146,112 @@ class _ForumHeaderState extends ConsumerState<ForumHeader> {
               ),
             ],
           ),
-          showCategorySelection
-              ? Stack(
-                  children: [
-                    Container(
-                      padding: EdgeInsets.symmetric(
-                        vertical: height * 0.0125,
-                        horizontal: width * 0.01,
+          if (showCategorySelection)
+            Stack(
+              children: [
+                Container(
+                  padding: EdgeInsets.symmetric(
+                    vertical: height * 0.0125,
+                    horizontal: width * 0.01,
+                  ),
+                  margin: EdgeInsets.only(
+                      left: width * 0.04,
+                      right: width * 0.04,
+                      top: height * 0.02),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                    color: colorData.secondaryColor(.4),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      const CategorySelection(
+                        category: ForumCategory.all,
+                        icon: Icons.all_inbox_rounded,
                       ),
-                      margin: EdgeInsets.only(
-                          left: width * 0.04,
-                          right: width * 0.04,
-                          top: height * 0.02),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(12),
-                        color: colorData.secondaryColor(.4),
+                      const CategorySelection(
+                        category: ForumCategory.groups,
+                        icon: Icons.groups_2_rounded,
                       ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          CategorySelection(
-                            category: ForumCategory.all,
-                            icon: Icons.all_inbox_rounded,
-                            onDone: toggleShowCategorySelection,
-                          ),
-                          CategorySelection(
-                            category: ForumCategory.groups,
-                            icon: Icons.groups_2_rounded,
-                            onDone: toggleShowCategorySelection,
-                          ),
-                          CategorySelection(
-                            category: ForumCategory.staffs,
-                            icon: Icons.school_rounded,
-                            onDone: toggleShowCategorySelection,
-                          ),
-                          userRole != UserRole.student
-                              ? CategorySelection(
-                                  category: ForumCategory.students,
-                                  icon: Icons.person_rounded,
-                                  onDone: toggleShowCategorySelection,
-                                )
-                              : const SizedBox(),
-                        ],
+                      const CategorySelection(
+                        category: ForumCategory.staffs,
+                        icon: Icons.school_rounded,
                       ),
+                      userRole != UserRole.student
+                          ? const CategorySelection(
+                              category: ForumCategory.students,
+                              icon: Icons.person_rounded,
+                            )
+                          : const SizedBox(),
+                    ],
+                  ),
+                ),
+                Positioned(
+                  top: height * 0.005,
+                  right: width * 0.15,
+                  child: CustomPaint(
+                    size: Size(width * .05, height * .015),
+                    painter:
+                        TrianglePainter(color: colorData.secondaryColor(.4)),
+                  ),
+                )
+              ],
+            ),
+          if (showSearch)
+            Container(
+              height: height * 0.05,
+              width: width,
+              margin: EdgeInsets.only(
+                  top: height * 0.02, left: width * 0.02, right: width * 0.02),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                color: colorData.secondaryColor(.3),
+              ),
+              child: TextField(
+                controller: controller,
+                onSubmitted: (value) {
+                  controller.clear();
+                  searchDataFun('');
+                  toggleShowSearch();
+                },
+                onChanged: (value) {
+                  searchDataFun(value);
+                },
+                scrollPadding: EdgeInsets.zero,
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: aspectRatio * 33,
+                  color: colorData.fontColor(.8),
+                  height: 1,
+                ),
+                decoration: InputDecoration(
+                  hintText: "Search using Name or ID",
+                  hintStyle: TextStyle(
+                    fontWeight: FontWeight.w600,
+                    fontSize: sizeData.medium,
+                    color: colorData.fontColor(.5),
+                    height: 1,
+                  ),
+                  contentPadding: EdgeInsets.only(
+                    top: height * 0.01,
+                  ),
+                  border: InputBorder.none,
+                  prefixIcon: GestureDetector(
+                    onTap: () {
+                      if (controller.text.isNotEmpty) {
+                        searchDataFun(controller.text.trim());
+                      }
+                    },
+                    child: CustomIcon(
+                      icon: Icons.search_rounded,
+                      color: colorData.fontColor(.8),
+                      size: aspectRatio * 50,
                     ),
-                    Positioned(
-                      top: height * 0.005,
-                      right: width * 0.15,
-                      child: CustomPaint(
-                        size: Size(width * .05, height * .015),
-                        painter: TrianglePainter(
-                            color: colorData.secondaryColor(.4)),
-                      ),
-                    )
-                  ],
-                )
-              : SizedBox(),
-          showSearch
-              ? TweenAnimationBuilder(
-                  tween: Tween<double>(begin: begin, end: end),
-                  duration: const Duration(milliseconds: 600),
-                  builder: (context, value, child) {
-                    return Container(
-                      height: height * 0.05 * value,
-                      width: width,
-                      margin: EdgeInsets.only(
-                          top: height * 0.02,
-                          left: width * 0.02,
-                          right: width * 0.02),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        color: colorData.secondaryColor(.3),
-                      ),
-                      child: TextField(
-                        controller: controller,
-                        onSubmitted: (value) {
-                          controller.clear();
-                          // searchResult.clear();
-                          toggleShowSearch();
-                        },
-                        onChanged: (value) {
-                          if (value.isNotEmpty) {
-                            searchDataFun();
-                          } else {
-                            setState(() {
-                              controller.clear();
-                              // searchResult.clear();
-                            });
-                          }
-                        },
-                        scrollPadding: EdgeInsets.zero,
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: aspectRatio * 33,
-                          color: colorData.fontColor(.8),
-                          height: 1,
-                        ),
-                        decoration: InputDecoration(
-                          hintText: "Search using Name or ID",
-                          hintStyle: TextStyle(
-                            fontWeight: FontWeight.w600,
-                            fontSize: sizeData.medium * value,
-                            color: colorData.fontColor(.5),
-                            height: 1,
-                          ),
-                          contentPadding: EdgeInsets.only(
-                            top: height * 0.008,
-                          ),
-                          border: InputBorder.none,
-                          prefixIcon: GestureDetector(
-                            onTap: () {
-                              if (controller.text.isNotEmpty) searchDataFun();
-                            },
-                            child: CustomIcon(
-                              icon: Icons.search_rounded,
-                              color: colorData.fontColor(.8),
-                              size: aspectRatio * 50 * (value),
-                            ),
-                          ),
-                        ),
-                      ),
-                    );
-                  },
-                )
-              : const SizedBox()
+                  ),
+                ),
+              ),
+            ),
         ],
       ),
     );

@@ -30,6 +30,11 @@ Future<bool> createBatch({
         .delete();
 
     List<String> members = ['admin'];
+    QuerySnapshot<Map<String, dynamic>> userCollectionData =
+        await FirebaseFirestore.instance.collection("users").get();
+    Map<String, dynamic> adminData = userCollectionData.docs
+        .firstWhere((data) => data.data()["userRole"] == "superAdmin")
+        .data();
 
     for (var element in batch.staffs) {
       // String role = (isAdmin ? "admin" : "staff").toUpperCase();
@@ -51,21 +56,32 @@ Future<bool> createBatch({
         "batches": FieldValue.arrayUnion([batch.name.toUpperCase()])
       }, SetOptions(merge: true));
 
-      // await FirebaseFirestore.instance
-      //     .collection("forum")
-      //     .doc("${element.email.toString().trim()}|admin")
-      //     .set({
-      //   "members": ["admin", element.email.toString().trim()],
-      //   "details": {
-      //     "name": 'admin',
-      //   },
-      //   "admin|${DateTime.now().toIso8601String()}": {
-      //     "text":
-      //         "Welcome aboard to our dedicated staff joining the new batch ${batch.name} at Vectra Advantage Pro! Wishing you an enriching teaching experience filled with passion and dedication. Let's inspire our students to embrace and love every aspect of this certification course journey!",
-      //     "from": "admin",
-      //     "time": DateTime.now().toIso8601String(),
-      //   }
-      // }, SetOptions(merge: true));
+      await FirebaseFirestore.instance
+          .collection("forum")
+          .doc("${element.email.toString().trim()}|admin")
+          .set({
+        "members": {
+          "admin": {
+            "name": adminData["name"],
+            "imagePath": adminData["imagePath"],
+            "userRole": "superAdmin",
+          },
+          element.email.toString().trim(): {
+            "name": element.name,
+            "imagePath": element.imagePath,
+            "userRole": "staff",
+          }
+        },
+        "details": {
+          "name": 'admin',
+        },
+        "admin|${DateTime.now().toIso8601String()}": {
+          "text":
+              "Welcome aboard to our dedicated staff joining the new batch ${batch.name} at Vectra Advantage Pro! Wishing you an enriching teaching experience filled with passion and dedication. Let's inspire our students to embrace and love every aspect of this certification course journey!",
+          "from": "admin",
+          "time": DateTime.now().toIso8601String(),
+        }
+      }, SetOptions(merge: true));
 
       members.add(element.email);
     }
@@ -105,8 +121,8 @@ Future<bool> createBatch({
         await sendStudentEmail(
           receiverEmail: element.email,
           name: element.name,
-          batchID: batch.name,
-          registrationNo: element.registrationID,
+          batchID: batch.name.toUpperCase(),
+          registrationNo: element.registrationID.toUpperCase(),
         );
       } else {
         // sendInvitation();
@@ -115,22 +131,41 @@ Future<bool> createBatch({
       members.add(element.email);
     }
 
-    // await FirebaseFirestore.instance
-    //     .collection("forum")
-    //     .doc(batch.name.trim())
-    //     .set({
-    //   "members": members,
-    //   "details": {
-    //     "name": batch.name,
-    //     "image": batch.courseData["image"],
-    //   },
-    //   "admin|${DateTime.now().toIso8601String()}": {
-    //     "text":
-    //         "A heartfelt welcome to all our students at Vectra Advantage Pro - where learning meets excellence, and success is a shared journey!",
-    //     "from": "admin",
-    //     "time": DateTime.now().toIso8601String()
-    //   }
-    // }, SetOptions(merge: true));
+    Map<String, dynamic> membersData = {};
+
+    for (var data in userCollectionData.docs) {
+      if (data.data()["userRole"] == "superAdmin") {
+        membersData["admin"] = {
+          "name": data.data()["name"],
+          "imagePath": data.data()["imagePath"],
+          "userRole": "superAdmin",
+        };
+      } else if (members.contains(data.id) ||
+          data.data()["userRole"] == "admin") {
+        membersData[data.id] = {
+          "name": data.data()["name"],
+          "imagePath": data.data()["imagePath"],
+          "userRole": data.data()["userRole"],
+        };
+      }
+    }
+
+    await FirebaseFirestore.instance
+        .collection("forum")
+        .doc(batch.name.trim().toUpperCase())
+        .set({
+      "members": membersData,
+      "details": {
+        "name": batch.name,
+        "image": batch.courseData["image"],
+      },
+      "admin|${DateTime.now().toIso8601String()}": {
+        "text":
+            "A heartfelt welcome to all our students at Vectra Advantage Pro - where learning meets excellence, and success is a shared journey!",
+        "from": "admin",
+        "time": DateTime.now().toIso8601String()
+      }
+    }, SetOptions(merge: true));
 
     return true;
   } catch (exception) {

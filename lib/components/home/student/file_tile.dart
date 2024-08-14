@@ -17,6 +17,7 @@ class FileTile extends ConsumerWidget {
     required this.extension,
     required this.name,
     this.fileSize,
+    this.needBottomPadding = true,
   });
 
   final File fileData;
@@ -24,6 +25,7 @@ class FileTile extends ConsumerWidget {
   final String extension;
   final String name;
   final String? fileSize;
+  final bool? needBottomPadding;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -39,7 +41,7 @@ class FileTile extends ConsumerWidget {
         OpenFile.open(fileData.path);
       },
       child: Container(
-        margin: EdgeInsets.only(bottom: height * 0.01),
+        margin: EdgeInsets.only(bottom: needBottomPadding! ? height * 0.01 : 0),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(8),
           gradient: LinearGradient(
@@ -51,56 +53,83 @@ class FileTile extends ConsumerWidget {
             ],
           ),
         ),
-        child: Row(
-          children: [
-            Container(
-              height: aspectRatio * 100,
-              width: aspectRatio * 100,
-              margin: EdgeInsets.only(
-                top: height * 0.005,
-                bottom: height * 0.005,
-                left: width * 0.01,
-                right: width * 0.02,
+        child: name.isNotEmpty
+            ? Row(
+                children: [
+                  Container(
+                    height: aspectRatio * 100,
+                    width: aspectRatio * 100,
+                    margin: EdgeInsets.only(
+                      top: height * 0.005,
+                      bottom: height * 0.005,
+                      left: width * 0.01,
+                      right: width * 0.02,
+                    ),
+                    decoration: isImage
+                        ? BoxDecoration(
+                            borderRadius: BorderRadius.circular(6),
+                            image: DecorationImage(
+                                image: FileImage(fileData), fit: BoxFit.cover),
+                          )
+                        : BoxDecoration(
+                            borderRadius: BorderRadius.circular(6),
+                            gradient: LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                              colors: [
+                                colorData.primaryColor(.3),
+                                colorData.primaryColor(.1),
+                              ],
+                            ),
+                          ),
+                    child: isImage
+                        ? const SizedBox()
+                        : Center(
+                            child: CustomText(
+                              text: extension.toUpperCase(),
+                              size: sizeData.regular,
+                              color: colorData.fontColor(.8),
+                              weight: FontWeight.w800,
+                            ),
+                          ),
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      CouseFileTile(value: name, field: "Name: "),
+                      fileSize != null
+                          ? CouseFileTile(value: fileSize!, field: "Size: ")
+                          : const SizedBox(),
+                    ],
+                  ),
+                ],
+              )
+            : Container(
+                height: aspectRatio * 150,
+                width: aspectRatio * 200,
+                margin: EdgeInsets.only(
+                  left: width * 0.01,
+                  right: width * 0.02,
+                ),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(6),
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      colorData.primaryColor(.3),
+                      colorData.primaryColor(.1),
+                    ],
+                  ),
+                ),
+                alignment: Alignment.center,
+                child: CustomText(
+                  text: extension.toUpperCase(),
+                  size: sizeData.header,
+                  color: colorData.fontColor(.8),
+                  weight: FontWeight.w800,
+                ),
               ),
-              decoration: isImage
-                  ? BoxDecoration(
-                      borderRadius: BorderRadius.circular(6),
-                      image: DecorationImage(
-                          image: FileImage(fileData), fit: BoxFit.cover),
-                    )
-                  : BoxDecoration(
-                      borderRadius: BorderRadius.circular(6),
-                      gradient: LinearGradient(
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                        colors: [
-                          colorData.primaryColor(.3),
-                          colorData.primaryColor(.1),
-                        ],
-                      ),
-                    ),
-              child: isImage
-                  ? const SizedBox()
-                  : Center(
-                      child: CustomText(
-                        text: extension.toUpperCase(),
-                        size: sizeData.regular,
-                        color: colorData.fontColor(.8),
-                        weight: FontWeight.w800,
-                      ),
-                    ),
-            ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                CouseFileTile(value: name, field: "Name: "),
-                fileSize != null
-                    ? CouseFileTile(value: fileSize!, field: "Size: ")
-                    : const SizedBox(),
-              ],
-            ),
-          ],
-        ),
       ),
     );
   }

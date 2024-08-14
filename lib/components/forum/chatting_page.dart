@@ -1,4 +1,3 @@
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -14,8 +13,9 @@ import 'chat_page/chat_page_header.dart';
 import 'chat_page/chat_textfield.dart';
 
 class ChattingPage extends ConsumerStatefulWidget {
-  const ChattingPage({super.key, required this.index});
+  const ChattingPage({super.key, required this.index, this.senderID});
   final int index;
+  final String? senderID;
 
   @override
   ConsumerState<ChattingPage> createState() => _ChattingPageState();
@@ -44,13 +44,12 @@ class _ChattingPageState extends ConsumerState<ChattingPage> {
     });
   }
 
-  
-
   @override
   Widget build(BuildContext context) {
     EdgeInsets viewInsets = MediaQuery.of(context).viewInsets;
 
-    ChatForum chatForum = ref.watch(forumDataProvider)[widget.index];
+    ChatForum chatForum = ref.watch(forumDataProvider).key[widget.index];
+    Map<String, Status> statusMap = ref.watch(forumDataProvider).value;
     CustomSizeData sizeData = CustomSizeData.from(context);
     CustomColorData colorData = CustomColorData.from(ref);
 
@@ -72,7 +71,7 @@ class _ChattingPageState extends ConsumerState<ChattingPage> {
               ChatFieldHeader(
                 name: chatForum.name,
                 imageURL: chatForum.imageURL,
-                status: Status.online,
+                status: statusMap[widget.senderID] ?? Status.offline,
               ),
               SizedBox(
                 height: height * 0.02,
@@ -89,7 +88,11 @@ class _ChattingPageState extends ConsumerState<ChattingPage> {
                     itemBuilder: (context, index) {
                       ChatMessage message = chatForum.messages[index];
                       return ChatTile(
+                        previousSenderId:
+                            index > 0 ? chatForum.messages[index - 1].from : '',
                         senderId: message.from,
+                        senderImage: chatForum.members[message.from]
+                            ["imagePath"],
                         name: message.name,
                         receiverId: message.to ?? "all",
                         isGroup: chatForum.members.length > 2,
@@ -98,10 +101,13 @@ class _ChattingPageState extends ConsumerState<ChattingPage> {
                         message: message.text,
                         imageURL: message.imageURL,
                         fileURL: message.fileURL,
+                        specType: message.specType,
                       );
                     }),
               ),
-              ChatTextField(index: widget.index,),
+              ChatTextField(
+                index: widget.index,
+              ),
             ],
           ),
         ),

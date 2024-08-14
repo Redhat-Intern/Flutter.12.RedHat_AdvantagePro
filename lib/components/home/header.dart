@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:redhat_v1/utilities/console_logger.dart';
 
 import '../../functions/update/update_notification_data.dart';
 import '../../model/user.dart';
@@ -48,60 +47,62 @@ class _HeaderState extends ConsumerState<Header>
             const MenuButton(),
             const Spacer(),
             StreamBuilder(
-                stream: FirebaseFirestore.instance
-                    .collection("notifications")
-                    .snapshots(),
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    List<QueryDocumentSnapshot<Map<String, dynamic>>> data =
-                        snapshot.data!.docs.toList();
-                    int messageCount = updateNotificationData(
-                        ref: ref, data: data, email: userData.email);
+              stream: FirebaseFirestore.instance
+                  .collection("notifications")
+                  .snapshots(),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  List<QueryDocumentSnapshot<Map<String, dynamic>>> data =
+                      snapshot.data!.docs.toList();
+                  int messageCount = updateNotificationData(
+                      ref: ref, data: data, email: userData.email);
 
-                    return GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (BuildContext context) =>
-                                const Notifications(),
-                          ),
-                        );
-                      },
-                      child: Stack(
-                        clipBehavior: Clip.none,
-                        children: [
-                          CustomIcon(
-                            size: aspectRatio * 65,
-                            icon: Icons.notifications_outlined,
-                            color: colorData.fontColor(.8),
-                          ),
-                          Positioned(
-                            top: -10,
-                            left: -2,
-                            child: Container(
-                              padding: EdgeInsets.all(aspectRatio * 10),
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: colorData.primaryColor(1),
-                              ),
-                              alignment: Alignment.center,
-                              child: CustomText(
-                                text: messageCount.toString(),
-                                size: aspectRatio * 22,
-                                color: colorData.sideBarTextColor(1),
-                                weight: FontWeight.bold,
-                                align: TextAlign.center,
-                              ),
+                  return GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (BuildContext context) =>
+                              const Notifications(),
+                        ),
+                      );
+                    },
+                    child: Stack(
+                      clipBehavior: Clip.none,
+                      children: [
+                        CustomIcon(
+                          size: aspectRatio * 65,
+                          icon: Icons.notifications_outlined,
+                          color: colorData.fontColor(.8),
+                        ),
+                        Positioned(
+                          top: -10,
+                          left: -2,
+                          child: Container(
+                            padding: EdgeInsets.all(aspectRatio * 10),
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: colorData.primaryColor(1),
                             ),
-                          )
-                        ],
-                      ),
-                    );
-                  } else {
-                    return const NotificationWaitingWidget();
-                  }
-                }),
+                            alignment: Alignment.center,
+                            child: CustomText(
+                              text: messageCount.toString(),
+                              size: aspectRatio * 22,
+                              color: colorData.sideBarTextColor(1),
+                              weight: FontWeight.bold,
+                              align: TextAlign.center,
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                  );
+                } else {
+                  return const NotificationWaitingWidget();
+                }
+              },
+            ),
+            SizedBox(width: width * 0.02),
             GestureDetector(
               onTap: () {
                 Navigator.push(
@@ -112,8 +113,9 @@ class _HeaderState extends ConsumerState<Header>
                 );
               },
               child: CustomNetworkImage(
-                size: aspectRatio * 70,
+                size: aspectRatio * 80,
                 radius: 8,
+                padding: 1.5,
                 url: userData.imagePath == '' ? null : userData.imagePath,
               ),
             )

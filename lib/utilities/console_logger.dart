@@ -35,7 +35,7 @@ class ConsoleLogger {
     debugPrint("\n**** 🚫 $message from $from 🚫 ****\n");
   }
 
-  static void message(Object message, {required String from}) {
+  static void message(Object message, {String? from}) {
     debugPrint("\n**** 💬  $message from $from 💬 ****\n");
   }
 

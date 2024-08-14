@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_switch/flutter_switch.dart';
 
 import '../components/report/student_namer.dart';
+import '../model/user.dart';
 import '../utilities/theme/color_data.dart';
 import '../utilities/theme/size_data.dart';
 
@@ -29,14 +30,18 @@ class AttendencePage extends ConsumerStatefulWidget {
 }
 
 class _AttendencePageState extends ConsumerState<AttendencePage> {
-  List<Map<dynamic, dynamic>> students = [];
+  List<UserModel> students = [];
   Map<String, bool?> toggle = {};
 
   @override
   void initState() {
     super.initState();
 
-    FirebaseFirestore.instance.collection("students").get().then((value) {
+    FirebaseFirestore.instance
+        .collection("users")
+        .where('userRole', isEqualTo: "student")
+        .get()
+        .then((value) {
       setState(() {
         students = value.docs
             .where((element) {
@@ -48,7 +53,7 @@ class _AttendencePageState extends ConsumerState<AttendencePage> {
               }
               return isFound;
             })
-            .map((e) => Map.from(e.data()))
+            .map((e) => UserModel.fromJson(e.data()))
             .toList();
       });
     });
@@ -179,12 +184,11 @@ class _AttendencePageState extends ConsumerState<AttendencePage> {
                                   Expanded(
                                     flex: 5,
                                     child: StudentReportTableNamer(
-                                        name: students[index - 1]["name"],
+                                        name: students[index - 1].name,
                                         id: widget
                                             .students[index - 1].keys.first,
-                                        imageUrl: students[index - 1]
-                                                ["image"] ??
-                                            students[index - 1]["name"][0]),
+                                        imageUrl:
+                                            students[index - 1].imagePath),
                                   ),
                                   SizedBox(
                                     width: width * 0.02,

@@ -5,8 +5,7 @@ class CustomIcon extends StatelessWidget {
   final Color color;
   final double size;
 
-  const CustomIcon(
-    {
+  const CustomIcon({
     super.key,
     required this.size,
     required this.icon,
@@ -15,6 +14,10 @@ class CustomIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Icon(icon, size: size, color: color,);
+    return Icon(
+      icon,
+      size: size,
+      color: color,
+    );
   }
 }
