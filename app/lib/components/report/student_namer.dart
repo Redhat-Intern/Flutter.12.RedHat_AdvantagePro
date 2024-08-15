@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:redhat_v1/components/common/network_image.dart';
 
 import '../../utilities/theme/color_data.dart';
 import '../../utilities/theme/size_data.dart';
+import '../common/network_image.dart';
 import '../common/text.dart';
 
 class StudentReportTableNamer extends ConsumerWidget {

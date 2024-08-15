@@ -1,12 +1,13 @@
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:redhat_v1/components/common/network_image.dart';
+
 import '../../utilities/static_data.dart';
 import '../../utilities/theme/color_data.dart';
 import '../../utilities/theme/size_data.dart';
 
 import '../add_course/course_image_picker.dart';
+import '../common/network_image.dart';
 
 class CourseDetail extends ConsumerWidget {
   final TextEditingController name;
@@ -87,7 +88,7 @@ class CourseDetail extends ConsumerWidget {
                     cursorWidth: 2,
                     decoration: InputDecoration(
                       contentPadding: EdgeInsets.only(bottom: height * 0.018),
-                      hintText: "Certification Name",
+                      hintText: "Course ID",
                       hintStyle: TextStyle(
                         fontWeight: FontWeight.w600,
                         fontSize: sizeData.regular,

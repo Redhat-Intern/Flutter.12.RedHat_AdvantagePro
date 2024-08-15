@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../model/forum.dart';
+import '../../model/user.dart';
 import '../../providers/chat_scroll_provider.dart';
 import '../../providers/forum_provider.dart';
+import '../../providers/user_detail_provider.dart';
 import '../../utilities/static_data.dart';
-import '../../utilities/theme/color_data.dart';
 import '../../utilities/theme/size_data.dart';
 import 'chat_page/chat_message.dart';
 import 'chat_page/chat_page_header.dart';
@@ -46,16 +46,28 @@ class _ChattingPageState extends ConsumerState<ChattingPage> {
 
   @override
   Widget build(BuildContext context) {
-    EdgeInsets viewInsets = MediaQuery.of(context).viewInsets;
-
     ChatForum chatForum = ref.watch(forumDataProvider).key[widget.index];
+    UserModel userData = ref.watch(userDataProvider).key;
     Map<String, Status> statusMap = ref.watch(forumDataProvider).value;
     CustomSizeData sizeData = CustomSizeData.from(context);
-    CustomColorData colorData = CustomColorData.from(ref);
 
     double height = sizeData.height;
     double width = sizeData.width;
-    double aspectRatio = sizeData.aspectRatio;
+
+    Status? singleStatus;
+    int? count;
+    if (chatForum.members.length == 2) {
+      singleStatus = statusMap[chatForum.members.entries
+          .where((data) => data.key != userData.email)
+          .first
+          .key];
+    } else {
+      count = chatForum.members.entries
+          .where((data) =>
+              data.key != userData.email &&
+              statusMap[data.key] == Status.online)
+          .length;
+    }
 
     return Scaffold(
       drawerEnableOpenDragGesture: true,
@@ -71,7 +83,8 @@ class _ChattingPageState extends ConsumerState<ChattingPage> {
               ChatFieldHeader(
                 name: chatForum.name,
                 imageURL: chatForum.imageURL,
-                status: statusMap[widget.senderID] ?? Status.offline,
+                status: singleStatus,
+                liveCount: count,
               ),
               SizedBox(
                 height: height * 0.02,

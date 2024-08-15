@@ -1,5 +1,5 @@
-name: redhat_v1
-description: A new Flutter project.
+name: Vectra
+description: Vectra advantage pro (A certified Redhat cetification provider)
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: "none" # Remove this line if you wish to publish to pub.dev
@@ -78,6 +78,7 @@ dependencies:
   url_launcher: ^6.3.0
   video_player: ^2.9.1
   firebase_vertexai: ^0.1.1
+  icons_launcher: ^2.1.7
   
 dev_dependencies:
   flutter_test:
@@ -92,6 +93,13 @@ dev_dependencies:
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
+icons_launcher:
+  image_path: "assets/images/logo.png"
+  platforms:
+    android:
+      enable: true
+    ios:
+      enable: true
 
 # The following section is specific to Flutter packages.
 flutter:

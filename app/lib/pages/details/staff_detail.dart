@@ -1,19 +1,17 @@
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:redhat_v1/functions/read/course_data.dart';
-import 'package:redhat_v1/providers/user_detail_provider.dart';
-import 'package:redhat_v1/utilities/console_logger.dart';
-import 'package:redhat_v1/utilities/theme/color_data.dart';
 
 import '../../components/common/page_header.dart';
 import '../../components/common/shimmer_box.dart';
 import '../../components/common/text.dart';
 import '../../components/home/student/course_files.dart';
+import '../../functions/read/course_data.dart';
 import '../../model/user.dart';
+import '../../providers/user_detail_provider.dart';
 import '../../utilities/static_data.dart';
+import '../../utilities/theme/color_data.dart';
 import '../../utilities/theme/size_data.dart';
 
 import '../../components/add_staff/custom_input_field.dart';

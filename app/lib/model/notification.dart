@@ -1,4 +1,4 @@
-import 'package:redhat_v1/utilities/static_data.dart';
+import '../utilities/static_data.dart';
 
 class NotificationData {
   NotificationsCategory category;

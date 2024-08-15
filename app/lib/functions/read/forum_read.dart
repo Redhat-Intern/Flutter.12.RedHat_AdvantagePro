@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -8,7 +6,7 @@ import '../../providers/chat_scroll_provider.dart';
 import '../../providers/forum_provider.dart';
 import '../../utilities/static_data.dart';
 
-List<ChatForum> fetchChatForums(
+MapEntry<List<ChatForum>, Map<String, bool>> fetchChatForums(
     {required snapshotData,
     required QueryDocumentSnapshot<Map<String, dynamic>>? statusSnap,
     required userData,
@@ -118,14 +116,17 @@ List<ChatForum> fetchChatForums(
     chatForums.add(chatForum);
   }
 
+  Map<String, bool> status =
+      statusSnap!.data().map((key, value) => MapEntry(key, value as bool));
+
   Future(() {
     ref.read(forumDataProvider.notifier).updateChatForum(chatForums);
     if (snapshotData != null) {
       ref.read(forumDataProvider.notifier).updateStatus(
-          statusSnap!.data().map((key, value) => MapEntry(key, value as bool)));
+          statusSnap.data().map((key, value) => MapEntry(key, value as bool)));
     }
     ref.read(chatScrollProvider.notifier).jump();
   });
 
-  return chatForums;
+  return MapEntry(chatForums, status);
 }

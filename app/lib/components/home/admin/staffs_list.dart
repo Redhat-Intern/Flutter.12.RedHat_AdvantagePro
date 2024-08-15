@@ -1,10 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:redhat_v1/providers/user_detail_provider.dart';
-import 'package:redhat_v1/utilities/static_data.dart';
 
 import '../../../model/user.dart';
+import '../../../providers/user_detail_provider.dart';
+import '../../../utilities/static_data.dart';
 import '../../../utilities/theme/color_data.dart';
 import '../../../utilities/theme/size_data.dart';
 import '../../../pages/details/staff_detail.dart';

@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:redhat_v1/model/course_content_data.dart';
+import 'course_content_data.dart';
 
 class CourseData {
   String name;

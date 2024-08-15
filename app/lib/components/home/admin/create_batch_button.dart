@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:redhat_v1/components/common/text.dart';
 
 import '../../../pages/batch/create_batch.dart';
 import '../../../utilities/theme/size_data.dart';
+import '../../common/text.dart';
 
 class CreateBatchButton extends StatelessWidget {
   const CreateBatchButton({super.key});

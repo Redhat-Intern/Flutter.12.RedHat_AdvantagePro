@@ -2,9 +2,6 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-import 'package:redhat_v1/components/forum/chat_page/message_widgets/audio.dart';
-import 'package:redhat_v1/components/forum/chat_page/message_widgets/video.dart';
-import 'package:redhat_v1/components/home/student/file_tile.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../model/user.dart';
@@ -15,7 +12,9 @@ import '../../../utilities/theme/size_data.dart';
 import '../../common/network_image.dart';
 import '../../common/text.dart';
 import 'bubble_painter.dart';
+import 'message_widgets/audio.dart';
 import 'message_widgets/document.dart';
+import 'message_widgets/video.dart';
 
 class ChatTile extends ConsumerWidget {
   const ChatTile({

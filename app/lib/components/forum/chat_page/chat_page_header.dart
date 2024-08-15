@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:redhat_v1/components/common/network_image.dart';
-import 'package:shimmer/shimmer.dart';
 
 import '../../../utilities/static_data.dart';
 import '../../../utilities/theme/color_data.dart';
 import '../../../utilities/theme/size_data.dart';
 import '../../common/back_button.dart';
+import '../../common/network_image.dart';
 import '../../common/text.dart';
 
 class ChatFieldHeader extends ConsumerWidget {
@@ -14,11 +13,13 @@ class ChatFieldHeader extends ConsumerWidget {
     super.key,
     required this.name,
     required this.imageURL,
-    required this.status,
+    this.status,
+    this.liveCount,
   });
   final String name;
   final String imageURL;
-  final Status status;
+  final Status? status;
+  final int? liveCount;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -55,12 +56,31 @@ class ChatFieldHeader extends ConsumerWidget {
                         : colorData.fontColor(.2),
                   ),
                 ),
-                CustomText(
-                  text: status.name,
-                  size: sizeData.small,
-                  color: colorData.fontColor(status == Status.online ? .8 : .5),
-                  weight: FontWeight.w800,
-                ),
+                if (status != null)
+                  CustomText(
+                    text: status!.name,
+                    size: sizeData.small,
+                    color:
+                        colorData.fontColor(status == Status.online ? .8 : .5),
+                    weight: FontWeight.w800,
+                  ),
+                if (liveCount != null)
+                  CustomText(
+                    text: liveCount!.toString(),
+                    size: sizeData.small,
+                    color:
+                        colorData.fontColor(status == Status.online ? .8 : .5),
+                    weight: FontWeight.w800,
+                  ),
+                if (liveCount != null) SizedBox(width: width * 0.01),
+                if (liveCount != null)
+                  CustomText(
+                    text: Status.online.name,
+                    size: sizeData.small,
+                    color:
+                        colorData.fontColor(status == Status.online ? .8 : .5),
+                    weight: FontWeight.w800,
+                  ),
               ],
             ),
           ],

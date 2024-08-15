@@ -2,12 +2,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:redhat_v1/utilities/static_data.dart';
-import 'package:redhat_v1/components/common/icon.dart';
-import 'package:redhat_v1/components/common/text.dart';
-
+import '../../../utilities/static_data.dart';
 import '../../../utilities/theme/color_data.dart';
 import '../../../utilities/theme/size_data.dart';
+import '../../common/icon.dart';
+import '../../common/text.dart';
 
 class Search extends ConsumerStatefulWidget {
   const Search({super.key});

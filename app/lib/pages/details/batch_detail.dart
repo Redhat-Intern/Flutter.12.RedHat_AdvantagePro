@@ -2,17 +2,17 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_stars/flutter_rating_stars.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:redhat_v1/components/common/network_image.dart';
-import 'package:redhat_v1/components/common/shimmer_box.dart';
-import 'package:redhat_v1/components/common/text_list.dart';
-import 'package:redhat_v1/model/user.dart';
-import 'package:redhat_v1/pages/show_all/batches.dart';
 
+import '../../components/common/network_image.dart';
 import '../../components/common/page_header.dart';
+import '../../components/common/shimmer_box.dart';
+import '../../components/common/text_list.dart';
+import '../../model/user.dart';
 import '../../utilities/theme/color_data.dart';
 import '../../utilities/theme/size_data.dart';
 
 import '../../components/common/text.dart';
+import '../show_all/batches.dart';
 
 class BatchDetail extends ConsumerStatefulWidget {
   const BatchDetail({super.key, required this.batchData});

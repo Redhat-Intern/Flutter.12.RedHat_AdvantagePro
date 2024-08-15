@@ -53,7 +53,7 @@ class _CoursesState extends ConsumerState<Courses> {
       //   Add course
       GestureDetector(
         onTap: () => Navigator.push(context,
-            MaterialPageRoute(builder: (context) => const AddCertification())),
+            MaterialPageRoute(builder: (context) => const AddCourse())),
         child: Container(
           margin: EdgeInsets.only(bottom: height * 0.03),
           padding: EdgeInsets.symmetric(

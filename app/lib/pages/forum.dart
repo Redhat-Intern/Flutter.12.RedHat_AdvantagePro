@@ -1,8 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:redhat_v1/providers/forum_category_provider.dart';
-import 'package:redhat_v1/utilities/static_data.dart';
 
 import '../components/common/page_header.dart';
 import '../components/forum/chat.dart';
@@ -10,7 +8,9 @@ import '../components/forum/forum_header.dart';
 import '../functions/read/forum_read.dart';
 import '../model/forum.dart';
 import '../model/user.dart';
+import '../providers/forum_category_provider.dart';
 import '../providers/user_detail_provider.dart';
+import '../utilities/static_data.dart';
 import '../utilities/theme/size_data.dart';
 
 class Forum extends ConsumerStatefulWidget {
@@ -45,7 +45,7 @@ class ForumState extends ConsumerState<Forum> {
                   FirebaseFirestore.instance.collection("forum").snapshots(),
               builder: (context, snapshot) {
                 if (snapshot.hasData && snapshot.data!.docs.isNotEmpty) {
-                  List<ChatForum> chatForums = fetchChatForums(
+                  MapEntry<List<ChatForum>,Map<String,bool>> fetchedData = fetchChatForums(
                       snapshotData: snapshot.data!.docs.where((data) {
                         if (data.id != "status") {
                           List<String> memberEmail =
@@ -64,6 +64,8 @@ class ForumState extends ConsumerState<Forum> {
                           .firstOrNull,
                       userData: userData,
                       ref: ref);
+                  
+                  List<ChatForum> chatForums = fetchedData.key;
 
                   ForumCategory forumCategory =
                       ref.watch(forumCategoryProvider).key;

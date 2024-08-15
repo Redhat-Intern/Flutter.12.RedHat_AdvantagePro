@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:redhat_v1/providers/restart_provider.dart';
 
 // Functions and utility logics
+import 'providers/restart_provider.dart';
 import 'utilities/theme/theme_provider.dart';
 import 'functions/firebase_options.dart';
 import 'layout/splash.dart';
@@ -36,6 +36,7 @@ class MyApp extends ConsumerWidget with CustomThemeDataMixin {
     ThemeMode themeMode = ref.watch(themeProvider).keys.first;
 
     return MaterialApp(
+      title: "Vectra",
       key: ref.watch(restartProvider),
       debugShowCheckedModeBanner: false,
       themeMode: themeMode,

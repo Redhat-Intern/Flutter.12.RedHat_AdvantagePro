@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lottie/lottie.dart';
-import 'package:redhat_v1/utilities/console_logger.dart';
 
 import '../../components/add_staff/add_staff_courses.dart';
 import '../../components/common/page_header.dart';

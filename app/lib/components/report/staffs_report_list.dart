@@ -1,10 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:redhat_v1/model/user.dart';
 
 import '../../../utilities/theme/color_data.dart';
 import '../../../utilities/theme/size_data.dart';
+import '../../model/user.dart';
 import '../../pages/details/staff_batch_detail.dart';
 import '../common/text.dart';
 import 'staff_image_button.dart';

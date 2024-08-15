@@ -1,8 +1,7 @@
-// import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:redhat_v1/utilities/static_data.dart';
 
 import '../model/forum.dart';
+import '../utilities/static_data.dart';
 
 class ForumDataNotifier
     extends StateNotifier<MapEntry<List<ChatForum>, Map<String, Status>>> {

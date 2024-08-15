@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:redhat_v1/utilities/console_logger.dart';
 
 import '../../../pages/details/batch_detail.dart';
 import '../../../utilities/theme/color_data.dart';

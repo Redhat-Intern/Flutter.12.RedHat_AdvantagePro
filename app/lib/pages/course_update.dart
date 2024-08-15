@@ -6,12 +6,12 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:redhat_v1/components/common/page_header.dart';
-import 'package:redhat_v1/components/common/text.dart';
-import 'package:redhat_v1/functions/create/create_course.dart';
 
 import '../components/add_course/course_files.dart';
+import '../components/common/page_header.dart';
 import '../components/common/shimmer_box.dart';
+import '../components/common/text.dart';
+import '../functions/create/create_course.dart';
 import '../utilities/theme/color_data.dart';
 import '../utilities/theme/size_data.dart';
 

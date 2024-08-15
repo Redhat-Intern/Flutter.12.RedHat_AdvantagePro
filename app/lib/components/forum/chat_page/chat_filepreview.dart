@@ -2,14 +2,14 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:redhat_v1/components/common/text.dart';
 import 'package:audio_waveforms/audio_waveforms.dart';
-import 'package:redhat_v1/components/home/student/file_tile.dart';
 import 'package:video_player/video_player.dart';
 
 import '../../../utilities/theme/color_data.dart';
 import '../../../utilities/theme/size_data.dart';
 import '../../common/icon.dart';
+import '../../common/text.dart';
+import '../../home/student/file_tile.dart';
 
 class PickedFileViewer extends ConsumerStatefulWidget {
   const PickedFileViewer({

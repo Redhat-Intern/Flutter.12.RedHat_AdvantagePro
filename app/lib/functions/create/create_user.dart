@@ -4,12 +4,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:redhat_v1/functions/create/add_staff.dart';
-import 'package:redhat_v1/utilities/static_data.dart';
 
 import '../../components/common/text.dart';
 import '../../model/user.dart';
 import '../firebase_auth.dart';
+import 'add_staff.dart';
 
 Future createUser({
   required WidgetRef ref,

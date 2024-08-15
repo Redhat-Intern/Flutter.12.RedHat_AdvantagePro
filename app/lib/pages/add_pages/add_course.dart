@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lottie/lottie.dart';
-import 'package:redhat_v1/utilities/static_data.dart';
 
 import '../../components/common/icon.dart';
 import '../../components/common/page_header.dart';
@@ -11,6 +10,7 @@ import '../../functions/create/create_course.dart';
 import '../../utilities/theme/color_data.dart';
 import '../../utilities/theme/size_data.dart';
 import '../../model/course_content_data.dart';
+import '../../utilities/static_data.dart';
 
 import '../../components/add_course/course_pdf_picker.dart';
 import '../../components/add_course/course_content_textfield.dart';
@@ -18,14 +18,14 @@ import '../../components/add_course/details_inputfield.dart';
 import '../../components/add_course/course_files.dart';
 import '../../components/common/text.dart';
 
-class AddCertification extends ConsumerStatefulWidget {
-  const AddCertification({super.key});
+class AddCourse extends ConsumerStatefulWidget {
+  const AddCourse({super.key});
 
   @override
-  ConsumerState<AddCertification> createState() => AddCourseState();
+  ConsumerState<AddCourse> createState() => AddCourseState();
 }
 
-class AddCourseState extends ConsumerState<AddCertification> {
+class AddCourseState extends ConsumerState<AddCourse> {
   TextEditingController name = TextEditingController();
   TextEditingController discription = TextEditingController();
   Map<File, String> image = {};

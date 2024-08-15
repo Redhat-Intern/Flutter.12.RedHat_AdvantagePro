@@ -4,9 +4,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_symbols_icons/material_symbols_icons.dart';
-import 'package:redhat_v1/layout/user_notfound.dart';
-import 'package:redhat_v1/providers/applifecycle_state.dart';
-import 'package:redhat_v1/utilities/console_logger.dart';
 
 import '../components/common/shimmer_box.dart';
 import '../components/common/waiting_widgets/header_waiting.dart';
@@ -18,7 +15,9 @@ import '../pages/courses.dart';
 import '../pages/home/admin_home.dart';
 import '../pages/home/staff_home.dart';
 import '../pages/home/student_home.dart';
+import '../providers/applifecycle_state.dart';
 import '../providers/user_detail_provider.dart';
+import '../utilities/console_logger.dart';
 import '../utilities/static_data.dart';
 import '../utilities/theme/color_data.dart';
 import '../utilities/theme/size_data.dart';
@@ -28,6 +27,7 @@ import '../providers/drawer_provider.dart';
 
 import '../pages/forum.dart';
 import 'sidebar.dart';
+import 'user_notfound.dart';
 
 class Navigation extends ConsumerStatefulWidget {
   const Navigation({super.key});
@@ -104,9 +104,10 @@ class _NavigationState extends ConsumerState<Navigation>
     double height = sizeData.height;
 
     ref.listen(appLifecycleStateProvider, (prev, next) {
-      FirebaseFirestore.instance.collection("forum").doc("status").set(
-          {userData.email: next == AppLifecycleState.resumed},
-          SetOptions(merge: true));
+      FirebaseFirestore.instance.collection("forum").doc("status").set({
+        userData.userRole == UserRole.superAdmin ? "admin" : userData.email:
+            next == AppLifecycleState.resumed
+      }, SetOptions(merge: true));
     });
 
     List<Widget> widgetList = [];

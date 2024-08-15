@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:redhat_v1/providers/notification_data_provider.dart';
 
 import '../../model/notification.dart';
+import '../../providers/notification_data_provider.dart';
 import '../../utilities/static_data.dart';
 
 int updateNotificationData(
