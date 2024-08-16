@@ -2,11 +2,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../pages/attendance_page.dart';
 import '../../../utilities/theme/color_data.dart';
 import '../../../utilities/theme/size_data.dart';
 
 import '../../common/text.dart';
-import '../../../pages/attendence_page.dart';
 import 'work_tile_placeholder.dart';
 
 class AttendanceWorkTile extends ConsumerWidget {
@@ -22,9 +22,9 @@ class AttendanceWorkTile extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    Widget toGo = AttendencePage(
+    Widget toGo = AttendancePage(
       docRef: FirebaseFirestore.instance
-          .collection("attendence")
+          .collection("attendance")
           .doc(batchData["name"]),
       students:
           List.from(batchData["students"]).map((e) => Map.from(e)).toList(),
@@ -40,7 +40,7 @@ class AttendanceWorkTile extends ConsumerWidget {
 
     return StreamBuilder(
       stream: FirebaseFirestore.instance
-          .collection("attendence")
+          .collection("attendance")
           .doc(batchData["name"])
           .snapshots(),
       builder: (context, snapshot) {
@@ -48,15 +48,15 @@ class AttendanceWorkTile extends ConsumerWidget {
             snapshot.data!.exists &&
             snapshot.data!.data()!.isNotEmpty &&
             snapshot.data!.data()![dayIndex.toString()] != null) {
-          Map<String, dynamic> attendenceList =
+          Map<String, dynamic> attendanceList =
               snapshot.data!.data()![dayIndex.toString()];
 
-          List<String> absentStudents = attendenceList.entries
+          List<String> absentStudents = attendanceList.entries
               .where((element) => element.value == false)
               .map((e) => e.key.toString())
               .toList();
           int absentCount = absentStudents.length;
-          int notSet = batchData["students"].length - attendenceList.length;
+          int notSet = batchData["students"].length - attendanceList.length;
           bool completed = notSet == 0;
 
           return Column(
@@ -66,7 +66,7 @@ class AttendanceWorkTile extends ConsumerWidget {
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   CustomText(
-                    text: "ATTENDENCE:",
+                    text: "attendance:",
                     color: colorData.fontColor(.5),
                     weight: FontWeight.w800,
                     size: sizeData.small,
@@ -141,7 +141,7 @@ class AttendanceWorkTile extends ConsumerWidget {
                           : Center(
                               child: CustomText(
                                 text: notSet > 0
-                                    ? "Need to update $notSet students attendence"
+                                    ? "Need to update $notSet students attendance"
                                     : "All students are present! 🥳",
                                 color: notSet > 0
                                     ? colorData.fontColor(.4)
@@ -176,10 +176,10 @@ class AttendanceWorkTile extends ConsumerWidget {
           );
         } else {
           return WorkTilePlaceHolder(
-            header: "attendence",
+            header: "attendance",
             toGO: toGo,
             value: "not created",
-            placeholder: "Tap to edit the student's attendence",
+            placeholder: "Tap to edit the student's attendance",
           );
         }
       },

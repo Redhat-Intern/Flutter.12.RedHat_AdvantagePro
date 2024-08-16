@@ -1,3 +1,4 @@
+import 'package:Vectra/utilities/static_data.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -17,6 +18,7 @@ class CustomInputField extends ConsumerWidget {
     this.visibleText = true,
     this.listener,
     this.initialValue,
+    this.isAuth = false,
   });
   final TextEditingController? controller;
   final String hintText;
@@ -27,6 +29,7 @@ class CustomInputField extends ConsumerWidget {
   final bool visibleText;
   final Function? listener;
   final String? initialValue;
+  final bool? isAuth;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -38,6 +41,17 @@ class CustomInputField extends ConsumerWidget {
 
     double aspectRatio = sizeData.aspectRatio;
 
+    Color fontColor(double opacity) => isAuth!
+        ? const Color(0XFF1C2136).withOpacity(opacity)
+        : colorData.fontColor(opacity);
+    Color secondaryColor(double opacity) => isAuth!
+        ? Colors.white.withOpacity(opacity)
+        : colorData.secondaryColor(opacity);
+
+    Color primaryColor(double opacity) => isAuth!
+        ? primaryColors[0].withOpacity(opacity)
+        : colorData.primaryColor(opacity);
+
     return Container(
       height: height * 0.045,
       margin: EdgeInsets.only(
@@ -45,7 +59,7 @@ class CustomInputField extends ConsumerWidget {
       ),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(8),
-        color: colorData.secondaryColor(.4),
+        color: secondaryColor(.4),
       ),
       child: Row(
         children: [
@@ -62,14 +76,14 @@ class CustomInputField extends ConsumerWidget {
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
-                  colorData.primaryColor(.6),
-                  colorData.primaryColor(.3),
+                  primaryColor(.6),
+                  primaryColor(.3),
                 ],
               ),
             ),
             child: CustomIcon(
               icon: icon,
-              color: colorData.secondaryColor(1),
+              color: secondaryColor(1),
               size: aspectRatio * 45,
             ),
           ),
@@ -87,10 +101,10 @@ class CustomInputField extends ConsumerWidget {
               style: TextStyle(
                 fontWeight: FontWeight.w800,
                 fontSize: sizeData.regular,
-                color: colorData.fontColor(.8),
+                color: fontColor(.8),
                 // height: 1,
               ),
-              cursorColor: colorData.primaryColor(1),
+              cursorColor: primaryColor(1),
               cursorWidth: 2,
               obscureText: !visibleText,
               decoration: InputDecoration(
@@ -98,7 +112,7 @@ class CustomInputField extends ConsumerWidget {
                 hintStyle: TextStyle(
                   fontWeight: FontWeight.w600,
                   fontSize: sizeData.regular,
-                  color: colorData.fontColor(.5),
+                  color: fontColor(.5),
                   // height: 1,
                 ),
                 border: InputBorder.none,

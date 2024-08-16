@@ -27,9 +27,8 @@ class _ChatMessageAudioState extends ConsumerState<ChatMessageAudio> {
 
   void loadData() async {
     if (widget.audioURL.isNotEmpty) {
-      File? audioFileTemp = await CourseService(ref: ref)
+      File? audioFileTemp = await ref.read(courseServiceProvider)
           .downloadFile(widget.audioURL, widget.messageID);
-      print("****************** ${audioFileTemp!.path}");
       setState(() {
         audioFile = audioFileTemp;
         controller = PlayerController();

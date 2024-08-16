@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:Vectra/utilities/console_logger.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
@@ -91,7 +92,7 @@ Future<Map<String, Map<String, dynamic>>> uploadCourses(
         case TaskState.running:
           final progress =
               100.0 * (taskSnapshot.bytesTransferred / taskSnapshot.totalBytes);
-          print(progress);
+         ConsoleLogger.processStart(progress,from:"add_staff");
           break;
         case TaskState.paused:
           break;

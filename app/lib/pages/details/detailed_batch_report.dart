@@ -72,7 +72,7 @@ class _DetailedBatchReportState extends ConsumerState<DetailedBatchReport> {
 
     List<Stream<DocumentSnapshot<Map<String, dynamic>>>> streams = [
       FirebaseFirestore.instance
-          .collection("attendence")
+          .collection("attendance")
           .doc(widget.searchData["name"])
           .snapshots(),
       FirebaseFirestore.instance

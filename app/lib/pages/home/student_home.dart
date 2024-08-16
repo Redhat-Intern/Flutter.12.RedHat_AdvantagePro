@@ -58,11 +58,11 @@ class StudentHome extends ConsumerWidget {
                 data.add(doc.data());
               }
 
-              CourseService(ref: ref).readCourseData(
-                batchName: batchData["name"],
-                courseName: batchData["courseID"],
-                isFromBatch: true,
-              );
+              ref.read(courseServiceProvider).readCourseData(
+                    batchName: batchData["name"],
+                    courseName: batchData["courseID"],
+                    isFromBatch: true,
+                  );
 
               return Expanded(
                 child: Column(

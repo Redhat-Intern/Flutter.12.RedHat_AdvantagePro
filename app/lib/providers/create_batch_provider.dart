@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:Vectra/utilities/console_logger.dart';
 import 'package:excel/excel.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -118,7 +119,8 @@ class CreateBatchNotifier extends StateNotifier<Batch> {
 
       addDataToSheet(excelData);
     } else {
-      print("Error while uploading data");
+      ConsoleLogger.error("Error while uploading data",
+          from: "create_batch_provider");
     }
   }
 

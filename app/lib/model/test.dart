@@ -1,3 +1,5 @@
+import 'package:lottie/lottie.dart';
+
 class TestField {
   String question;
   Map<String, String> options;
@@ -11,5 +13,14 @@ class TestField {
       "options": options,
       "answer": answer,
     };
+  }
+
+  factory TestField.fromJson(Map<String, dynamic> json) {
+    return TestField(
+      json["question"],
+      Map.from(json["options"])
+          .map((key, value) => MapEntry(key.toString(), value.toString())),
+      json["answer"],
+    );
   }
 }

@@ -27,7 +27,7 @@ class _ChatMessageFileState extends ConsumerState<ChatMessageFile> {
 
   void loadData() async {
     if (widget.fileURL.isNotEmpty) {
-      File? fileTemp = await CourseService(ref: ref)
+      File? fileTemp = await ref.read(courseServiceProvider)
           .downloadFile(widget.fileURL, widget.messageID);
       setState(() {
         file = fileTemp;

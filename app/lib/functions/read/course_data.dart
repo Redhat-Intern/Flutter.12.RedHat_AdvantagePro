@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:Vectra/utilities/console_logger.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -8,8 +9,12 @@ import 'package:path_provider/path_provider.dart';
 import '../../model/course_content_data.dart';
 import '../../providers/course_data_provider.dart';
 
+final courseServiceProvider = Provider<CourseService>((ref) {
+  return CourseService(ref: ref);
+});
+
 class CourseService {
-  final WidgetRef ref;
+  final Ref ref;
 
   CourseService({required this.ref});
 
@@ -36,7 +41,8 @@ class CourseService {
       if (file != null) {
         fileMap[file] = Map<String, dynamic>.from(entry.value);
       } else {
-        print("******* DATA NOT FOUND ******");
+        ConsoleLogger.error("******* DATA NOT FOUND ******",
+            from: "course_data");
       }
     }
 

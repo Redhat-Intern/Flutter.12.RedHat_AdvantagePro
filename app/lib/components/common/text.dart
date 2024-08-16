@@ -16,6 +16,7 @@ class CustomText extends ConsumerWidget {
   final bool loadingState;
   final double length;
   final String? fontFamily;
+  final LinearGradient? shader;
 
   const CustomText({
     super.key,
@@ -29,6 +30,7 @@ class CustomText extends ConsumerWidget {
     this.loadingState = false,
     this.length = 0.1,
     this.fontFamily,
+    this.shader,
   });
 
   @override
@@ -46,9 +48,20 @@ class CustomText extends ConsumerWidget {
             style: TextStyle(
               fontSize: size ?? fontSize,
               fontWeight: weight,
-              color: color ?? colorData.fontColor(.8),
+              color: shader == null ? (color ?? colorData.fontColor(.8)) : null,
               height: height,
               fontFamily: fontFamily,
+              foreground: shader != null
+                  ? (Paint()
+                    ..shader = shader!.createShader(
+                      Rect.fromLTRB(
+                        0,
+                        0,
+                        text.length * (size ?? fontSize),
+                        size ?? fontSize,
+                      ),
+                    ))
+                  : null,
             ),
           )
         : Shimmer.fromColors(

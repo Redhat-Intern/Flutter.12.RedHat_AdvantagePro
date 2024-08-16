@@ -11,8 +11,8 @@ import '../utilities/theme/size_data.dart';
 import '../components/common/back_button.dart';
 import '../components/common/text.dart';
 
-class AttendencePage extends ConsumerStatefulWidget {
-  const AttendencePage({
+class AttendancePage extends ConsumerStatefulWidget {
+  const AttendancePage({
     super.key,
     required this.docRef,
     required this.students,
@@ -26,10 +26,10 @@ class AttendencePage extends ConsumerStatefulWidget {
   final int dayIndex;
 
   @override
-  ConsumerState<AttendencePage> createState() => _AttendencePageState();
+  ConsumerState<AttendancePage> createState() => _AttendancePageState();
 }
 
-class _AttendencePageState extends ConsumerState<AttendencePage> {
+class _AttendancePageState extends ConsumerState<AttendancePage> {
   List<UserModel> students = [];
   Map<String, bool?> toggle = {};
 
@@ -59,10 +59,10 @@ class _AttendencePageState extends ConsumerState<AttendencePage> {
     });
   }
 
-  void setAttendence(
-      {required String studentID, required bool attendence}) async {
+  void setAttendance(
+      {required String studentID, required bool attendance}) async {
     await widget.docRef.set({
-      widget.dayIndex.toString(): {studentID: attendence}
+      widget.dayIndex.toString(): {studentID: attendance}
     }, SetOptions(merge: true));
   }
 
@@ -88,12 +88,12 @@ class _AttendencePageState extends ConsumerState<AttendencePage> {
             builder: (context, snapshot) {
               if (snapshot.hasData) {
                 Map<String, dynamic>? data = snapshot.data!.data();
-                Map<String, dynamic> attendenceData = data != null &&
+                Map<String, dynamic> attendanceData = data != null &&
                         data.isNotEmpty &&
                         data[widget.dayIndex.toString()] != null
                     ? data[widget.dayIndex.toString()]
                     : {};
-                attendenceData.forEach((key, value) {
+                attendanceData.forEach((key, value) {
                   toggle[key] = value;
                 });
                 return Column(
@@ -104,7 +104,7 @@ class _AttendencePageState extends ConsumerState<AttendencePage> {
                         const CustomBackButton(),
                         const Spacer(),
                         CustomText(
-                          text: "ATTENDENCE",
+                          text: "attendance",
                           size: sizeData.header,
                           color: colorData.fontColor(1),
                           weight: FontWeight.w600,
@@ -163,7 +163,7 @@ class _AttendencePageState extends ConsumerState<AttendencePage> {
                                   flex: 3,
                                   child: Center(
                                     child: CustomText(
-                                      text: "Attendence",
+                                      text: "attendance",
                                       size: sizeData.medium,
                                       color: colorData.fontColor(.8),
                                       weight: FontWeight.w800,
@@ -226,9 +226,9 @@ class _AttendencePageState extends ConsumerState<AttendencePage> {
                                             onToggle: (value) {
                                               setState(() {
                                                 toggle[studentID] = value;
-                                                setAttendence(
+                                                setAttendance(
                                                     studentID: studentID,
-                                                    attendence: value);
+                                                    attendance: value);
                                               });
                                             }),
                                       ],

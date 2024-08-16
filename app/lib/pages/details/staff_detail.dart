@@ -240,7 +240,7 @@ class _CourseFileLoaderState extends ConsumerState<CourseFileLoader> {
 
   void fetchData() async {
     Map<File, Map<String, dynamic>> courseFilesTemp =
-        await CourseService(ref: ref).getFileMap(widget.filesData);
+        await ref.read(courseServiceProvider).getFileMap(widget.filesData);
     if (mounted) {
       setState(() {
         courseFiles = courseFilesTemp;

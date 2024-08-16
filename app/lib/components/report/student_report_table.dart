@@ -151,7 +151,7 @@ class _StudentReportTableState extends ConsumerState<StudentReportTable> {
                     );
                   }
                   if (snapshot.hasData && snapshot.data!.exists) {
-                    Map<String, dynamic> attendenceData =
+                    Map<String, dynamic> attendanceData =
                         snapshot.data!.data()!;
 
                     return ListView.builder(
@@ -184,7 +184,7 @@ class _StudentReportTableState extends ConsumerState<StudentReportTable> {
                                 child: ListView.builder(
                                   controller: controllers[index],
                                   scrollDirection: Axis.horizontal,
-                                  itemCount: attendenceData.length,
+                                  itemCount: attendanceData.length,
                                   itemBuilder: (context, index) => SizedBox(
                                     width: width * .2,
                                     child: Center(
@@ -226,13 +226,13 @@ class _StudentReportTableState extends ConsumerState<StudentReportTable> {
                                   child: ListView.builder(
                                     controller: controllers[index],
                                     scrollDirection: Axis.horizontal,
-                                    itemCount: attendenceData.length,
+                                    itemCount: attendanceData.length,
                                     itemBuilder: (context, valueIndex) {
-                                      bool attendenceCheck =
-                                          attendenceData[valueIndex.toString()]
+                                      bool attendanceCheck =
+                                          attendanceData[valueIndex.toString()]
                                               [studentID];
                                       String attendance =
-                                          attendenceCheck == true
+                                          attendanceCheck == true
                                               ? "Present"
                                               : "Absent";
                                       return SizedBox(
@@ -240,7 +240,7 @@ class _StudentReportTableState extends ConsumerState<StudentReportTable> {
                                         child: Center(
                                           child: CustomText(
                                             text: attendance,
-                                            color: attendenceCheck
+                                            color: attendanceCheck
                                                 ? Colors.green.shade600
                                                 : Colors.red,
                                             weight: FontWeight.w800,

@@ -1,3 +1,4 @@
+import 'package:Vectra/utilities/static_data.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -10,9 +11,15 @@ import '../common/text.dart';
 class AddQuestionSet extends ConsumerStatefulWidget {
   const AddQuestionSet({
     super.key,
-    required this.addTestField,
+    required this.function,
+    this.testField,
+    this.index,
+    this.from = From.add,
   });
-  final Function addTestField;
+  final Function function;
+  final TestField? testField;
+  final int? index;
+  final From from;
 
   @override
   ConsumerState<AddQuestionSet> createState() => _AddQuestionSetState();
@@ -28,7 +35,12 @@ class _AddQuestionSetState extends ConsumerState<AddQuestionSet> {
 
   void addTestField() {
     if (questionCtr.text != "" && options.isNotEmpty && answer != "") {
-      widget.addTestField(TestField(questionCtr.text.trim(), options, answer));
+      if (widget.from == From.edit) {
+        widget.function(
+            TestField(questionCtr.text.trim(), options, answer), widget.index);
+      } else {
+        widget.function(TestField(questionCtr.text.trim(), options, answer));
+      }
       Navigator.pop(context);
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -42,6 +54,16 @@ class _AddQuestionSetState extends ConsumerState<AddQuestionSet> {
           ),
         ),
       );
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.from == From.edit) {
+      questionCtr.text = widget.testField?.question ?? "";
+      options = widget.testField?.options ?? {};
+      answer = widget.testField?.answer ?? "";
     }
   }
 
@@ -69,13 +91,17 @@ class _AddQuestionSetState extends ConsumerState<AddQuestionSet> {
               Row(
                 children: [
                   const CustomBackButton(),
-                  const Spacer(flex: 3,),
+                  const Spacer(
+                    flex: 3,
+                  ),
                   CustomText(
                     text: "CREATE QUESTION",
                     weight: FontWeight.w800,
                     size: sizeData.subHeader,
                   ),
-                  const Spacer(flex: 5,),
+                  const Spacer(
+                    flex: 5,
+                  ),
                 ],
               ),
               SizedBox(
@@ -222,7 +248,7 @@ class _AddQuestionSetState extends ConsumerState<AddQuestionSet> {
                         bool isAnswer = answer ==
                             options.entries.toList()[index].key.toString();
                         return GestureDetector(
-                          onLongPress: () {
+                          onTap: () {
                             setState(() {
                               if (isAnswer) {
                                 answer = "";
@@ -231,6 +257,15 @@ class _AddQuestionSetState extends ConsumerState<AddQuestionSet> {
                                     .toList()[index]
                                     .key
                                     .toString();
+                              }
+                            });
+                          },
+                          onLongPress: () {
+                            setState(() {
+                              options
+                                  .remove(options.entries.toList()[index].key);
+                              if (isAnswer) {
+                                answer = "";
                               }
                             });
                           },

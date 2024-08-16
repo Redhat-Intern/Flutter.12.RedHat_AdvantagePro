@@ -32,16 +32,19 @@ class LoginTextField extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     CustomSizeData sizeData = CustomSizeData.from(context);
-    CustomColorData colorData = CustomColorData.from(ref);
 
     double height = sizeData.height;
     double aspectRatio = sizeData.aspectRatio;
+    
+    Color fontColor(double opacity) =>
+        const Color(0XFF1C2136).withOpacity(opacity);
+    Color secondaryColor(double opacity) => Colors.white.withOpacity(opacity);
 
     return Container(
       margin: EdgeInsets.only(bottom: height * bottomMargin),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(8),
-        color: colorData.secondaryColor(.4),
+        color: secondaryColor(.4),
       ),
       child: TextField(
         readOnly: isReadOnly,
@@ -50,14 +53,14 @@ class LoginTextField extends ConsumerWidget {
         style: TextStyle(
           fontWeight: FontWeight.bold,
           fontSize: sizeData.medium,
-          color: colorData.fontColor(.8),
+          color: fontColor(.8),
         ),
         decoration: InputDecoration(
           contentPadding: EdgeInsets.zero,
           border: InputBorder.none,
           prefixIcon: CustomIcon(
             icon: icon,
-            color: colorData.fontColor(.8),
+            color: fontColor(.8),
             size: aspectRatio * 55,
           ),
           suffixIcon: suffixIconData != null
@@ -65,7 +68,7 @@ class LoginTextField extends ConsumerWidget {
                   onTap: onTap,
                   child: CustomIcon(
                     icon: suffixIconData!,
-                    color: colorData.fontColor(.8),
+                    color: fontColor(.8),
                     size: aspectRatio * 55,
                   ),
                 )
@@ -74,7 +77,7 @@ class LoginTextField extends ConsumerWidget {
           labelStyle: TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: sizeData.medium,
-            color: colorData.fontColor(.7),
+            color: fontColor(.7),
           ),
         ),
       ),

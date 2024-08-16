@@ -8,6 +8,8 @@ import '../../components/common/page_header.dart';
 import '../../components/common/shimmer_box.dart';
 import '../../components/common/text_list.dart';
 import '../../model/user.dart';
+import '../../providers/user_detail_provider.dart';
+import '../../utilities/static_data.dart';
 import '../../utilities/theme/color_data.dart';
 import '../../utilities/theme/size_data.dart';
 
@@ -52,6 +54,23 @@ class BatchDeatilState extends ConsumerState<BatchDetail> {
     }
   }
 
+  void deleteBatch() {
+    FirebaseFirestore.instance
+        .collection("batches")
+        .doc(widget.batchData["name"])
+        .delete()
+        .whenComplete(() {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Center(
+            child: Text("BATCH: ${widget.batchData["name"]} is deleted"),
+          ),
+        ),
+      );
+      Navigator.pop(context);
+    });
+  }
+
   @override
   void initState() {
     super.initState();
@@ -62,13 +81,12 @@ class BatchDeatilState extends ConsumerState<BatchDetail> {
   Widget build(BuildContext context) {
     CustomSizeData sizeData = CustomSizeData.from(context);
     CustomColorData colorData = CustomColorData.from(ref);
+    UserModel userModel = ref.watch(userDataProvider).key;
 
     double height = sizeData.height;
     double width = sizeData.width;
     double aspectRatio = sizeData.aspectRatio;
     bool status = !(widget.batchData["completed"] == true);
-
-    print(staffsData);
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -85,6 +103,29 @@ class BatchDeatilState extends ConsumerState<BatchDetail> {
               PageHeader(
                 tittle: widget.batchData["name"],
                 isMenuButton: false,
+                secondaryWidget: userModel.userRole == UserRole.superAdmin
+                    ? Center(
+                        child: GestureDetector(
+                          onTap: () => deleteBatch(),
+                          child: Container(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: width * 0.02,
+                              vertical: height * 0.008,
+                            ),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(8),
+                              color: Colors.red,
+                            ),
+                            child: CustomText(
+                              text: "DELETE",
+                              size: sizeData.regular,
+                              color: Colors.white,
+                              weight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      )
+                    : null,
               ),
               SizedBox(height: height * 0.03),
               Row(

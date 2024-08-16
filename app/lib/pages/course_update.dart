@@ -108,7 +108,6 @@ class CourseUpdateState extends ConsumerState<CourseUpdate> {
             "course/${widget.courseName}/courseData/${widget.dayIndex}/",
         ref: ref);
 
-    print("ploaded files");
 
     DocumentReference docRef = FirebaseFirestore.instance
         .collection("courses")
@@ -134,7 +133,6 @@ class CourseUpdateState extends ConsumerState<CourseUpdate> {
       }
     }, SetOptions(merge: true));
 
-    print("corrected");
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(

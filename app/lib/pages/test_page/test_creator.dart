@@ -1,10 +1,16 @@
+import 'dart:io';
+
+import 'package:Vectra/utilities/console_logger.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:excel/excel.dart' as ex;
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../components/common/back_button.dart';
+import '../../components/common/page_header.dart';
 import '../../components/common/text.dart';
-import '../../components/test/add_test_page.dart';
+import '../../components/test/add_testfield_page.dart';
+import '../../components/test/ai_generate_testfield_page.dart';
 import '../../model/test.dart';
 import '../../utilities/static_data.dart';
 import '../../utilities/theme/color_data.dart';
@@ -37,6 +43,52 @@ class _TestCreaterState extends ConsumerState<TestCreater> {
     });
   }
 
+  void editTestField(TestField testField, int index) {
+    setState(() {
+      testFields.replaceRange(index, index + 1, [testField]);
+    });
+  }
+
+  void readExcelFile(File file) async {
+    var bytes = file.readAsBytesSync();
+    var excel = ex.Excel.decodeBytes(bytes);
+
+    List<List<ex.Data?>> sheet = excel[excel.getDefaultSheet()!].rows;
+    List<List<String>> excelData = [];
+
+    if (sheet.isNotEmpty) {
+      for (var row in sheet.sublist(1)) {
+        List<String> rowStrings = [];
+        for (var index = 0; index < 6; index++) {
+          row[index]?.value != null
+              ? rowStrings.add(row[index]!.value.toString())
+              : null;
+        }
+        if (rowStrings.isNotEmpty) {
+          excelData.add(rowStrings);
+        }
+      }
+
+      List<TestField> testFiledList = [];
+      for (List<String> element in excelData) {
+        testFiledList.add(TestField(
+            element[0],
+            {
+              'o1': element[1],
+              'o2': element[2],
+              'o3': element[3],
+              'o4': element[4]
+            },
+            element[5]));
+      }
+      setState(() {
+        testFields.addAll(testFiledList);
+      });
+    } else {
+      ConsoleLogger.error("Error while uploading data", from: "test_creator");
+    }
+  }
+
   void onSubmit() {
     if (timeCtr.text != ""
         // && testFields.isNotEmpty
@@ -49,8 +101,7 @@ class _TestCreaterState extends ConsumerState<TestCreater> {
           .set({
         widget.dayIndex.toString(): {
           "duration": timeCtr.text.trim(),
-          "data": sample_data,
-          // testFields.map((e) => e.toMap()).toList(),
+          "data": testFields.map((e) => e.toMap()).toList(),
         }
       }, SetOptions(merge: true));
 
@@ -122,36 +173,24 @@ class _TestCreaterState extends ConsumerState<TestCreater> {
           ),
           child: Column(
             children: [
-              Row(
-                children: [
-                  const CustomBackButton(),
-                  const Spacer(
-                    flex: 2,
-                  ),
-                  CustomText(
-                    text: "${widget.testType.name.toUpperCase()} TEST",
-                    size: sizeData.header,
-                    color: colorData.fontColor(1),
-                    weight: FontWeight.w600,
-                  ),
-                  const Spacer(),
-                  CustomText(
-                    text: widget.day,
-                    size: sizeData.medium,
-                    color: colorData.fontColor(.6),
-                    weight: FontWeight.w800,
-                  ),
-                  SizedBox(
-                    width: width * 0.02,
-                  ),
-                ],
+              PageHeader(
+                tittle: "${widget.testType.name.toUpperCase()} TEST",
+                isMenuButton: false,
+                secondaryWidget: CustomText(
+                  text: widget.day,
+                  size: sizeData.medium,
+                  color: colorData.fontColor(.6),
+                  weight: FontWeight.w800,
+                  height: height * 0.0028,
+                ),
               ),
               SizedBox(
                 height: height * 0.03,
               ),
               Row(
                 children: [
-                  Expanded(flex: 4,
+                  Expanded(
+                    flex: 4,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -212,195 +251,350 @@ class _TestCreaterState extends ConsumerState<TestCreater> {
               SizedBox(
                 height: height * 0.02,
               ),
-              Align(
-                alignment: Alignment.center,
-                child: GestureDetector(
-                  onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) =>
-                          AddQuestionSet(addTestField: addTestField),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  GestureDetector(
+                    onTap: () async {
+                      FilePickerResult? excelSheetResult =
+                          await FilePicker.platform.pickFiles(
+                        allowMultiple: false,
+                        allowedExtensions: ["csv", "xlsx", "xls", "gsheet"],
+                        type: FileType.custom,
+                        allowCompression: true,
+                      );
+                      if (excelSheetResult != null) {
+                        PlatformFile excelSheet = excelSheetResult.files.first;
+                        File fileData = File(excelSheet.path.toString());
+                        readExcelFile(fileData);
+                      }
+                    },
+                    child: Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: width * 0.04,
+                        vertical: height * 0.006,
+                      ),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(6),
+                        color: colorData.secondaryColor(.3),
+                        border: Border.all(
+                          color: colorData.secondaryColor(1),
+                          strokeAlign: BorderSide.strokeAlignInside,
+                          width: 3,
+                        ),
+                      ),
+                      child: CustomText(
+                        text: "EXCEL",
+                        weight: FontWeight.w900,
+                        color: colorData.primaryColor(1),
+                        fontFamily: FontFamilyENUM.Merriweather.name,
+                      ),
                     ),
                   ),
-                  child: Container(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: width * 0.04,
-                      vertical: height * 0.01,
+                  GestureDetector(
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => AddQuestionSet(
+                            function: addTestField, from: From.add),
+                      ),
                     ),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(6),
-                      color: colorData.secondaryColor(.5),
-                    ),
-                    child: const CustomText(
-                      text: "ADD QUESTION",
-                      weight: FontWeight.w800,
+                    child: Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: width * 0.04,
+                        vertical: height * 0.01,
+                      ),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(6),
+                        color: colorData.secondaryColor(.5),
+                      ),
+                      child: const CustomText(
+                        text: "ADD QUESTION",
+                        weight: FontWeight.w800,
+                      ),
                     ),
                   ),
-                ),
+                  GestureDetector(
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => AiGenerateTestfieldPage(
+                          addTestField: addTestField,
+                          from: 'daily',
+                        ),
+                      ),
+                    ),
+                    child: Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: width * 0.04,
+                        vertical: height * 0.006,
+                      ),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(6),
+                        color: colorData.secondaryColor(.3),
+                        border: Border.all(
+                          color: colorData.secondaryColor(1),
+                          strokeAlign: BorderSide.strokeAlignInside,
+                          width: 3,
+                        ),
+                      ),
+                      child: CustomText(
+                        text: "AI ✨",
+                        weight: FontWeight.w900,
+                        color: colorData.primaryColor(1),
+                        fontFamily: FontFamilyENUM.Merriweather.name,
+                      ),
+                    ),
+                  ),
+                ],
               ),
-              SizedBox(
-                height: height * 0.02,
-              ),
+              testFields.isNotEmpty
+                  ? GestureDetector(
+                      onTap: () => setState(() {
+                        testFields = [];
+                      }),
+                      child: Container(
+                        padding: EdgeInsets.symmetric(vertical: height * 0.015),
+                        alignment: Alignment.centerLeft,
+                        child: const CustomText(
+                            text: "CLEAR ALL", color: Colors.red),
+                      ),
+                    )
+                  : SizedBox(
+                      height: height * 0.02,
+                    ),
               testFields.isNotEmpty
                   ? Expanded(
                       child: ListView.builder(
-                          padding:
-                              EdgeInsets.symmetric(vertical: height * 0.01),
                           scrollDirection: Axis.vertical,
                           itemCount: testFields.length,
                           itemBuilder: (context, index) {
                             bool toExpand = expandedIndex == index;
-                            return AnimatedContainer(
-                              duration: Durations.short4,
-                              margin: EdgeInsets.only(bottom: height * 0.02),
-                              padding: EdgeInsets.symmetric(
-                                vertical: height * 0.01,
-                                horizontal: width * 0.02,
-                              ),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(8),
-                                color: colorData.secondaryColor(.5),
-                              ),
-                              child: AnimatedSize(
-                                duration: Durations.short4,
-                                child: Column(
-                                  children: [
-                                    GestureDetector(
-                                      onTap: () {
-                                        setState(() {
-                                          if (expandedIndex == index) {
-                                            expandedIndex = null;
-                                          } else {
-                                            expandedIndex = index;
-                                          }
-                                        });
-                                      },
-                                      child: Row(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Container(
-                                            height: aspectRatio * 50,
-                                            width: aspectRatio * 50,
+                            return Stack(
+                              children: [
+                                AnimatedContainer(
+                                  duration: Durations.long2,
+                                  margin:
+                                      EdgeInsets.only(bottom: height * 0.02),
+                                  padding: EdgeInsets.symmetric(
+                                    vertical: height * 0.01,
+                                    horizontal: width * 0.02,
+                                  ),
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(8),
+                                      color: colorData.secondaryColor(.3),
+                                      border: Border.all(
+                                        color: colorData.secondaryColor(.5),
+                                      )),
+                                  child: AnimatedSize(
+                                    duration: Durations.long2,
+                                    child: Column(
+                                      children: [
+                                        GestureDetector(
+                                          onTap: () {
+                                            setState(() {
+                                              if (expandedIndex == index) {
+                                                expandedIndex = null;
+                                              } else {
+                                                expandedIndex = index;
+                                              }
+                                            });
+                                          },
+                                          onLongPress: () {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    AddQuestionSet(
+                                                  function: editTestField,
+                                                  from: From.edit,
+                                                  index: index,
+                                                  testField: testFields[index],
+                                                ),
+                                              ),
+                                            );
+                                          },
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Row(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Container(
+                                                    height: aspectRatio * 50,
+                                                    width: aspectRatio * 50,
+                                                    decoration: BoxDecoration(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              4),
+                                                      color: colorData
+                                                          .backgroundColor(1),
+                                                    ),
+                                                    alignment: Alignment.center,
+                                                    child: CustomText(
+                                                      text: (index + 1)
+                                                          .toString(),
+                                                      weight: FontWeight.bold,
+                                                      size: sizeData.subHeader,
+                                                      color: colorData
+                                                          .primaryColor(1),
+                                                    ),
+                                                  ),
+                                                  SizedBox(
+                                                    width: width * 0.02,
+                                                  ),
+                                                  Expanded(
+                                                    child: CustomText(
+                                                      text: testFields[index]
+                                                          .question,
+                                                      maxLine: 8,
+                                                      color: colorData
+                                                          .fontColor(.6),
+                                                      weight: FontWeight.w700,
+                                                      height: 1.35,
+                                                    ),
+                                                  )
+                                                ],
+                                              ),
+                                              SizedBox(
+                                                height: height * 0.01,
+                                              ),
+                                              Row(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.center,
+                                                children: [
+                                                  CustomText(
+                                                    text: "ANS:",
+                                                    color:
+                                                        colorData.fontColor(.5),
+                                                    weight: FontWeight.w700,
+                                                    size: sizeData.tooSmall,
+                                                  ),
+                                                  SizedBox(
+                                                    width: width * 0.02,
+                                                  ),
+                                                  Expanded(
+                                                    child: CustomText(
+                                                      text: (testFields[index]
+                                                              .options[
+                                                          testFields[index]
+                                                              .answer])!,
+                                                      color: colorData
+                                                          .fontColor(1),
+                                                      weight: FontWeight.w800,
+                                                      size: sizeData.medium,
+                                                      height: 1.25,
+                                                      maxLine: 3,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          height: toExpand ? height * 0.01 : 0,
+                                        ),
+                                        if (toExpand)
+                                          Divider(
+                                            endIndent: width * 0.02,
+                                            indent: width * 0.02,
+                                            color: colorData.fontColor(.1),
+                                          ),
+                                        SizedBox(
+                                          height: toExpand ? height * 0.01 : 0,
+                                        ),
+                                        ...List.generate(
+                                            toExpand
+                                                ? testFields[index]
+                                                    .options
+                                                    .length
+                                                : 0, (optionIndex) {
+                                          MapEntry<String, String> option =
+                                              testFields[index]
+                                                  .options
+                                                  .entries
+                                                  .toList()[optionIndex];
+
+                                          bool isAnswer =
+                                              testFields[index].answer ==
+                                                  option.key;
+
+                                          return Container(
+                                            margin: EdgeInsets.only(
+                                              bottom: height * 0.01,
+                                              left: width * 0.01,
+                                              right: width * 0.01,
+                                            ),
+                                            padding: isAnswer
+                                                ? EdgeInsets.symmetric(
+                                                    vertical: height * 0.005,
+                                                    horizontal: width * 0.01)
+                                                : null,
                                             decoration: BoxDecoration(
                                               borderRadius:
                                                   BorderRadius.circular(4),
-                                              color:
-                                                  colorData.backgroundColor(1),
+                                              color: isAnswer
+                                                  ? Colors.green.shade100
+                                                  : null,
                                             ),
-                                            alignment: Alignment.center,
-                                            child: CustomText(
-                                              text: index.toString(),
-                                              weight: FontWeight.bold,
-                                              size: sizeData.subHeader,
-                                              color: colorData.primaryColor(1),
+                                            child: Row(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                CustomText(
+                                                  text: "${option.key}: ",
+                                                  color:
+                                                      colorData.fontColor(.6),
+                                                  weight: FontWeight.bold,
+                                                ),
+                                                SizedBox(
+                                                  width: width * 0.01,
+                                                ),
+                                                Expanded(
+                                                  child: CustomText(
+                                                    text: option.value,
+                                                    color:
+                                                        colorData.fontColor(.6),
+                                                    weight: FontWeight.w700,
+                                                    maxLine: 3,
+                                                  ),
+                                                )
+                                              ],
                                             ),
-                                          ),
-                                          SizedBox(
-                                            width: width * 0.02,
-                                          ),
-                                          Expanded(
-                                            child: CustomText(
-                                              text: testFields[index].question,
-                                              maxLine: 5,
-                                              color: colorData.fontColor(.7),
-                                              weight: FontWeight.w700,
-                                              height: 1.15,
-                                            ),
-                                          )
-                                        ],
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      height: height * 0.01,
-                                    ),
-                                    Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: [
-                                        CustomText(
-                                          text: "ANS:",
-                                          color: colorData.fontColor(.5),
-                                          weight: FontWeight.w700,
-                                          size: sizeData.small,
-                                        ),
-                                        SizedBox(
-                                          width: width * 0.01,
-                                        ),
-                                        Expanded(
-                                          child: CustomText(
-                                            text: testFields[index].options[
-                                                testFields[index].answer]!,
-                                            color: colorData.fontColor(.8),
-                                            weight: FontWeight.w800,
-                                            height: 1.15,
-                                            maxLine: 3,
-                                          ),
-                                        ),
+                                          );
+                                        }),
                                       ],
                                     ),
-                                    SizedBox(
-                                      height: toExpand ? height * 0.02 : 0,
-                                    ),
-                                    ...List.generate(
-                                        toExpand
-                                            ? testFields[index].options.length
-                                            : 0, (optionIndex) {
-                                      MapEntry<String, String> option =
-                                          testFields[index]
-                                              .options
-                                              .entries
-                                              .toList()[optionIndex];
-
-                                      bool isAnswer =
-                                          testFields[index].answer ==
-                                              option.key;
-
-                                      return Container(
-                                        margin: EdgeInsets.only(
-                                          bottom: height * 0.01,
-                                          left: width * 0.01,
-                                          right: width * 0.01,
-                                        ),
-                                        padding: isAnswer
-                                            ? EdgeInsets.symmetric(
-                                                vertical: height * 0.005,
-                                                horizontal: width * 0.01)
-                                            : null,
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(4),
-                                          color: isAnswer
-                                              ? Colors.green.shade100
-                                              : null,
-                                        ),
-                                        child: Row(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            CustomText(
-                                              text: "${option.key}: ",
-                                              color: colorData.fontColor(.8),
-                                              weight: FontWeight.bold,
-                                            ),
-                                            SizedBox(
-                                              width: width * 0.01,
-                                            ),
-                                            Expanded(
-                                              child: CustomText(
-                                                text: option.value,
-                                                color: colorData.fontColor(.6),
-                                                weight: FontWeight.w700,
-                                                maxLine: 3,
-                                              ),
-                                            )
-                                          ],
+                                  ),
+                                ),
+                                Positioned(
+                                  top: 2,
+                                  right: 2,
+                                  child: GestureDetector(
+                                    onDoubleTap: () {
+                                      setState(
+                                          () => testFields.removeAt(index));
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        SnackBar(
+                                          duration:
+                                              const Duration(milliseconds: 300),
+                                          content: Center(
+                                              child: Text(
+                                                  "Deleted TestField of index ${index + 1}")),
                                         ),
                                       );
-                                    }),
-                                  ],
-                                ),
-                              ),
+                                    },
+                                    child: const Icon(
+                                      Icons.delete_forever_rounded,
+                                      color: Colors.red,
+                                    ),
+                                  ),
+                                )
+                              ],
                             );
                           }),
                     )

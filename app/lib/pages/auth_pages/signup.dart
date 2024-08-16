@@ -48,8 +48,8 @@ class _SignupState extends ConsumerState<Signup> {
   }
 
   void _generateUserData() async {
-    Map<String, dynamic>? userData =
-        await generateUserData(context: context, id: idCtr.text.trim().toUpperCase());
+    Map<String, dynamic>? userData = await generateUserData(
+        context: context, id: idCtr.text.trim().toUpperCase());
     if (userData != null) {
       if (userData["userRole"] == "student") {
         setState(() {
@@ -166,6 +166,7 @@ class _SignupState extends ConsumerState<Signup> {
                     children: [
                       Expanded(
                         child: CustomInputField(
+                          isAuth: true,
                           icon: Icons.fingerprint_rounded,
                           controller: idCtr,
                           hintText: hintText,
@@ -219,6 +220,7 @@ class _SignupState extends ConsumerState<Signup> {
                       height: height * 0.02,
                     ),
                   CustomInputField(
+                    isAuth: true,
                     controller: nameCtr,
                     hintText: "NAME",
                     icon: Icons.person_rounded,
@@ -226,6 +228,7 @@ class _SignupState extends ConsumerState<Signup> {
                     readOnly: generatedData.isEmpty,
                   ),
                   CustomInputField(
+                    isAuth: true,
                     controller: emailCtr,
                     hintText: "EMAIL",
                     icon: Icons.email_rounded,
@@ -233,6 +236,7 @@ class _SignupState extends ConsumerState<Signup> {
                     readOnly: true,
                   ),
                   CustomInputField(
+                    isAuth: true,
                     controller: passwordCtr,
                     hintText: "PASSWORD",
                     icon: Icons.password_rounded,

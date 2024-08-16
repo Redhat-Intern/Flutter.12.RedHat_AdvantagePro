@@ -175,7 +175,7 @@ class _CoursesState extends ConsumerState<Courses> {
                           return GestureDetector(
                             onTap: () {
                               ref.read(courseDataProvider.notifier).clearData();
-                              CourseService(ref: ref).readCourseData(
+                             ref.read(courseServiceProvider).readCourseData(
                                   courseName: courseList[index]["name"],
                                   isFromBatch: false);
 

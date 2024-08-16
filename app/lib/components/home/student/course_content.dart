@@ -1,3 +1,4 @@
+import 'package:Vectra/utilities/console_logger.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -78,7 +79,6 @@ class _CourseContentState extends ConsumerState<CourseContent> {
     double height = sizeData.height;
 
     void joinOrRemove(bool toadd) async {
-      print("Called");
 
       Map<String, dynamic> data = toadd
           ? {
@@ -101,7 +101,7 @@ class _CourseContentState extends ConsumerState<CourseContent> {
           }
         }, SetOptions(merge: true));
       } catch (error) {
-        print(error);
+        ConsoleLogger.message(error);
       }
     }
 

@@ -28,7 +28,7 @@ class _ChatMessageVideoState extends ConsumerState<ChatMessageVideo> {
 
   void loadData() async {
     if (widget.fileURL.isNotEmpty) {
-      File? fileTemp = await CourseService(ref: ref)
+      File? fileTemp = await ref.read(courseServiceProvider)
           .downloadFile(widget.fileURL, widget.messageID);
       setState(() {
         controller = VideoPlayerController.file(fileTemp!);

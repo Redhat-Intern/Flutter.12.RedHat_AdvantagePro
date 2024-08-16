@@ -62,7 +62,6 @@ class _LiveTestWaitingRoomState extends ConsumerState<LiveTestWaitingRoom> {
                 FirebaseFirestore.instance
                     .collection("liveTest")
                     .doc(widget.batchData['name']);
-            print(testData["status"]);
 
             if (toStart == null || toStart == false) {
               return Scaffold(

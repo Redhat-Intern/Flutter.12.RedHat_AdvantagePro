@@ -56,7 +56,6 @@ class _CertificationsState extends ConsumerState<Certifications> {
   Widget build(BuildContext context) {
     CustomSizeData sizeData = CustomSizeData.from(context);
     CustomColorData colorData = CustomColorData.from(ref);
-    print(widget.batchList);
 
     double width = sizeData.width;
     double height = sizeData.height;
