@@ -62,9 +62,10 @@ class _DetailedBatchReportState extends ConsumerState<DetailedBatchReport> {
 
     List<MapEntry> staffList =
         List.from(widget.searchData["staffs"]).map((element) {
-          Map<String,String> data = Map<String,String>.from(element);
+      Map<String, String> data = Map<String, String>.from(element);
       return MapEntry(data.keys.first, data.values.first);
     }).toList();
+    print(widget.searchData["students"]);
 
     List<Map> studentsList = List.from(widget.searchData["students"])
         .map((e) => Map.from(e))
@@ -73,15 +74,15 @@ class _DetailedBatchReportState extends ConsumerState<DetailedBatchReport> {
     List<Stream<DocumentSnapshot<Map<String, dynamic>>>> streams = [
       FirebaseFirestore.instance
           .collection("attendance")
-          .doc(widget.searchData["name"])
+          .doc(widget.searchData["name"].toString().toUpperCase())
           .snapshots(),
       FirebaseFirestore.instance
           .collection("liveTest")
-          .doc(widget.searchData["name"])
+          .doc(widget.searchData["name"].toString().toUpperCase())
           .snapshots(),
       FirebaseFirestore.instance
           .collection("dailyTest")
-          .doc(widget.searchData["name"])
+          .doc(widget.searchData["name"].toString().toUpperCase())
           .snapshots(),
     ];
 

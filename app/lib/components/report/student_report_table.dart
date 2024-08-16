@@ -33,8 +33,11 @@ class _StudentReportTableState extends ConsumerState<StudentReportTable> {
   late Stream<DocumentSnapshot<Map<String, dynamic>>> stream;
 
   getStudentsData() async {
-    QuerySnapshot<Map<String, dynamic>> docsSnapShot =
-        await FirebaseFirestore.instance.collection("students").get();
+    QuerySnapshot<Map<String, dynamic>> docsSnapShot = await FirebaseFirestore
+        .instance
+        .collection("users")
+        .where("userRole", isEqualTo: "student")
+        .get();
     setState(() {
       studentsData = docsSnapShot.docs
           .where((element) {
@@ -215,7 +218,7 @@ class _StudentReportTableState extends ConsumerState<StudentReportTable> {
                                       name: studentsData[index - 1]["name"],
                                       id: studentID,
                                       imageUrl: studentsData[index - 1]
-                                              ["photo"] ??
+                                              ["imagePath"] ??
                                           studentsData[index - 1]["name"][0]),
                                 ),
                                 SizedBox(
