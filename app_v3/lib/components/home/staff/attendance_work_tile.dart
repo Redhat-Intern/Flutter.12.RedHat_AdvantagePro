@@ -66,7 +66,7 @@ class AttendanceWorkTile extends ConsumerWidget {
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   CustomText(
-                    text: "attendance:",
+                    text: "ATTENDANCE:",
                     color: colorData.fontColor(.5),
                     weight: FontWeight.w800,
                     size: sizeData.small,

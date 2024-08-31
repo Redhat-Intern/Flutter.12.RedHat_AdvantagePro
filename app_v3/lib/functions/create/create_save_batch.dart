@@ -13,7 +13,7 @@ Future<bool> createBatch({
     await FirebaseFirestore.instance
         .collection("batches")
         .doc(batch.name.toUpperCase())
-        .set(batchData);
+        .set({...batchData, "status": "live"});
 
     await FirebaseFirestore.instance
         .collection("savedBatches")

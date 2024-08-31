@@ -64,9 +64,7 @@ class StaffHome extends ConsumerWidget {
                       .map((e) => DateFormat('dd-MM-yyyy').parse(e))
                       .toList();
                   dates.sort((a, b) => b.compareTo(a));
-                  bool isLive = DateTime.now()
-                          .compareTo(dates[0].add(const Duration(hours: 24))) !=
-                      1;
+                  bool isLive = data["status"] == "live";
                   if (isLive) {
                     liveBatches.add(i);
                   }

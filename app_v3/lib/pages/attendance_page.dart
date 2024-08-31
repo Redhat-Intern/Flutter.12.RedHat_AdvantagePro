@@ -3,12 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_switch/flutter_switch.dart';
 
+import '../components/common/page_header.dart';
 import '../components/report/student_namer.dart';
 import '../model/user.dart';
 import '../utilities/theme/color_data.dart';
 import '../utilities/theme/size_data.dart';
 
-import '../components/common/back_button.dart';
 import '../components/common/text.dart';
 
 class AttendancePage extends ConsumerStatefulWidget {
@@ -99,27 +99,16 @@ class _AttendancePageState extends ConsumerState<AttendancePage> {
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(
-                      children: [
-                        const CustomBackButton(),
-                        const Spacer(),
-                        CustomText(
-                          text: "attendance",
-                          size: sizeData.header,
-                          color: colorData.fontColor(1),
-                          weight: FontWeight.w600,
-                        ),
-                        SizedBox(
-                          width: width * 0.02,
-                        ),
-                        CustomText(
-                          text: widget.day,
-                          size: sizeData.medium,
-                          color: colorData.fontColor(.6),
-                          weight: FontWeight.w800,
-                        ),
-                        const Spacer(),
-                      ],
+                    PageHeader(
+                      tittle: 'attendane',
+                      isMenuButton: false,
+                      secondaryWidget: CustomText(
+                        text: widget.day,
+                        size: sizeData.medium,
+                        color: colorData.fontColor(.6),
+                        weight: FontWeight.w800,
+                        height: 2.25,
+                      ),
                     ),
                     SizedBox(
                       height: height * 0.04,
@@ -241,6 +230,31 @@ class _AttendancePageState extends ConsumerState<AttendancePage> {
                         },
                       ),
                     ),
+                    if (students.isEmpty)
+                      Expanded(
+                        flex: 10,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Container(
+                              alignment: Alignment.topCenter,
+                              margin: EdgeInsets.only(bottom: height * .02),
+                              child: Image.asset(
+                                "assets/icons/UNF.png",
+                                width: width * 0.8,
+                              ),
+                            ),
+                            CustomText(
+                              text:
+                                  "Students haven't signed in to their accounts!",
+                              size: sizeData.medium,
+                              maxLine: 2,
+                              align: TextAlign.center,
+                            )
+                          ],
+                        ),
+                      )
                   ],
                 );
               } else {
