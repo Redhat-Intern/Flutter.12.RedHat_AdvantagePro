@@ -15,7 +15,6 @@ class CertifcatesPlaceHolder extends ConsumerWidget {
 
     double width = sizeData.width;
     double height = sizeData.height;
-    double aspectRatio = sizeData.aspectRatio;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

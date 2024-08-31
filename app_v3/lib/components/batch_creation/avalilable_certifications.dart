@@ -205,7 +205,9 @@ class _AvailableCertificationsState
                                     .floor()
                                 : 0);
                         firstVisibleItemIndex = firstVisibleItemIndex >= 0
-                            ? firstVisibleItemIndex
+                            ? certifications.length - 1 < firstVisibleItemIndex
+                                ? certifications.length - 1
+                                : firstVisibleItemIndex
                             : 0;
                         setState(() {
                           firstIndex = firstVisibleItemIndex;
@@ -223,52 +225,64 @@ class _AvailableCertificationsState
                       physics: const BouncingScrollPhysics(),
                       itemBuilder: (BuildContext context, int index) {
                         bool isFirst = firstIndex == index;
+                        bool isLast = index == certifications.length - 1;
+                        index = index > certifications.length - 1
+                            ? index = certifications.length - 1
+                            : index;
+                        double rightMargin = (height * .14 + width * 0.02) *
+                            (certifications.length > 3 ? 2 : 1);
                         return GestureDetector(
                           onTap: () async {
                             setState(() {
                               selectedCourse = certifications[index];
                             });
                           },
-                          child: Column(
-                            children: [
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Container(
-                                    height: aspectRatio * 15,
-                                    width: aspectRatio * 15,
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      color: colorData.primaryColor(1),
-                                    ),
+                          child: Container(
+                            margin: EdgeInsets.only(
+                                right: isLast ? rightMargin : width * 0.02),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                SizedBox(
+                                  width: height * 0.11,
+                                  child: Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Container(
+                                        height: aspectRatio * 15,
+                                        width: aspectRatio * 15,
+                                        decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          color: colorData.primaryColor(1),
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        width: width * 0.01,
+                                      ),
+                                      CustomText(
+                                        text: certifications[index]["name"]
+                                            .toString(),
+                                        size: sizeData.regular,
+                                        color: colorData.fontColor(.7),
+                                      ),
+                                    ],
                                   ),
-                                  SizedBox(
-                                    width: width * 0.01,
-                                  ),
-                                  CustomText(
-                                    text: certifications[firstIndex]["name"]
-                                        .toString(),
-                                    size: sizeData.regular,
-                                    color: colorData.fontColor(.7),
-                                  ),
-                                ],
-                              ),
-                              SizedBox(
-                                height: height * 0.01,
-                              ),
-                              CustomNetworkImage(
-                                url: certifications[index]["image"],
-                                radius: 8,
-                                size: height * .12,
-                                rightMargin: width * 0.02,
-                                border: isFirst
-                                    ? Border.all(
-                                        color: colorData.primaryColor(.6),
-                                        width: 2)
-                                    : null,
-                              ),
-                            ],
+                                ),
+                                CustomNetworkImage(
+                                  url: certifications[index]["image"],
+                                  radius: 8,
+                                  size: height * .12,
+                                  rightMargin: width * 0.02,
+                                  border: isFirst
+                                      ? Border.all(
+                                          color: colorData.primaryColor(.6),
+                                          width: 2)
+                                      : null,
+                                ),
+                              ],
+                            ),
                           ),
                         );
                       },
@@ -339,8 +353,8 @@ class _AvailableCertificationsState
                       child: GestureDetector(
                         onTap: () => selectDate(
                           context: context,
-                          days: Map.from(selectedCourse["courseContent"])
-                              .length,
+                          days:
+                              Map.from(selectedCourse["courseContent"]).length,
                           size: Size(width * .8, height * 0.3),
                           colorData: colorData,
                           sizeData: sizeData,

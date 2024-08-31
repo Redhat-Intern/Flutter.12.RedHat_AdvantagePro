@@ -26,7 +26,8 @@ class _AddStudentOverlayState extends ConsumerState<AddStudentOverlay> {
   Future<String> generateExcelFile() async {
     List<List<String>> body = [];
     List<String> header = [
-      'Name',
+      'RegistrationID'
+          'Name',
       'Email',
       'Phone No',
       'Occupation',
@@ -34,6 +35,7 @@ class _AddStudentOverlayState extends ConsumerState<AddStudentOverlay> {
     ];
     body.add(header);
     body.add([
+      'STU001',
       'John Doe',
       'john.doe@email.com',
       '1234567890',
@@ -54,6 +56,7 @@ class _AddStudentOverlayState extends ConsumerState<AddStudentOverlay> {
   @override
   Widget build(BuildContext context) {
     List<String> columnData = [
+      "RegistrationID",
       "Name",
       "Email",
       "PhoneNo",

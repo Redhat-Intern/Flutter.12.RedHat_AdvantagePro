@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -44,6 +45,13 @@ class _ChattingPageState extends ConsumerState<ChattingPage> {
     });
   }
 
+  void deleteChat({required String chatID, required String forumID}) async {
+    await FirebaseFirestore.instance
+        .collection("forum")
+        .doc(forumID)
+        .set({chatID: FieldValue.delete()}, SetOptions(merge: true));
+  }
+
   @override
   Widget build(BuildContext context) {
     ChatForum chatForum = ref.watch(forumDataProvider).key[widget.index];
@@ -58,13 +66,21 @@ class _ChattingPageState extends ConsumerState<ChattingPage> {
     int? count;
     if (chatForum.members.length == 2) {
       singleStatus = statusMap[chatForum.members.entries
-          .where((data) => data.key != userData.email)
-          .first
-          .key];
+              .where((data) =>
+                  data.key !=
+                  (userData.userRole == UserRole.superAdmin
+                      ? "admin"
+                      : userData.email))
+              .first
+              .key] ??
+          Status.offline;
     } else {
       count = chatForum.members.entries
           .where((data) =>
-              data.key != userData.email &&
+              data.key !=
+                  (userData.userRole == UserRole.superAdmin
+                      ? "admin"
+                      : userData.email) &&
               statusMap[data.key] == Status.online)
           .length;
     }
@@ -115,6 +131,12 @@ class _ChattingPageState extends ConsumerState<ChattingPage> {
                         imageURL: message.imageURL,
                         fileURL: message.fileURL,
                         specType: message.specType,
+                        deleteChat: () {
+                          deleteChat(
+                            chatID: chatForum.messages[index].id,
+                            forumID: chatForum.id,
+                          );
+                        },
                       );
                     }),
               ),

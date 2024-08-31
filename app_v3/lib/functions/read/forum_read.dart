@@ -115,15 +115,17 @@ MapEntry<List<ChatForum>, Map<String, bool>> fetchChatForums(
 
     chatForums.add(chatForum);
   }
-
-  Map<String, bool> status =
-      statusSnap!.data().map((key, value) => MapEntry(key, value as bool));
+  Map<String, bool> status = {};
+  if (statusSnap != null) {
+    status =
+        statusSnap.data().map((key, value) => MapEntry(key, value as bool));
+  }
 
   Future(() {
     ref.read(forumDataProvider.notifier).updateChatForum(chatForums);
     if (snapshotData != null) {
       ref.read(forumDataProvider.notifier).updateStatus(
-          statusSnap.data().map((key, value) => MapEntry(key, value as bool)));
+          statusSnap!.data().map((key, value) => MapEntry(key, value as bool)));
     }
     ref.read(chatScrollProvider.notifier).jump();
   });

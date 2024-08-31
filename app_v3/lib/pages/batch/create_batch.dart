@@ -1,3 +1,9 @@
+// This file contains the implementation of the CreateBatch screen and the ImageLoader widget.
+// The CreateBatch screen allows users to create new batches or select from saved batches.
+// It includes a search bar for filtering saved batches and displays a list of batch details.
+// The ImageLoader widget fetches and displays images associated with courses.
+// Both components make use of Firebase Firestore for data storage and retrieval and Riverpod for state management.
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -6,10 +12,7 @@ import '../../components/common/icon.dart';
 import '../../components/common/network_image.dart';
 import '../../components/common/page_header.dart';
 import '../../components/common/text.dart';
-import '../../model/user.dart';
 import '../../providers/create_batch_provider.dart';
-import '../../providers/user_detail_provider.dart';
-import '../../utilities/static_data.dart';
 import '../../utilities/theme/color_data.dart';
 import '../../utilities/theme/size_data.dart';
 import 'create_new_batch.dart';
@@ -39,7 +42,6 @@ class _CreateBatchState extends ConsumerState<CreateBatch> {
 
   @override
   Widget build(BuildContext context) {
-    UserModel userData = ref.watch(userDataProvider).key;
     CustomSizeData sizeData = CustomSizeData.from(context);
     CustomColorData colorData = CustomColorData.from(ref);
 
@@ -61,41 +63,39 @@ class _CreateBatchState extends ConsumerState<CreateBatch> {
               height: height * 0.02,
             ),
 
-            if (userData.userRole == UserRole.superAdmin)
-              //   Add course
-              GestureDetector(
-                onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const CreateNewBatch())),
-                child: Container(
-                  margin: EdgeInsets.only(bottom: height * 0.03),
-                  padding: EdgeInsets.symmetric(
-                    vertical: height * 0.01,
-                    horizontal: width * 0.1,
-                  ),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(8),
-                    gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [
-                        colorData.primaryColor(.6),
-                        colorData.primaryColor(1),
-                      ],
-                    ),
-                  ),
-                  child: CustomText(
-                    text: "Create/Save New Batch",
-                    size: sizeData.medium,
-                    color: colorData.secondaryColor(1),
-                    weight: FontWeight.w800,
+            //   Add course
+            GestureDetector(
+              onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const CreateNewBatch())),
+              child: Container(
+                margin: EdgeInsets.only(bottom: height * 0.03),
+                padding: EdgeInsets.symmetric(
+                  vertical: height * 0.01,
+                  horizontal: width * 0.1,
+                ),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(8),
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      colorData.primaryColor(.6),
+                      colorData.primaryColor(1),
+                    ],
                   ),
                 ),
+                child: CustomText(
+                  text: "Create/Save New Batch",
+                  size: sizeData.medium,
+                  color: colorData.secondaryColor(1),
+                  weight: FontWeight.w800,
+                ),
               ),
+            ),
 
             // Course List
-
             Align(
               alignment: Alignment.centerLeft,
               child: CustomText(

@@ -51,9 +51,13 @@ class ChatFieldHeader extends ConsumerWidget {
                   margin: EdgeInsets.only(right: width * 0.01),
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: status == Status.online
-                        ? Colors.green
-                        : colorData.fontColor(.2),
+                    color: status != null
+                        ? status == Status.online
+                            ? Colors.green
+                            : colorData.fontColor(.2)
+                        : liveCount != null && liveCount! > 0
+                            ? Colors.green
+                            : colorData.fontColor(.2),
                   ),
                 ),
                 if (status != null)

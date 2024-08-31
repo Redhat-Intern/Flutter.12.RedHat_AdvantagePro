@@ -133,12 +133,12 @@ class StaffsListState extends ConsumerState<StaffsList> {
                                 children: [
                                   CustomNetworkImage(
                                     url: staffsList[index].imagePath,
-                                    size: height * 0.075,
+                                    size: height * 0.07,
                                     radius: 8,
                                     rightMargin: width * .03,
                                   ),
                                   Positioned(
-                                    bottom: -(height * 0.02),
+                                    bottom: -10,
                                     left: -4,
                                     child: SizedBox(
                                       width: height * .085,
