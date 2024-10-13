@@ -45,7 +45,7 @@ class FeedbackReport extends ConsumerWidget {
           SizedBox(
             height: height * 0.02,
           ),
-          // const FeedbackChart(),
+          const FeedbackChart(),
         ],
       ),
     );

@@ -1,4 +1,4 @@
-
+import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -81,7 +81,6 @@ class _CourseContentState extends ConsumerState<CourseContent> {
     double height = sizeData.height;
 
     void joinOrRemove(bool toadd) async {
-
       Map<String, dynamic> data = toadd
           ? {
               userData.studentId![widget.batchData["name"]]!: {
@@ -127,7 +126,8 @@ class _CourseContentState extends ConsumerState<CourseContent> {
             )
             .add(const Duration(hours: 24)),
       );
-      bool dailyTestResult = dailyTest != null && dateCmp == 1;
+      bool dailyTestResult = true;
+      // dailyTest != null && dateCmp == 1;
 
       return Expanded(
         child: Column(
@@ -520,8 +520,7 @@ class DailyTestTile extends ConsumerWidget {
                   width: width * 0.02,
                 ),
                 isAnswered
-                    ? const SizedBox()
-                    : Expanded(
+                    ? Expanded(
                         child: GestureDetector(
                           onTap: () {
                             if (dailyTestResult) {
@@ -555,7 +554,8 @@ class DailyTestTile extends ConsumerWidget {
                             ),
                           ),
                         ),
-                      ),
+                      )
+                    : const SizedBox(),
               ],
             );
           } else {

@@ -100,14 +100,14 @@ class _AttendancePageState extends ConsumerState<AttendancePage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     PageHeader(
-                      tittle: 'attendane',
+                      tittle: 'attendance',
                       isMenuButton: false,
                       secondaryWidget: CustomText(
                         text: widget.day,
-                        size: sizeData.medium,
+                        size: sizeData.regular,
                         color: colorData.fontColor(.6),
                         weight: FontWeight.w800,
-                        height: 2.25,
+                        height: 2.5,
                       ),
                     ),
                     SizedBox(

@@ -56,7 +56,7 @@ dependencies:
   # UI Widgets and Enhancements
   calendar_date_picker2: ^1.1.5 # Date picker utility
   dotted_border: ^2.1.0 # Dotted borders for UI elements
-  syncfusion_flutter_charts: ^26.2.10 # Advanced charts and graphs
+  syncfusion_flutter_charts: ^27.1.52 # Advanced charts and graphs
   flutter_switch: ^0.3.2 # Custom switch widgets
   flutter_rating_stars: ^1.0.3+4 # Rating stars widget
   video_player: ^2.9.1 # Video playback utility

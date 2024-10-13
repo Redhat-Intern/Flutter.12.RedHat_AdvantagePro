@@ -45,26 +45,28 @@ class ForumState extends ConsumerState<Forum> {
                   FirebaseFirestore.instance.collection("forum").snapshots(),
               builder: (context, snapshot) {
                 if (snapshot.hasData && snapshot.data!.docs.isNotEmpty) {
-                  MapEntry<List<ChatForum>,Map<String,bool>> fetchedData = fetchChatForums(
-                      snapshotData: snapshot.data!.docs.where((data) {
-                        if (data.id != "status") {
-                          List<String> memberEmail =
-                              Map<String, dynamic>.from(data.data()["members"])
-                                  .keys
-                                  .toList();
-                          return (memberEmail.contains(userData.email) ||
-                              (userData.userRole == UserRole.superAdmin &&
-                                  memberEmail.contains("admin")));
-                        } else {
-                          return false;
-                        }
-                      }),
-                      statusSnap: snapshot.data!.docs
-                          .where((data) => data.id == "status")
-                          .firstOrNull,
-                      userData: userData,
-                      ref: ref);
-                  
+                  MapEntry<List<ChatForum>, Map<String, bool>> fetchedData =
+                      fetchChatForums(
+                          snapshotData: snapshot.data!.docs.where((data) {
+                            if (data.id != "status") {
+                              List<String> memberEmail =
+                                  Map<String, dynamic>.from(
+                                          data.data()["members"])
+                                      .keys
+                                      .toList();
+                              return (memberEmail.contains(userData.email) ||
+                                  (userData.userRole == UserRole.superAdmin &&
+                                      memberEmail.contains("admin")));
+                            } else {
+                              return false;
+                            }
+                          }),
+                          statusSnap: snapshot.data!.docs
+                              .where((data) => data.id == "status")
+                              .firstOrNull,
+                          userData: userData,
+                          ref: ref);
+
                   List<ChatForum> chatForums = fetchedData.key;
 
                   ForumCategory forumCategory =
@@ -116,9 +118,9 @@ class ForumState extends ConsumerState<Forum> {
                     itemCount: chatForums.length,
                     itemBuilder: (context, index) {
                       return Chat(
-                        data: chatForums[index],
-                        index: index,
-                      );
+                          data: chatForums[index],
+                          index: index,
+                          isLast: index != chatForums.length - 1,);
                     },
                   );
                 } else {

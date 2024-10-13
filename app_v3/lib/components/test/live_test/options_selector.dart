@@ -78,19 +78,21 @@ class _OptionsSelectorState extends ConsumerState<OptionsSelector> {
                 alignment: Alignment.center,
                 child: CustomText(
                   text: e.key,
-                  size: sizeData.subHeader,
+                  size: sizeData.medium,
                   weight: FontWeight.bold,
                   color: colorData.fontColor(.7),
                 ),
               ),
-              CustomText(
-                text: e.value,
-                size: sizeData.subHeader,
-                color: isSelected
-                    ? colorData.sideBarTextColor(1)
-                    : colorData.fontColor(.6),
-                weight: FontWeight.w800,
-                maxLine: 3,
+              Expanded(
+                child: CustomText(
+                  text: e.value,
+                  size: sizeData.medium,
+                  color: isSelected
+                      ? colorData.sideBarTextColor(1)
+                      : colorData.fontColor(.6),
+                  weight: FontWeight.w800,
+                  maxLine: 3,
+                ),
               ),
             ]),
           ),

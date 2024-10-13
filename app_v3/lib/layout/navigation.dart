@@ -173,7 +173,7 @@ class _NavigationState extends ConsumerState<Navigation>
                     children: loadingList)
                 : PopScope(
                     canPop: ref.read(navigationIndexProvider) == 0,
-                    onPopInvoked: (didPop) {
+                    onPopInvokedWithResult: (didPop,_) {
                       if (didPop) {
                         exit(1);
                       } else {

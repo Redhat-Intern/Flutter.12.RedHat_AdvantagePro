@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:vectra/components/common/network_image.dart';
 
 import '../../../utilities/theme/color_data.dart';
 import '../../../utilities/theme/size_data.dart';
@@ -48,26 +49,10 @@ class FinalResultTile extends ConsumerWidget {
             weight: FontWeight.w800,
           ),
           SizedBox(width: width * 0.03),
-          Container(
-            height: aspectRatio * 110,
-            width: aspectRatio * 110,
-            padding: EdgeInsets.all(aspectRatio * 6),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(4),
-              color: colorData.secondaryColor(1),
-            ),
-            alignment: Alignment.center,
-            child: imageURL.length == 1
-                ? CustomText(
-                    text: imageURL,
-                    size: sizeData.superLarge,
-                    color: colorData.fontColor(.7),
-                    weight: FontWeight.w800,
-                  )
-                : ClipRRect(
-                    borderRadius: BorderRadius.circular(4),
-                    child: Image.network(imageURL),
-                  ),
+          CustomNetworkImage(
+            size: aspectRatio * 110,
+            radius: 8,
+            url: imageURL,
           ),
           SizedBox(width: width * 0.03),
           Expanded(

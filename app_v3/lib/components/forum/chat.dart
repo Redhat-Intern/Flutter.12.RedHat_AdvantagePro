@@ -17,10 +17,12 @@ class Chat extends ConsumerWidget {
     super.key,
     required this.data,
     required this.index,
+    required this.isLast,
   });
 
   final ChatForum data;
   final int index;
+  final bool isLast;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -138,19 +140,20 @@ class Chat extends ConsumerWidget {
             SizedBox(
               height: height * 0.0125,
             ),
-            Container(
-              height: 2,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(50),
-                gradient: LinearGradient(
-                  colors: [
-                    Colors.transparent,
-                    colorData.fontColor(.2),
-                    Colors.transparent,
-                  ],
+            if (isLast)
+              Container(
+                height: 2,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(50),
+                  gradient: LinearGradient(
+                    colors: [
+                      Colors.transparent,
+                      colorData.fontColor(.2),
+                      Colors.transparent,
+                    ],
+                  ),
                 ),
-              ),
-            )
+              )
           ],
         ),
       ),

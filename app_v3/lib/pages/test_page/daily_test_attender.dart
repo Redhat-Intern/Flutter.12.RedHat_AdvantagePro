@@ -39,7 +39,7 @@ class _DailyTestAttenderState extends ConsumerState<DailyTestAttender>
   List<String?> answers = [];
   int totalMark = 0;
   int count = 0;
-  bool canPop = true;
+  bool canPop = false;
 
   late DateTime onInitializeTime;
 
@@ -227,7 +227,7 @@ class _DailyTestAttenderState extends ConsumerState<DailyTestAttender>
               CustomText(
                 text: testFields[testIndex].question,
                 maxLine: 5,
-                size: sizeData.header,
+                size: sizeData.subHeader,
                 weight: FontWeight.w700,
                 color: colorData.fontColor(.9),
                 height: 1.25,

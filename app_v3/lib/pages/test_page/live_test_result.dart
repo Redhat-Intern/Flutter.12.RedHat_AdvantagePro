@@ -397,11 +397,6 @@ class _LiveTestResultState extends ConsumerState<LiveTestResult>
                       },
                     ),
                   ),
-                  // ResultTile(
-                  //     index: "2",
-                  //     name: "Bharathraj",
-                  //     imageURL: "B",
-                  //     points: "1221"),
                 ],
               );
             },

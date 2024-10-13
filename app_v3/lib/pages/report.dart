@@ -17,7 +17,7 @@ class Report extends ConsumerWidget {
     CustomColorData colorData = CustomColorData.from(ref);
 
     double height = sizeData.height;
-    double width = sizeData.width;
+    // double width = sizeData.width;
 
     return Column(
       children: [

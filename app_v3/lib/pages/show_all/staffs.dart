@@ -74,8 +74,8 @@ class AllStaffs extends ConsumerWidget {
                         itemCount: staffDataList.length,
                         itemBuilder: (context, index) {
                           UserModel staffData = staffDataList[index];
-                          Map<String, dynamic> certifications =
-                              staffData.courses!;
+                          // Map<String, dynamic> certifications =
+                          //     staffData.courses!;
 
                           return Stack(
                             clipBehavior: Clip.none,

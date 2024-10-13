@@ -27,7 +27,7 @@ class CustomSizeData {
     double superLarge = aspectRatio * 50;
     double superHeader = aspectRatio * 40;
     double header = aspectRatio * 36;
-    double subHeader = aspectRatio * 34;
+    double subHeader = aspectRatio * 32;
     double medium = aspectRatio * 30;
     double regular = aspectRatio * 28;
     double small = aspectRatio * 26;

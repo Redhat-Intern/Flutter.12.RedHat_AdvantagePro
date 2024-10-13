@@ -80,10 +80,10 @@ class DailyTestResult extends ConsumerWidget {
                       isMenuButton: false,
                       secondaryWidget: CustomText(
                         text: day,
-                        size: sizeData.medium,
+                        size: sizeData.small,
                         color: colorData.fontColor(.6),
                         weight: FontWeight.w800,
-                        height: 2.25,
+                        height: 3,
                       ),
                     ),
                     SizedBox(

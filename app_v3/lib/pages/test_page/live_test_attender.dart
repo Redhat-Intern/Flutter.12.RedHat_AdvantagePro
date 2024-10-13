@@ -273,7 +273,7 @@ class _LiveTestAttenderState extends ConsumerState<LiveTestAttender>
                       CustomText(
                         text: currentTestField.question,
                         maxLine: 5,
-                        size: sizeData.header,
+                        size: sizeData.subHeader,
                         weight: FontWeight.w700,
                         color: colorData.fontColor(.9),
                         height: 1.25,
@@ -290,7 +290,7 @@ class _LiveTestAttenderState extends ConsumerState<LiveTestAttender>
 
     return PopScope(
       canPop: false,
-      onPopInvoked: (didPop) {},
+      onPopInvokedWithResult: (didPop, _) {},
       child: Scaffold(
         body: SafeArea(
           child: AnimatedContainer(

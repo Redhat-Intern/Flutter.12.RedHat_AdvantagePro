@@ -13,18 +13,19 @@ class StudentReportTable extends ConsumerStatefulWidget {
     super.key,
     required this.studentsData,
     required this.streams,
+    required this.batchID,
   });
   final List<Map> studentsData;
   final List<Stream<DocumentSnapshot<Map<String, dynamic>>>> streams;
+  final String batchID;
 
   @override
   ConsumerState<StudentReportTable> createState() => _StudentReportTableState();
 }
 
 class _StudentReportTableState extends ConsumerState<StudentReportTable> {
-  String selectedItem = "attendance";
-  List<String> searchData = ["attendance", "tests", "exams"];
-  int streamIndex = 0;
+  List<String> searchData = ["attendance", "live Test", "daily Test"];
+  int searchDataIndex = 0;
   LinkedScrollControllerGroup commonCtr = LinkedScrollControllerGroup();
   // Initialize controllers dynamically in initState
   List<ScrollController> controllers = [];
@@ -57,7 +58,7 @@ class _StudentReportTableState extends ConsumerState<StudentReportTable> {
   @override
   void initState() {
     super.initState();
-    stream = widget.streams[streamIndex];
+    stream = widget.streams[0];
     for (int i = 0; i <= widget.studentsData.length; i++) {
       controllers.add(commonCtr.addAndGet());
     }
@@ -111,8 +112,10 @@ class _StudentReportTableState extends ConsumerState<StudentReportTable> {
                   elevation: 0,
                   alignment: Alignment.center,
                   hint: CustomText(
-                    text: selectedItem.toString()[0].toUpperCase() +
-                        selectedItem.toString().substring(1),
+                    text: searchData[searchDataIndex]
+                            .toString()[0]
+                            .toUpperCase() +
+                        searchData[searchDataIndex].toString().substring(1),
                     size: sizeData.medium,
                     color: colorData.fontColor(.7),
                     weight: FontWeight.w600,
@@ -133,8 +136,8 @@ class _StudentReportTableState extends ConsumerState<StudentReportTable> {
                       .toList(),
                   onChanged: (value) {
                     setState(() {
-                      selectedItem = value.toString();
-                      stream = widget.streams[searchData.indexOf(value!)];
+                      searchDataIndex = searchData.indexOf(value!);
+                      stream = widget.streams[searchDataIndex];
                     });
                   },
                 ),
@@ -154,8 +157,7 @@ class _StudentReportTableState extends ConsumerState<StudentReportTable> {
                     );
                   }
                   if (snapshot.hasData && snapshot.data!.exists) {
-                    Map<String, dynamic> attendanceData =
-                        snapshot.data!.data()!;
+                    Map<String, dynamic> snapshotData = snapshot.data!.data()!;
 
                     return ListView.builder(
                       padding: EdgeInsets.only(left: width * 0.01),
@@ -187,7 +189,7 @@ class _StudentReportTableState extends ConsumerState<StudentReportTable> {
                                 child: ListView.builder(
                                   controller: controllers[index],
                                   scrollDirection: Axis.horizontal,
-                                  itemCount: attendanceData.length,
+                                  itemCount: snapshotData.length,
                                   itemBuilder: (context, index) => SizedBox(
                                     width: width * .2,
                                     child: Center(
@@ -205,7 +207,7 @@ class _StudentReportTableState extends ConsumerState<StudentReportTable> {
                           );
                         } else {
                           String studentID =
-                              widget.studentsData[index - 1].keys.first;
+                              studentsData[index - 1]["id"][widget.batchID];
 
                           return Container(
                             height: height * 0.065,
@@ -229,28 +231,77 @@ class _StudentReportTableState extends ConsumerState<StudentReportTable> {
                                   child: ListView.builder(
                                     controller: controllers[index],
                                     scrollDirection: Axis.horizontal,
-                                    itemCount: attendanceData.length,
+                                    itemCount: snapshotData.length,
                                     itemBuilder: (context, valueIndex) {
-                                      bool attendanceCheck =
-                                          attendanceData[valueIndex.toString()]
-                                              [studentID];
-                                      String attendance =
-                                          attendanceCheck == true
-                                              ? "Present"
-                                              : "Absent";
-                                      return SizedBox(
-                                        width: width * .2,
-                                        child: Center(
-                                          child: CustomText(
-                                            text: attendance,
-                                            color: attendanceCheck
-                                                ? Colors.green.shade600
-                                                : Colors.red,
-                                            weight: FontWeight.w800,
-                                            size: sizeData.medium,
+                                      if (searchDataIndex == 0) {
+                                        bool attendanceCheck =
+                                            snapshotData[valueIndex.toString()]
+                                                [studentID];
+                                        String attendance =
+                                            attendanceCheck == true
+                                                ? "Present"
+                                                : "Absent";
+                                        return SizedBox(
+                                          width: width * .2,
+                                          child: Center(
+                                            child: CustomText(
+                                              text: attendance,
+                                              color: attendanceCheck
+                                                  ? Colors.green.shade600
+                                                  : Colors.red,
+                                              weight: FontWeight.w800,
+                                              size: sizeData.medium,
+                                            ),
                                           ),
-                                        ),
-                                      );
+                                        );
+                                      } else if (searchDataIndex == 2) {
+                                        int? totalMark =
+                                            snapshotData[valueIndex.toString()]
+                                                            ["answers"]
+                                                        [studentID] !=
+                                                    null
+                                                ? snapshotData[valueIndex
+                                                        .toString()]["answers"]
+                                                    [studentID]["totalMark"]
+                                                : null;
+                                        return SizedBox(
+                                          width: width * .2,
+                                          child: Center(
+                                            child: CustomText(
+                                              text: totalMark
+                                                  .toString()
+                                                  .toUpperCase(),
+                                              color: totalMark == null
+                                                  ? Colors.red
+                                                  : null,
+                                              weight: FontWeight.w800,
+                                              size: sizeData.medium,
+                                            ),
+                                          ),
+                                        );
+                                      } else {
+                                        int? totalMark =
+                                            snapshotData[valueIndex.toString()]
+                                                        ["totalScores"] !=
+                                                    null
+                                                ? snapshotData[
+                                                        valueIndex.toString()]
+                                                    ["totalScores"][studentID]
+                                                : null;
+                                        return SizedBox(
+                                          width: width * .2,
+                                          child: Center(
+                                            child: CustomText(
+                                              text: totalMark.toString(),
+                                              color: totalMark == null
+                                                  ? Colors.red
+                                                  : null,
+                                              weight: FontWeight.w800,
+                                              size: sizeData.medium,
+                                            ),
+                                          ),
+                                        );
+                                      }
                                     },
                                   ),
                                 ),

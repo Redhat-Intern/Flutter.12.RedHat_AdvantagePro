@@ -12,11 +12,11 @@ import firebase_app_check
 import firebase_auth
 import firebase_core
 import firebase_storage
-import open_file
+import open_file_mac
 import path_provider_foundation
 import share_plus
 import shared_preferences_foundation
-import sqflite
+import sqflite_darwin
 import url_launcher_macos
 
 func RegisterGeneratedPlugins(registry: FlutterPluginRegistry) {

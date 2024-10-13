@@ -65,7 +65,6 @@ class _DetailedBatchReportState extends ConsumerState<DetailedBatchReport> {
       Map<String, String> data = Map<String, String>.from(element);
       return MapEntry(data.keys.first, data.values.first);
     }).toList();
-    print(widget.searchData["students"]);
 
     List<Map> studentsList = List.from(widget.searchData["students"])
         .map((e) => Map.from(e))
@@ -116,7 +115,7 @@ class _DetailedBatchReportState extends ConsumerState<DetailedBatchReport> {
                 staffsListData: staffList,
               ),
               SizedBox(height: height * 0.03),
-              StudentReportTable(studentsData: studentsList, streams: streams),
+              StudentReportTable(studentsData: studentsList, streams: streams,batchID : widget.searchData["name"].toString().toUpperCase()),
             ],
           ),
         ),
