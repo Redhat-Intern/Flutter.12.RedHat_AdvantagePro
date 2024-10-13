@@ -117,10 +117,7 @@ enum TestType { live, daily }
 
 enum SnackBarType { success, error, info }
 
-enum CourseFileListFrom {
-  staffDetail,
-  courseConent
-} 
+enum CourseFileListFrom { staffDetail, courseConent }
 
 // Constant Lists and Maps
 const List<String> searchData = [
@@ -129,15 +126,7 @@ const List<String> searchData = [
   "students"
 ]; // Used for searching various entities
 
-const emojis = {
-  "0": "🤩",
-  "1": "😇",
-  "2": "😎",
-  "3": "🥶",
-  "4": "😢",
-  "5": "🥵",
-  "6": "🤕",
-};
+const emojis = ["🤩", "😇", "😎", "🥶", "😢", "🥵", "🤕"];
 
 // Primary colors used in the application
 const List<Color> primaryColors = [

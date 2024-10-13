@@ -47,11 +47,13 @@ class _LiveTestAttenderState extends ConsumerState<LiveTestAttender>
   bool waitingRoom = false;
   int seconds = 0;
   int totalScore = 0;
+  int previousScore = 0;
 
   int scoreCalculator(double time, bool answerCheck) {
     double howFast = seconds - time;
     if (answerCheck) {
       setState(() {
+        previousScore = (howFast * 100).toInt();
         totalScore += (howFast * 100).toInt();
       });
       return (howFast * 100).toInt();
@@ -231,7 +233,9 @@ class _LiveTestAttenderState extends ConsumerState<LiveTestAttender>
                             ),
                             child: Row(children: [
                               CustomText(
-                                text: emojis['0']!,
+                                text: emojis[
+                                    (6 - (previousScore / (500 / 6)).floor())
+                                        .clamp(0, 6)],
                                 color: Colors.white,
                                 weight: FontWeight.bold,
                                 size: sizeData.header,
